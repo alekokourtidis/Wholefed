@@ -64,62 +64,36 @@ function getUnseenFact() {
   return pick;
 }
 
-// Normalize AI insights into a consistent format no matter what the AI returns
-function normalizeInsights(raw) {
+// Force-assign card types to ensure visual variety
+// The AI can't be trusted to return correct types, so we assign them ourselves
+function normalizeInsights(raw, hasConditions) {
   if (!raw || !Array.isArray(raw)) return [];
 
-  // Map common AI-returned type variations to our known types
-  const typeAliases = {
-    interaction: "interaction", nutrient_interaction: "interaction", synergy: "interaction",
-    missing: "missing", gap: "missing", suggestion: "missing", add: "missing",
-    fact: "fact", fun_fact: "fact", did_you_know: "fact", trivia: "fact",
-    condition: "condition", health: "condition", health_note: "condition", medical: "condition",
-    good: "good", positive: "good", strength: "good", summary: "good", meal_summary: "good",
-    highlight: "highlight",
-    swap: "swap", upgrade: "swap", replace: "swap", tip: "swap",
-  };
-
-  function inferType(item, text) {
-    // First try the explicit type with alias mapping
-    if (item.type) {
-      const normalized = item.type.toLowerCase().replace(/[\s-]/g, "_");
-      if (typeAliases[normalized]) return typeAliases[normalized];
-    }
-    // If item has a title, guess from content
-    if (item.title) {
-      const t = item.title.toLowerCase();
-      if (t.includes("missing") || t.includes("add") || t.includes("need")) return "missing";
-      if (t.includes("diabetes") || t.includes("heart") || t.includes("cholesterol") || t.includes("blood")) return "condition";
-      if (t.includes("swap") || t.includes("replace") || t.includes("instead")) return "swap";
-    }
-    // Guess from the body text
-    const lower = (text || "").toLowerCase();
-    if (lower.includes("adding") || lower.includes("you're missing") || lower.includes("would benefit from")) return "missing";
-    if (lower.includes("combining") || lower.includes("absorption") || lower.includes("bioavail")) return "interaction";
-    if (lower.includes("did you know") || lower.includes("surprisingly") || lower.includes("studies show")) return "fact";
-    return item.type?.toLowerCase() || "interaction";
-  }
-
-  return raw.map((item) => {
-    if (typeof item === "string") {
-      return { type: "interaction", icon: "link", text: item };
-    }
-    const text = item.text || item.description || item.content || item.detail || item.body || "";
-    const type = inferType(item, text);
-
-    // Auto-assign icons based on resolved type
-    const defaultIcons = {
-      interaction: "link", missing: "eco", fact: "lightbulb",
-      condition: "monitor_heart", good: "check_circle", highlight: "star", swap: "swap_horiz",
-    };
-
+  // Extract text from each item regardless of format
+  const texts = raw.map((item) => {
+    if (typeof item === "string") return { text: item, title: item.title, suggestions: item.suggestions };
     return {
-      type,
-      icon: item.icon || defaultIcons[type] || "info",
+      text: item.text || item.description || item.content || item.detail || item.body || "",
       title: item.title || null,
-      text,
+      suggestions: item.suggestions || null,
     };
   }).filter(i => i.text);
+
+  // Force-assign types in this exact visual order:
+  // good (cardless) → missing (card) → interaction (cardless) → fact (card) → condition/highlight
+  const slots = ["good", "missing"];
+  if (hasConditions) slots.push("condition");
+  slots.push("interaction");
+  if (!hasConditions && texts.length > 3) slots.push("highlight");
+  slots.push("fact"); // always last
+
+  return texts.slice(0, slots.length).map((item, i) => ({
+    type: slots[i],
+    text: item.text,
+    title: slots[i] === "missing" ? (item.title || "Something Missing") : (slots[i] === "condition" ? item.title : null),
+    suggestions: slots[i] === "missing" ? item.suggestions : null,
+    icon: null,
+  }));
 }
 
 export default function ResultsPage() {
@@ -407,52 +381,95 @@ export default function ResultsPage() {
             ))}
           </div>
 
-          {/* Quick Swap */}
-          {upgrade && (
-            <div className="glass-panel p-6 rounded-2xl border border-white/5">
-              <p className="text-[10px] tracking-[0.25em] font-bold text-[#bcccab] uppercase mb-3">Quick Swap</p>
-              <div className="flex items-center gap-3">
-                <span className="text-lg font-light text-[#e5e2e1]">{upgrade.from}</span>
-                <span className="material-symbols-outlined text-[#bcccab] text-xl">east</span>
-                <span className="text-lg font-medium text-white">{upgrade.to}</span>
-              </div>
-            </div>
-          )}
-
-          {/* Insight Cards */}
-          <div className="space-y-4 pt-2">
-            {normalizeInsights(insights).map((insight, i) => {
-              const labels = {
-                good: "Meal Summary", missing: "What\u2019s Missing", interaction: "Nutrient Interaction",
-                fact: "Did You Know", condition: "For You", highlight: "Highlight", swap: "Quick Swap",
-              };
+          {/* Insight Cards — each type has a visually distinct layout */}
+          <div className="space-y-5 pt-2">
+            {normalizeInsights(insights, getConditions().length > 0).map((insight, i) => {
               const type = insight.type?.toLowerCase() || "interaction";
-              const label = labels[type] || "Nutrient Interaction";
-              const isFact = type === "fact";
-              const isCondition = type === "condition";
-              return (
-                <div key={i} className="glass-panel p-6 rounded-2xl border border-white/5 space-y-3">
-                  {/* Header */}
-                  <div className="flex items-center gap-2">
-                    {isFact && <span className="material-symbols-outlined text-[#bcccab] text-base" style={{ fontVariationSettings: "'FILL' 1" }}>lightbulb</span>}
-                    {isCondition && <span className="material-symbols-outlined text-[#bcccab] text-base" style={{ fontVariationSettings: "'FILL' 1" }}>monitor_heart</span>}
-                    <p className="text-[10px] tracking-[0.25em] font-bold text-[#8a8578] uppercase">{label}</p>
+
+              {/* GOOD — check icon + text, then Quick Swap after */}
+              if (type === "good" || type === "highlight") return (
+                <div key={i}>
+                  <div className="py-3 px-2 flex items-start gap-3">
+                    <span className="material-symbols-outlined text-[#8aab7f] text-lg flex-shrink-0 mt-0.5" style={{ fontVariationSettings: "'FILL' 1" }}>
+                      {type === "good" ? "check_circle" : "star"}
+                    </span>
+                    <p className="text-[14px] font-light text-[#d4cfc4] leading-relaxed">{insight.text}</p>
                   </div>
-                  {/* Title */}
-                  {insight.title && (
-                    <h3 className="text-xl font-light text-[#e5e2e1]">{insight.title}</h3>
+                  {/* Quick Swap — placed right after the good summary */}
+                  {i === 0 && upgrade && (
+                    <div className="glass-panel p-6 rounded-2xl border border-white/5 mt-5">
+                      <p className="text-[10px] tracking-[0.25em] font-bold text-[#bcccab] uppercase mb-3">Quick Swap</p>
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg font-light text-[#e5e2e1]">{upgrade.from}</span>
+                        <span className="material-symbols-outlined text-[#8a8578] text-xl">east</span>
+                        <span className="text-lg font-medium text-white">{upgrade.to}</span>
+                      </div>
+                    </div>
                   )}
-                  {/* Body */}
-                  <div className="flex items-start gap-3">
-                    {!isFact && !isCondition && insight.icon && (
-                      <span className="material-symbols-outlined text-lg text-[#8a8578] flex-shrink-0 mt-0.5" style={{ fontVariationSettings: "'FILL' 1, 'wght' 300" }}>
-                        {insight.icon}
-                      </span>
-                    )}
-                    <p className={`${insight.title ? "text-[14px]" : "text-[15px]"} font-light text-[#acabaa] leading-relaxed`}>
-                      {insight.text}
-                    </p>
+                </div>
+              );
+
+              {/* NUTRIENT INTERACTION — green circle + timeline */}
+              if (type === "interaction") return (
+                <div key={i} className="py-4 px-2">
+                  <p className="text-[10px] tracking-[0.25em] font-bold text-[#8a8578] uppercase mb-2">Nutrient Interaction</p>
+                  <p className="text-[14px] font-light text-[#acabaa] leading-relaxed">{insight.text}</p>
+                </div>
+              );
+
+              {/* WHAT'S MISSING — card with suggestion circles */}
+              if (type === "missing") return (
+                <div key={i} className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] space-y-4">
+                  <p className="text-[10px] tracking-[0.25em] font-bold text-[#8a8578] uppercase">What&apos;s Missing</p>
+                  {insight.title && (
+                    <h3 className="text-lg font-light text-[#e5e2e1]">{insight.title}</h3>
+                  )}
+                  <p className="text-[13px] font-light text-[#acabaa] leading-relaxed">{insight.text}</p>
+                  {/* Suggestions */}
+                  {insight.suggestions && insight.suggestions.length > 0 && (
+                    <div className="flex items-center justify-between pt-3 mt-3 border-t border-white/[0.04]">
+                      {insight.suggestions.map((s, j) => (
+                        <span key={j} className="flex items-center gap-0 text-[11px] font-light text-[#bcccab]/50">
+                          {s.name}
+                          {j < insight.suggestions.length - 1 && <span className="mx-3 text-[#8a8578]/30">•</span>}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+
+              {/* DID YOU KNOW — divider + compact green tint */}
+              if (type === "fact") return (
+                <div key={i}>
+                <div className="bg-[#6b7a5e]/[0.06] p-5 rounded-xl border border-[#6b7a5e]/[0.08]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="material-symbols-outlined text-[#bcccab]/60 text-base" style={{ fontVariationSettings: "'FILL' 1" }}>lightbulb</span>
+                    <p className="text-[10px] tracking-[0.25em] font-bold text-[#8a8578] uppercase">Did You Know</p>
                   </div>
+                  <p className="text-[13px] font-light text-[#acabaa] leading-relaxed">{insight.text}</p>
+                </div>
+                </div>
+              );
+
+              {/* FOR YOU (condition) — left green border */}
+              if (type === "condition") return (
+                <div key={i} className="flex gap-4 pl-4 border-l-2 border-[#6b7a5e]/40 py-2">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="material-symbols-outlined text-[#bcccab] text-base" style={{ fontVariationSettings: "'FILL' 1" }}>monitor_heart</span>
+                      <p className="text-[10px] tracking-[0.25em] font-bold text-[#8a8578] uppercase">For You</p>
+                    </div>
+                    {insight.title && <h3 className="text-base font-light text-[#e5e2e1] mb-1">{insight.title}</h3>}
+                    <p className="text-[13px] font-light text-[#acabaa] leading-relaxed">{insight.text}</p>
+                  </div>
+                </div>
+              );
+
+              {/* DEFAULT */}
+              return (
+                <div key={i} className="glass-panel p-5 rounded-2xl border border-white/5">
+                  <p className="text-[14px] font-light text-[#acabaa] leading-relaxed">{insight.text}</p>
                 </div>
               );
             })}
@@ -479,10 +496,14 @@ function getDemoData() {
       { label: "Complete Protein", ingredient: "Eggs", position: "bottom-right" },
     ],
     insights: [
-      { type: "missing", icon: "eco", title: "Complex Carbs", text: "Adding quinoa or sweet potato would give you sustained energy and more fiber." },
-      { type: "interaction", icon: "link", text: "The fat in avocado is helping your body absorb the fat-soluble vitamins A and K from the brussels sprouts." },
-      { type: "fact", icon: "lightbulb", text: "The sulforaphane in those brussels sprouts is 3x more bioavailable when you chew them raw for 30 seconds before cooking." },
-      { type: "good", icon: "check_circle", text: "Excellent protein-to-fat ratio — the eggs provide complete amino acids while avocado adds heart-healthy monounsaturated fats." },
+      { type: "good", text: "Excellent protein-to-fat ratio — eggs provide complete amino acids while avocado adds heart-healthy monounsaturated fats." },
+      { type: "missing", title: "Complex Carbs", text: "A source of slow-release energy would round this plate out perfectly.", suggestions: [
+        { name: "Sweet Potato" },
+        { name: "Quinoa" },
+        { name: "Brown Rice" },
+      ]},
+      { type: "interaction", text: "The fat in avocado is helping your body absorb the fat-soluble vitamins A and K from the brussels sprouts." },
+      { type: "fact", text: "The sulforaphane in those brussels sprouts is 3x more bioavailable when you chew them raw for 30 seconds before cooking." },
     ],
     ingredients: ["Tomatoes", "Brussels Sprouts", "Avocado", "Eggs", "Red Pepper Flakes"],
   };

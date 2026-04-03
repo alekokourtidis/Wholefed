@@ -75,16 +75,18 @@ UPGRADE — Only suggest swaps that meaningfully improve nutrition:
 - Default to null. Only include a swap if it's genuinely obvious and the "from" food is clearly unhealthy.
 - "from" and "to" must be Capitalized (e.g. "White Rice" not "white rice")
 
-INSIGHTS — Mix visual and text content:
-- Return 3-4 insights. Each one must teach something specific about THIS meal.
-- Types and when to use them:
-  - "missing" — only if something is genuinely missing (not just "could be better"). Include "title" (2-4 words, Capitalized) and "text". Icon: "eco"
-  - "interaction" — a real nutrient interaction happening between foods in this meal. These are the most valuable insights. Icon: "link". No title needed.
-  - "fact" — a genuinely surprising, specific fact about an ingredient in this meal. Not common knowledge. Not "salmon has omega-3s" (everyone knows that). Icon: "lightbulb". No title needed.
-  - "condition" — ONLY if user has health conditions. How this specific meal affects their condition. Icon: "monitor_heart". Include "title" (the condition name) and "text".
-- NO generic advice like "eating greens is good for you". Every insight must be specific to THIS meal.
-- Keep each insight text to 1-2 sentences max.
-${conditions && conditions.length > 0 ? "- You MUST include at least one 'condition' type insight referencing: " + conditions.join(", ") : ""}
+INSIGHTS — You MUST return a visually diverse mix. Each type renders differently in the UI so variety is critical.
+- Return EXACTLY 5 insights in THIS EXACT ORDER. One of each type, no duplicates, no repeats:
+  1. "good" — one positive observation about the meal. Just "text", no title. Keep it to one sentence.
+  2. "missing" — something genuinely lacking. Include "title" (2-4 words, Capitalized), "text", AND "suggestions" array with 2-3 food options: [{"emoji": "🍠", "name": "Sweet Potato"}, ...]. Use real food emojis.
+  3. "interaction" — a real nutrient interaction between two foods in this meal. Just "text", no title. Must mention TWO specific foods.
+  4. "fact" — a genuinely surprising fact about a specific ingredient. Not common knowledge. Just "text", no title.
+  5. "highlight" — spotlight one standout ingredient and why it's great. Just "text", no title.
+- NEVER return two insights of the same type. Each type appears EXACTLY ONCE.
+${conditions && conditions.length > 0 ? '- You MUST also include a "condition" type insight (can be the 5th). Include "title" (the condition name) and "text" about how this meal affects: ' + conditions.join(", ") : ""}
+- Every insight MUST have a "text" field. This is non-negotiable.
+- Each "text" is 1-2 sentences. Specific to THIS meal, not generic.
+- NO generic advice. Reference actual ingredients you identified.
 
 Return ONLY valid JSON. No markdown. No explanation.`;
 
