@@ -1,0 +1,16 @@
+{
+  "name": "Wholefed",
+  "short_name": "Wholefed",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#131313",
+  "theme_color": "#131313",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
