@@ -1,7 +1,5 @@
 // Allow large image uploads (up to 10MB base64)
-export const config = {
-  api: { bodyParser: { sizeLimit: "10mb" } },
-};
+export const maxDuration = 60;
 
 // In-memory cache — keyed by image hash + conditions + profile
 const analysisCache = new Map();

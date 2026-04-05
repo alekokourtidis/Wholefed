@@ -1,8 +1,6 @@
 // Extract bloodwork data from an uploaded image/PDF using GPT-4o Vision
 
-export const config = {
-  api: { bodyParser: { sizeLimit: "10mb" } },
-};
+export const maxDuration = 60;
 
 export async function POST(request) {
   const { image } = await request.json();
