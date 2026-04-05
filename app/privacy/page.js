@@ -1,0 +1,63 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+
+export default function PrivacyPage() {
+  const router = useRouter();
+
+  return (
+    <div className="bg-surface text-on-surface min-h-screen pb-12">
+      <header className="sticky top-0 z-50 flex items-center justify-between px-5 pt-16 pb-3 bg-surface/80 backdrop-blur-xl border-b border-white/[0.04]">
+        <button onClick={() => router.back()} className="text-[#bcccab] text-sm">
+          <span className="material-symbols-outlined text-lg">arrow_back</span>
+        </button>
+        <h1 className="text-[#d4cfc4] font-thin tracking-[0.2em] text-xs uppercase">Privacy Policy</h1>
+        <div className="w-6" />
+      </header>
+
+      <main className="px-6 pt-8 space-y-6 text-[13px] font-light text-[#acabaa] leading-relaxed">
+        <p className="text-[10px] tracking-[0.15em] uppercase text-[#8a8578]">Last updated: April 2026</p>
+
+        <section>
+          <h2 className="text-[#e5e2e1] text-sm font-medium mb-2">What We Collect</h2>
+          <p>When you use Wholefed, we process the food photos you scan using AI to provide nutritional analysis. Photos are sent to our AI provider (OpenAI) for analysis and are not permanently stored on our servers.</p>
+        </section>
+
+        <section>
+          <h2 className="text-[#e5e2e1] text-sm font-medium mb-2">Account Data</h2>
+          <p>If you create an account, we store your email address, health conditions you choose to share, and scan history. This data is stored securely via Supabase and is never sold to third parties.</p>
+        </section>
+
+        <section>
+          <h2 className="text-[#e5e2e1] text-sm font-medium mb-2">Health Information</h2>
+          <p>Health conditions, personal details (age, weight, etc.), and lab results you provide are used solely to personalize your nutritional analysis. When you upload lab results (e.g., bloodwork), the document is processed by our AI provider (OpenAI) to extract relevant biomarkers. This data is stored locally on your device and in your account if signed in, and is never sold or shared with third parties beyond what is necessary for analysis.</p>
+        </section>
+
+        <section>
+          <h2 className="text-[#e5e2e1] text-sm font-medium mb-2">Third-Party Services</h2>
+          <p>Wholefed uses the following third-party services to operate: OpenAI (meal photo analysis and lab result extraction), Supabase (account data and storage), RevenueCat (subscription management), and Apple (in-app purchases). Each service processes only the data necessary for its function. We encourage you to review their respective privacy policies.</p>
+        </section>
+
+        <section>
+          <h2 className="text-[#e5e2e1] text-sm font-medium mb-2">Local Storage</h2>
+          <p>Wholefed stores scan history, preferences, and health data locally on your device for offline access. This data is not transmitted unless you create an account, in which case it syncs to our secure servers.</p>
+        </section>
+
+        <section>
+          <h2 className="text-[#e5e2e1] text-sm font-medium mb-2">Not Medical Advice</h2>
+          <p>Wholefed provides general nutritional information only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider regarding dietary or health concerns.</p>
+        </section>
+
+        <section>
+          <h2 className="text-[#e5e2e1] text-sm font-medium mb-2">Data Deletion</h2>
+          <p>You can delete your account and all associated data at any time from the Profile page. Upon deletion, all your scan history, health conditions, and personal information are permanently removed.</p>
+        </section>
+
+        <section>
+          <h2 className="text-[#e5e2e1] text-sm font-medium mb-2">Contact</h2>
+          <p>Questions about this policy? Contact us at support@wholefed.app</p>
+        </section>
+      </main>
+    </div>
+  );
+}

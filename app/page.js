@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import BottomNav from "./components/BottomNav";
 import { canScan, scansRemaining, incrementScanCount, isPro } from "../lib/scans";
 
+// Check if running inside Capacitor native shell
+function isNative() {
+  return typeof window !== "undefined" && window.Capacitor?.isNativePlatform?.();
+}
+
 export default function ScanPage() {
   const router = useRouter();
   const fileRef = useRef(null);
@@ -16,12 +21,35 @@ export default function ScanPage() {
     setPro(isPro());
   }, []);
 
-  const toBase64 = (file) =>
+  // Compress image to max 1200px and JPEG quality 0.7 to fit in sessionStorage
+  const compressBase64 = (src) =>
     new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.readAsDataURL(file);
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const maxSize = 1200;
+        let { width, height } = img;
+        if (width > maxSize || height > maxSize) {
+          if (width > height) { height = (height / width) * maxSize; width = maxSize; }
+          else { width = (width / height) * maxSize; height = maxSize; }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", 0.7));
+      };
+      img.src = src;
     });
+
+  const toBase64FromFile = (file) => compressBase64(URL.createObjectURL(file));
+
+  const storeAndNavigate = async (displayUrl, base64) => {
+    try { sessionStorage.setItem("wholefed_image", displayUrl); } catch {}
+    try { sessionStorage.setItem("wholefed_image_base64", base64); } catch {}
+    window.__wholefed_base64 = base64;
+    window.__wholefed_image = displayUrl;
+    router.push("/results");
+  };
 
   const tryScan = () => {
     if (!canScan()) {
@@ -33,22 +61,85 @@ export default function ScanPage() {
     return true;
   };
 
-  const handleShutter = () => {
+  // Native camera via Capacitor
+  const handleNativeCamera = async () => {
     if (!tryScan()) return;
-    sessionStorage.setItem("wholefed_image", "/healthymeal1.jpg");
-    sessionStorage.setItem("wholefed_image_base64", "");
-    router.push("/results");
+    try {
+      const { Camera, CameraResultType, CameraSource } = await import("@capacitor/camera");
+      const photo = await Camera.getPhoto({
+        quality: 85,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Camera,
+        width: 1200,
+        height: 1200,
+      });
+      const base64 = photo.dataUrl;
+      await storeAndNavigate(base64, base64);
+    } catch (err) {
+      console.warn("Camera error:", err);
+    }
+  };
+
+  // Native photo picker via Capacitor
+  const handleNativeGallery = async () => {
+    if (!tryScan()) return;
+    try {
+      const { Camera, CameraResultType, CameraSource } = await import("@capacitor/camera");
+      const photo = await Camera.getPhoto({
+        quality: 85,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Photos,
+        width: 1200,
+        height: 1200,
+      });
+      const base64 = photo.dataUrl;
+      await storeAndNavigate(base64, base64);
+    } catch (err) {
+      console.warn("Gallery error:", err);
+    }
+  };
+
+  const triggerHaptic = async () => {
+    try {
+      if (isNative()) {
+        const { Haptics, ImpactStyle } = await import("@capacitor/haptics");
+        await Haptics.impact({ style: ImpactStyle.Medium });
+      }
+    } catch {}
+  };
+
+  const handleShutter = () => {
+    triggerHaptic();
+    if (isNative()) {
+      handleNativeCamera();
+      return;
+    }
+    // Web fallback — use file input with camera capture
+    if (fileRef.current) {
+      fileRef.current.setAttribute("capture", "environment");
+      fileRef.current.click();
+    }
+  };
+
+  const handleGallery = () => {
+    if (isNative()) {
+      handleNativeGallery();
+      return;
+    }
+    // Web fallback — file picker
+    if (fileRef.current) {
+      fileRef.current.removeAttribute("capture");
+      fileRef.current.click();
+    }
   };
 
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!tryScan()) return;
-    const base64 = await toBase64(file);
+    const base64 = await toBase64FromFile(file);
     const url = URL.createObjectURL(file);
-    sessionStorage.setItem("wholefed_image", url);
-    sessionStorage.setItem("wholefed_image_base64", base64);
-    router.push("/results");
+    await storeAndNavigate(url, base64);
   };
 
   return (
@@ -80,8 +171,8 @@ export default function ScanPage() {
         onChange={handleUpload}
       />
 
-      {/* Top App Bar — frosted glass */}
-      <header className="absolute top-0 left-0 w-full z-50 flex items-end justify-center h-26 pb-3 bg-black/25 backdrop-blur-2xl border-b border-white/[0.06]">
+      {/* Top App Bar — frosted glass, edge to edge */}
+      <header className="absolute top-0 left-0 w-full z-50 flex items-end justify-center pt-16 pb-3 bg-white/[0.04] backdrop-blur-2xl border-b border-white/[0.06]">
         <h1 className="text-[#d4cfc4] font-thin tracking-[0.3em] text-sm uppercase drop-shadow-sm">
           WHOLEFED
         </h1>
@@ -90,14 +181,17 @@ export default function ScanPage() {
       {/* Bottom controls */}
       <div className="absolute bottom-0 left-0 w-full z-10 flex flex-col items-center pb-28 pt-16" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)" }}>
         {/* Scan counter */}
-        {!pro && (
-          <p className="text-[10px] tracking-[0.2em] uppercase text-[#8a8578] mb-4">
-            {remaining > 0 ? `${remaining} free scan${remaining !== 1 ? "s" : ""} left` : "No free scans left"}
-          </p>
+        {!pro && remaining <= 0 && (
+          <button
+            onClick={() => router.push("/subscribe")}
+            className="text-[10px] tracking-[0.2em] uppercase text-[#bcccab] mb-4"
+          >
+            Get unlimited scans
+          </button>
         )}
         <div className="flex items-center gap-10">
           <button
-            onClick={() => fileRef.current?.click()}
+            onClick={handleGallery}
             className="w-10 h-10 rounded-lg bg-white/[0.08] border border-white/[0.12] flex items-center justify-center active:scale-95 transition-transform"
           >
             <span className="material-symbols-outlined text-base text-[#d4cfc4]" style={{ fontVariationSettings: "'wght' 300" }}>

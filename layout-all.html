@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,100..700,0..1" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0a0a0a; color: #d4cfc4; font-family: 'Manrope', sans-serif; padding: 20px; }
+.grid { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; }
+.phone { width: 393px; border: 2px solid #333; border-radius: 40px; overflow: hidden; background: #131313; flex-shrink: 0; }
+.label { font-size: 10px; letter-spacing: 0.25em; font-weight: 700; color: #8a8578; text-transform: uppercase; }
+.card { padding: 24px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); }
+.text-sm { font-size: 13px; font-weight: 300; color: #acabaa; line-height: 1.6; }
+.text-md { font-size: 14px; font-weight: 300; color: #d4cfc4; line-height: 1.6; }
+.text-title { font-size: 18px; font-weight: 300; color: #e5e2e1; }
+.icon { font-family: 'Material Symbols Outlined'; font-variation-settings: 'FILL' 1; }
+.green { color: #8aab7f; }
+.bcccab { color: #bcccab; }
+.dot { color: rgba(138,133,120,0.3); margin: 0 12px; }
+.suggestions { display: flex; align-items: center; padding-top: 12px; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.04); font-size: 11px; font-weight: 300; color: rgba(188,204,171,0.5); }
+.condition-border { border-left: 2px solid rgba(107,122,94,0.4); padding: 8px 0 8px 16px; }
+.flex-row { display: flex; align-items: flex-start; gap: 12px; }
+.icon-wrap { flex-shrink: 0; margin-top: 2px; font-size: 18px; }
+.layout-label { text-align: center; padding: 12px; background: rgba(188,204,171,0.1); color: #bcccab; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; line-height: 1.5; }
+.section { padding: 16px 32px 40px; display: flex; flex-direction: column; gap: 20px; }
+.num { font-size: 20px; display: block; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<div class="grid">
+
+<!-- #1: Missing + Quick Swap + Condition -->
+<div class="phone">
+<div class="layout-label"><span class="num">#1</span>Missing ✓ &nbsp; Quick Swap ✓ &nbsp; Condition ✓</div>
+<div class="section">
+  <div class="card" style="display: flex; flex-direction: column; gap: 16px;">
+    <div class="label">What's Missing</div>
+    <div class="text-title">Add Fiber</div>
+    <div class="text-sm">Consider adding more fiber to help manage blood sugar levels.</div>
+    <div class="suggestions">Broccoli<span class="dot">•</span>Spinach<span class="dot">•</span>Sweet Potato</div>
+  </div>
+  <div class="condition-border">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span class="icon bcccab" style="font-size: 16px;">monitor_heart</span>
+      <div class="label">For You</div>
+    </div>
+    <div class="text-title" style="font-size: 16px; margin-bottom: 4px;">Type 2 Diabetes</div>
+    <div class="text-sm">The white burger bun causes rapid blood sugar spikes — consider a lettuce wrap or whole grain alternative.</div>
+  </div>
+  <div style="padding: 16px 8px;">
+    <div class="label" style="margin-bottom: 8px;">Nutrient Interaction</div>
+    <div class="text-md" style="color: #acabaa;">The fat in avocado helps your body absorb fat-soluble vitamins A and K from the brussels sprouts.</div>
+  </div>
+  <div style="padding: 12px 8px;">
+    <div class="flex-row">
+      <div class="icon-wrap icon green">check_circle</div>
+      <div class="text-md">The burger patty provides lean protein essential for muscle recovery.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="label" style="color: #bcccab; margin-bottom: 12px;">Quick Swap</div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span style="font-size: 18px; font-weight: 300; color: #e5e2e1;">Burger Bun</span>
+      <span class="icon" style="color: #8a8578; font-size: 20px;">east</span>
+      <span style="font-size: 18px; font-weight: 500; color: white;">Whole Grain Bun</span>
+    </div>
+  </div>
+  <div class="card">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span class="icon" style="color: rgba(188,204,171,0.6); font-size: 16px;">lightbulb</span>
+      <div class="label">Did You Know</div>
+    </div>
+    <div class="text-sm">Ground beef retains more iron when cooked medium rather than well-done.</div>
+  </div>
+</div>
+</div>
+
+<!-- #2: Missing + Quick Swap + No Condition -->
+<div class="phone">
+<div class="layout-label"><span class="num">#2</span>Missing ✓ &nbsp; Quick Swap ✓ &nbsp; Condition ✗</div>
+<div class="section">
+  <div class="card" style="display: flex; flex-direction: column; gap: 16px;">
+    <div class="label">What's Missing</div>
+    <div class="text-title">Complex Carbs</div>
+    <div class="text-sm">A source of slow-release energy would round this plate out perfectly.</div>
+    <div class="suggestions">Sweet Potato<span class="dot">•</span>Quinoa<span class="dot">•</span>Brown Rice</div>
+  </div>
+  <div style="padding: 16px 8px;">
+    <div class="label" style="margin-bottom: 8px;">Nutrient Interaction</div>
+    <div class="text-md" style="color: #acabaa;">The fat in avocado helps your body absorb fat-soluble vitamins A and K from the brussels sprouts.</div>
+  </div>
+  <div style="padding: 12px 8px;">
+    <div class="flex-row">
+      <div class="icon-wrap icon green">check_circle</div>
+      <div class="text-md">Excellent protein-to-fat ratio — eggs provide complete amino acids while avocado adds heart-healthy fats.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="label" style="color: #bcccab; margin-bottom: 12px;">Quick Swap</div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span style="font-size: 18px; font-weight: 300; color: #e5e2e1;">White Rice</span>
+      <span class="icon" style="color: #8a8578; font-size: 20px;">east</span>
+      <span style="font-size: 18px; font-weight: 500; color: white;">Brown Rice</span>
+    </div>
+  </div>
+  <div class="card">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span class="icon" style="color: rgba(188,204,171,0.6); font-size: 16px;">lightbulb</span>
+      <div class="label">Did You Know</div>
+    </div>
+    <div class="text-sm">The sulforaphane in brussels sprouts is 3x more bioavailable when chewed raw for 30 seconds before cooking.</div>
+  </div>
+</div>
+</div>
+
+<!-- #3: Missing + No Quick Swap + Condition -->
+<div class="phone">
+<div class="layout-label"><span class="num">#3</span>Missing ✓ &nbsp; Quick Swap ✗ &nbsp; Condition ✓</div>
+<div class="section">
+  <div class="card" style="display: flex; flex-direction: column; gap: 16px;">
+    <div class="label">What's Missing</div>
+    <div class="text-title">Add Fiber</div>
+    <div class="text-sm">Consider adding more fiber to help manage blood sugar levels.</div>
+    <div class="suggestions">Broccoli<span class="dot">•</span>Spinach<span class="dot">•</span>Sweet Potato</div>
+  </div>
+  <div class="condition-border">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span class="icon bcccab" style="font-size: 16px;">monitor_heart</span>
+      <div class="label">For You</div>
+    </div>
+    <div class="text-title" style="font-size: 16px; margin-bottom: 4px;">Type 2 Diabetes</div>
+    <div class="text-sm">The white burger bun causes rapid blood sugar spikes — consider a lettuce wrap or whole grain alternative.</div>
+  </div>
+  <div style="padding: 16px 8px;">
+    <div class="label" style="margin-bottom: 8px;">Nutrient Interaction</div>
+    <div class="text-md" style="color: #acabaa;">The fat in avocado helps your body absorb fat-soluble vitamins A and K from the brussels sprouts.</div>
+  </div>
+  <div style="padding: 12px 8px;">
+    <div class="flex-row">
+      <div class="icon-wrap icon green">check_circle</div>
+      <div class="text-md">The burger patty provides lean protein essential for muscle recovery.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span class="icon" style="color: rgba(188,204,171,0.6); font-size: 16px;">lightbulb</span>
+      <div class="label">Did You Know</div>
+    </div>
+    <div class="text-sm">Ground beef retains more iron when cooked medium rather than well-done.</div>
+  </div>
+</div>
+</div>
+
+<!-- #4: Missing + No Quick Swap + No Condition -->
+<div class="phone">
+<div class="layout-label"><span class="num">#4</span>Missing ✓ &nbsp; Quick Swap ✗ &nbsp; Condition ✗</div>
+<div class="section">
+  <div class="card" style="display: flex; flex-direction: column; gap: 16px;">
+    <div class="label">What's Missing</div>
+    <div class="text-title">Complex Carbs</div>
+    <div class="text-sm">A source of slow-release energy would round this plate out perfectly.</div>
+    <div class="suggestions">Sweet Potato<span class="dot">•</span>Quinoa<span class="dot">•</span>Brown Rice</div>
+  </div>
+  <div style="padding: 16px 8px;">
+    <div class="label" style="margin-bottom: 8px;">Nutrient Interaction</div>
+    <div class="text-md" style="color: #acabaa;">The fat in avocado helps your body absorb fat-soluble vitamins A and K from the brussels sprouts.</div>
+  </div>
+  <div style="padding: 12px 8px;">
+    <div class="flex-row">
+      <div class="icon-wrap icon green">check_circle</div>
+      <div class="text-md">Excellent protein-to-fat ratio — eggs provide complete amino acids while avocado adds heart-healthy fats.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span class="icon" style="color: rgba(188,204,171,0.6); font-size: 16px;">lightbulb</span>
+      <div class="label">Did You Know</div>
+    </div>
+    <div class="text-sm">The sulforaphane in brussels sprouts is 3x more bioavailable when chewed raw for 30 seconds before cooking.</div>
+  </div>
+</div>
+</div>
+
+<!-- #5: No Missing + Quick Swap + Condition -->
+<div class="phone">
+<div class="layout-label"><span class="num">#5</span>Missing ✗ &nbsp; Quick Swap ✓ &nbsp; Condition ✓</div>
+<div class="section">
+  <div class="condition-border">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span class="icon bcccab" style="font-size: 16px;">monitor_heart</span>
+      <div class="label">For You</div>
+    </div>
+    <div class="text-title" style="font-size: 16px; margin-bottom: 4px;">High Cholesterol</div>
+    <div class="text-sm">The avocado's monounsaturated fats actively help lower LDL cholesterol — great choice.</div>
+  </div>
+  <div style="padding: 16px 8px;">
+    <div class="label" style="margin-bottom: 8px;">Nutrient Interaction</div>
+    <div class="text-md" style="color: #acabaa;">The lycopene in tomatoes becomes significantly more bioavailable alongside the healthy fats from avocado.</div>
+  </div>
+  <div style="padding: 12px 8px;">
+    <div class="flex-row">
+      <div class="icon-wrap icon green">check_circle</div>
+      <div class="text-md">Great balance of macronutrients — protein from eggs, healthy fats from avocado, and micronutrients from greens.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="label" style="color: #bcccab; margin-bottom: 12px;">Quick Swap</div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span style="font-size: 18px; font-weight: 300; color: #e5e2e1;">White Rice</span>
+      <span class="icon" style="color: #8a8578; font-size: 20px;">east</span>
+      <span style="font-size: 18px; font-weight: 500; color: white;">Brown Rice</span>
+    </div>
+  </div>
+  <div class="card">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span class="icon" style="color: rgba(188,204,171,0.6); font-size: 16px;">lightbulb</span>
+      <div class="label">Did You Know</div>
+    </div>
+    <div class="text-sm">Eggs contain choline, which 90% of Americans don't get enough of — essential for brain function.</div>
+  </div>
+</div>
+</div>
+
+<!-- #6: No Missing + Quick Swap + No Condition -->
+<div class="phone">
+<div class="layout-label"><span class="num">#6</span>Missing ✗ &nbsp; Quick Swap ✓ &nbsp; Condition ✗</div>
+<div class="section">
+  <div style="padding: 16px 8px;">
+    <div class="label" style="margin-bottom: 8px;">Nutrient Interaction</div>
+    <div class="text-md" style="color: #acabaa;">The vitamin C in bell peppers dramatically increases iron absorption from the spinach.</div>
+  </div>
+  <div style="padding: 12px 8px;">
+    <div class="flex-row">
+      <div class="icon-wrap icon green">check_circle</div>
+      <div class="text-md">Excellent variety — this plate covers all major food groups with quality whole ingredients.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="label" style="color: #bcccab; margin-bottom: 12px;">Quick Swap</div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span style="font-size: 18px; font-weight: 300; color: #e5e2e1;">Sour Cream</span>
+      <span class="icon" style="color: #8a8578; font-size: 20px;">east</span>
+      <span style="font-size: 18px; font-weight: 500; color: white;">Greek Yogurt</span>
+    </div>
+  </div>
+  <div class="card">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span class="icon" style="color: rgba(188,204,171,0.6); font-size: 16px;">lightbulb</span>
+      <div class="label">Did You Know</div>
+    </div>
+    <div class="text-sm">Cooking tomatoes for just 15 minutes increases their lycopene content by 171% compared to raw.</div>
+  </div>
+</div>
+</div>
+
+<!-- #7: No Missing + No Quick Swap + Condition -->
+<div class="phone">
+<div class="layout-label"><span class="num">#7</span>Missing ✗ &nbsp; Quick Swap ✗ &nbsp; Condition ✓</div>
+<div class="section">
+  <div class="condition-border">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span class="icon bcccab" style="font-size: 16px;">monitor_heart</span>
+      <div class="label">For You</div>
+    </div>
+    <div class="text-title" style="font-size: 16px; margin-bottom: 4px;">IBS</div>
+    <div class="text-sm">This meal is low in common FODMAP triggers — the lean protein and cooked vegetables are gentle on your digestive system.</div>
+  </div>
+  <div style="padding: 16px 8px;">
+    <div class="label" style="margin-bottom: 8px;">Nutrient Interaction</div>
+    <div class="text-md" style="color: #acabaa;">The vitamin C in tomatoes enhances iron absorption from the spinach, making both more effective together.</div>
+  </div>
+  <div style="padding: 12px 8px;">
+    <div class="flex-row">
+      <div class="icon-wrap icon green">check_circle</div>
+      <div class="text-md">Well-rounded plate with excellent variety across protein, healthy fats, and leafy greens.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span class="icon" style="color: rgba(188,204,171,0.6); font-size: 16px;">lightbulb</span>
+      <div class="label">Did You Know</div>
+    </div>
+    <div class="text-sm">Spinach contains oxalates that block calcium absorption — pairing with lemon juice reduces this effect by 30%.</div>
+  </div>
+</div>
+</div>
+
+<!-- #8: No Missing + No Quick Swap + No Condition -->
+<div class="phone">
+<div class="layout-label"><span class="num">#8</span>Missing ✗ &nbsp; Quick Swap ✗ &nbsp; Condition ✗</div>
+<div class="section">
+  <div style="padding: 16px 8px;">
+    <div class="label" style="margin-bottom: 8px;">Nutrient Interaction</div>
+    <div class="text-md" style="color: #acabaa;">The vitamin C in bell peppers dramatically increases iron absorption from the spinach.</div>
+  </div>
+  <div style="padding: 12px 8px;">
+    <div class="flex-row">
+      <div class="icon-wrap icon green">check_circle</div>
+      <div class="text-md">Excellent variety — this plate covers all major food groups with quality whole ingredients.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span class="icon" style="color: rgba(188,204,171,0.6); font-size: 16px;">lightbulb</span>
+      <div class="label">Did You Know</div>
+    </div>
+    <div class="text-sm">Cooking tomatoes for just 15 minutes increases their lycopene content by 171% compared to raw.</div>
+  </div>
+</div>
+</div>
+
+</div>
+</body>
+</html>

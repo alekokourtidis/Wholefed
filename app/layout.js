@@ -1,5 +1,7 @@
 import { Manrope } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "../lib/auth";
+import SubscriptionInit from "./components/SubscriptionInit";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -32,7 +34,10 @@ export default function RootLayout({ children }) {
       </head>
       <body className="bg-surface text-on-surface min-h-screen antialiased">
         <div className="grain-overlay" />
-        {children}
+        <AuthProvider>
+          <SubscriptionInit />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,100..700,0..1" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0a0a0a; color: #d4cfc4; font-family: 'Manrope', sans-serif; padding: 40px 20px; }
+.phone { width: 393px; margin: 0 auto 40px; border: 2px solid #333; border-radius: 40px; overflow: hidden; background: #131313; }
+.label { font-size: 10px; letter-spacing: 0.25em; font-weight: 700; color: #8a8578; text-transform: uppercase; }
+.card { padding: 24px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); }
+.text-sm { font-size: 13px; font-weight: 300; color: #acabaa; line-height: 1.6; }
+.text-md { font-size: 14px; font-weight: 300; color: #d4cfc4; line-height: 1.6; }
+.text-title { font-size: 18px; font-weight: 300; color: #e5e2e1; }
+.icon { font-family: 'Material Symbols Outlined'; font-variation-settings: 'FILL' 1; }
+.green { color: #8aab7f; }
+.bcccab { color: #bcccab; }
+.dot { color: rgba(138,133,120,0.3); margin: 0 12px; }
+.suggestions { display: flex; align-items: center; padding-top: 12px; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.04); font-size: 11px; font-weight: 300; color: rgba(188,204,171,0.5); }
+.condition-border { border-left: 2px solid rgba(107,122,94,0.4); padding: 8px 0 8px 16px; }
+.flex-row { display: flex; align-items: flex-start; gap: 12px; }
+.icon-wrap { flex-shrink: 0; margin-top: 2px; font-size: 18px; }
+.layout-label { text-align: center; padding: 12px; background: rgba(188,204,171,0.1); color: #bcccab; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; }
+
+/* Drag and drop */
+.section { padding: 16px 32px 60px; display: flex; flex-direction: column; gap: 20px; }
+.drag-item { cursor: grab; position: relative; transition: transform 0.15s ease; }
+.drag-item:active { cursor: grabbing; }
+.drag-item.dragging { opacity: 0.4; transform: scale(0.96); }
+.drag-item.drag-over { border-top: 2px solid #bcccab; }
+.drag-handle { position: absolute; top: 50%; right: -4px; transform: translateY(-50%); color: #8a8578; font-size: 16px; opacity: 0.3; pointer-events: none; }
+.toggle-bar { display: flex; justify-content: center; gap: 8px; padding: 12px; background: rgba(255,255,255,0.03); flex-wrap: wrap; }
+.toggle-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: #8a8578; font-family: 'Manrope', sans-serif; font-size: 11px; cursor: pointer; font-weight: 500; letter-spacing: 0.05em; transition: all 0.2s; }
+.toggle-btn.active { background: rgba(188,204,171,0.15); border-color: #bcccab; color: #bcccab; }
+.hidden-card { display: none; }
+</style>
+</head>
+<body>
+
+<div class="phone" id="playground">
+  <div class="layout-label">DRAG TO REORDER — Toggle cards on/off</div>
+  <div class="toggle-bar">
+    <button class="toggle-btn active" onclick="toggleCard('missing', this)">What's Missing</button>
+    <button class="toggle-btn active" onclick="toggleCard('quickswap', this)">Quick Swap</button>
+    <button class="toggle-btn active" onclick="toggleCard('condition', this)">For You</button>
+    <button class="toggle-btn active" onclick="toggleCard('fact', this)">Did You Know</button>
+    <button class="toggle-btn" onclick="toggleGoodBad(this)">⚠ Bad Meal Mode</button>
+  </div>
+  <div class="section" id="sortable">
+
+    <!-- MISSING -->
+    <div class="drag-item" draggable="true" data-id="missing">
+      <div class="card" style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="label">What's Missing</div>
+        <div class="text-title">Add Fiber</div>
+        <div class="text-sm">Consider adding more fiber to help manage blood sugar levels.</div>
+        <div class="suggestions">
+          Broccoli<span class="dot">•</span>Spinach<span class="dot">•</span>Sweet Potato
+        </div>
+      </div>
+      <div class="drag-handle icon">drag_indicator</div>
+    </div>
+
+    <!-- INTERACTION -->
+    <div class="drag-item" draggable="true" data-id="interaction">
+      <div style="padding: 16px 8px;">
+        <div class="label" style="margin-bottom: 8px;">Nutrient Interaction</div>
+        <div class="text-md" style="color: #acabaa;">The fat in avocado is helping your body absorb the fat-soluble vitamins A and K from the brussels sprouts.</div>
+      </div>
+      <div class="drag-handle icon">drag_indicator</div>
+    </div>
+
+    <!-- GOOD / WARNING -->
+    <div class="drag-item" draggable="true" data-id="good">
+      <div style="padding: 12px 8px;" id="good-card">
+        <div class="flex-row">
+          <div class="icon-wrap icon green" id="good-icon">check_circle</div>
+          <div class="text-md" id="good-text">The burger patty provides a good source of lean protein essential for muscle recovery.</div>
+        </div>
+      </div>
+      <div class="drag-handle icon">drag_indicator</div>
+    </div>
+
+    <!-- QUICK SWAP -->
+    <div class="drag-item" draggable="true" data-id="quickswap">
+      <div class="card">
+        <div class="label" style="color: #bcccab; margin-bottom: 12px;">Quick Swap</div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 18px; font-weight: 300; color: #e5e2e1;">Burger Bun</span>
+          <span class="icon" style="color: #8a8578; font-size: 20px;">east</span>
+          <span style="font-size: 18px; font-weight: 500; color: white;">Whole Grain Bun</span>
+        </div>
+      </div>
+      <div class="drag-handle icon">drag_indicator</div>
+    </div>
+
+    <!-- FOR YOU -->
+    <div class="drag-item" draggable="true" data-id="condition">
+      <div class="condition-border">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+          <span class="icon bcccab" style="font-size: 16px;">monitor_heart</span>
+          <div class="label">For You</div>
+        </div>
+        <div class="text-title" style="font-size: 16px; margin-bottom: 4px;">Type 2 Diabetes</div>
+        <div class="text-sm">The white burger bun causes rapid blood sugar spikes — consider a lettuce wrap or whole grain alternative.</div>
+      </div>
+      <div class="drag-handle icon">drag_indicator</div>
+    </div>
+
+    <!-- DID YOU KNOW -->
+    <div class="drag-item" draggable="true" data-id="fact">
+      <div class="card">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+          <span class="icon" style="color: rgba(188,204,171,0.6); font-size: 16px;">lightbulb</span>
+          <div class="label">Did You Know</div>
+        </div>
+        <div class="text-sm">Ground beef retains more iron when cooked medium rather than well-done — overcooking destroys up to 40% of its heme iron content.</div>
+      </div>
+      <div class="drag-handle icon">drag_indicator</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const sortable = document.getElementById('sortable');
+let dragItem = null;
+
+sortable.addEventListener('dragstart', (e) => {
+  dragItem = e.target.closest('.drag-item');
+  if (dragItem) dragItem.classList.add('dragging');
+});
+
+sortable.addEventListener('dragend', () => {
+  if (dragItem) dragItem.classList.remove('dragging');
+  document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+  dragItem = null;
+  updateOrderLabel();
+});
+
+sortable.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  const target = e.target.closest('.drag-item');
+  if (!target || target === dragItem) return;
+  document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+  target.classList.add('drag-over');
+});
+
+sortable.addEventListener('drop', (e) => {
+  e.preventDefault();
+  const target = e.target.closest('.drag-item');
+  if (!target || target === dragItem) return;
+  target.classList.remove('drag-over');
+  const items = [...sortable.querySelectorAll('.drag-item')];
+  const dragIdx = items.indexOf(dragItem);
+  const targetIdx = items.indexOf(target);
+  if (dragIdx < targetIdx) {
+    target.after(dragItem);
+  } else {
+    target.before(dragItem);
+  }
+  updateOrderLabel();
+});
+
+function toggleCard(id, btn) {
+  const item = document.querySelector(`[data-id="${id}"]`);
+  if (!item) return;
+  btn.classList.toggle('active');
+  item.classList.toggle('hidden-card');
+  updateOrderLabel();
+}
+
+function toggleGoodBad(btn) {
+  btn.classList.toggle('active');
+  const icon = document.getElementById('good-icon');
+  const text = document.getElementById('good-text');
+  if (btn.classList.contains('active')) {
+    icon.textContent = 'warning';
+    icon.className = 'icon-wrap icon';
+    icon.style.color = '#c49e6e';
+    text.textContent = 'This meal is very high in saturated fat and refined carbs — regular consumption increases cardiovascular risk.';
+  } else {
+    icon.textContent = 'check_circle';
+    icon.className = 'icon-wrap icon green';
+    icon.style.color = '';
+    text.textContent = 'The burger patty provides a good source of lean protein essential for muscle recovery.';
+  }
+  updateOrderLabel();
+}
+
+function updateOrderLabel() {
+  const visible = [...sortable.querySelectorAll('.drag-item:not(.hidden-card)')].map(el => {
+    const names = { missing: 'Missing', interaction: 'Interaction', good: 'Good ✓', quickswap: 'Quick Swap', condition: 'For You', fact: 'Did You Know' };
+    return names[el.dataset.id] || el.dataset.id;
+  });
+  document.querySelector('.layout-label').textContent = visible.join(' → ');
+}
+</script>
+
+</body>
+</html>

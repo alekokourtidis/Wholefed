@@ -1,50 +1,119 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import BottomNav from "../components/BottomNav";
 import { getConditions, getProfile } from "../../lib/user-profile";
+import { useAuth } from "../../lib/auth";
+import { saveScan } from "../../lib/scan-storage";
 
 const funFacts = [
+  // Nutrient science
   "Avocados have more potassium than bananas",
   "Eating greens before starch reduces glucose spikes by up to 73%",
   "Dark chocolate has more antioxidants per gram than blueberries",
   "Cooking tomatoes triples their lycopene content",
   "Cinnamon can lower fasting blood sugar by 10-29%",
-  "Your gut microbiome weighs about 2kg — more than your brain",
-  "Fermented foods can contain 100x more probiotics than supplements",
   "Salmon's omega-3s are 3x better absorbed when eaten with fat",
   "Bell peppers have 3x more vitamin C than oranges per gram",
   "Turmeric absorption increases 2000% when paired with black pepper",
-  "Honey never spoils — 3000-year-old honey was found edible in Egyptian tombs",
-  "Almonds are technically seeds, not nuts",
   "Broccoli has more protein per calorie than steak",
-  "Carrots were originally purple before the 17th century",
-  "A single Brazil nut contains your entire daily selenium requirement",
+  "Kiwi skin has 3x more fiber than the flesh",
+  "Frozen vegetables often have more nutrients than fresh — they're flash-frozen at peak ripeness",
+  "Olive oil loses most of its antioxidants when heated above 180°C",
+  "Vitamin C in food is destroyed within 20 minutes of being cut and exposed to air",
+  "Soaking beans overnight reduces their phytic acid by up to 70%, unlocking more minerals",
+  "Pairing iron-rich spinach with vitamin C increases iron absorption by up to 6x",
+  "Blueberries retain nearly all their antioxidants when frozen",
+  "Eating protein within 30 minutes of exercise boosts muscle synthesis by 25%",
+  "Resistant starch in cooled rice feeds beneficial gut bacteria more than freshly cooked rice",
+  "Steaming broccoli retains 90% of its vitamin C — boiling keeps only 25%",
+  "Your body absorbs more beta-carotene from cooked carrots than raw ones",
+  "A tablespoon of chia seeds has more omega-3s than a serving of salmon",
+  "The calcium in kale is absorbed 27% better than the calcium in milk",
+  "Lemon juice added to tea increases catechin absorption by up to 80%",
+  "Eating nuts with their skins provides 50% more antioxidants",
+  "Garlic must be crushed and left for 10 minutes to activate its key compound, allicin",
+  "Fermenting cabbage into sauerkraut creates 200x more bioavailable vitamin C",
+  "Bone broth contains collagen peptides that are 90% absorbed by the gut",
+  "Purple foods get their color from anthocyanins — one of the most potent antioxidant families",
+  "Ground flaxseed is absorbed — whole flaxseed passes straight through you undigested",
+  "Eating the white pith of citrus fruits provides as much fiber as the fruit itself",
+  // Body facts
+  "Your gut microbiome weighs about 2kg — more than your brain",
+  "Fermented foods can contain 100x more probiotics than supplements",
+  "Your stomach lining replaces itself every 3-4 days",
+  "Your liver can regenerate itself from just 25% of its tissue",
   "Chewing food 32 times can reduce calorie absorption by 12%",
+  "Your small intestine is about 6 meters long — roughly the height of a giraffe",
+  "Your body produces about 1.5 liters of saliva per day",
+  "The average person eats about 35 tons of food in their lifetime",
+  "Your taste buds regenerate every 10-14 days",
+  "Stomach acid is strong enough to dissolve metal — your mucus lining protects you",
+  "You have more bacteria in your gut than stars in the Milky Way",
+  "90% of your serotonin — the happiness chemical — is made in your gut, not your brain",
+  "Your body uses 10% of daily calories just to digest food — it's called the thermic effect",
+  "Dehydration of just 2% can reduce cognitive performance by up to 25%",
+  "Your nose can detect over 1 trillion different scents — most of your taste is actually smell",
+  // Food origins & history
+  "Honey never spoils — 3000-year-old honey was found edible in Egyptian tombs",
+  "Carrots were originally purple before the 17th century",
+  "Black rice was once reserved exclusively for Chinese emperors",
+  "Saffron is more expensive by weight than gold",
+  "Garlic has been used as currency in ancient Egypt",
+  "Cashews grow from the bottom of cashew apples",
+  "Tomatoes were considered poisonous in Europe for over 200 years",
+  "Vanilla is the second most expensive spice after saffron — each flower is hand-pollinated",
+  "Pineapples took 2 years to grow and were so rare in the 1700s that people rented them for parties",
+  "Lobster was considered prison food in colonial America — inmates protested eating too much of it",
+  "Ketchup was sold as medicine in the 1830s to treat diarrhea",
+  "The oldest known recipe is a 4000-year-old Sumerian beer recipe",
+  "Chocolate was used as currency by the Aztecs — 10 beans could buy a rabbit",
+  "Corn was originally a grass with kernels smaller than a grain of rice — humans bred it over 9000 years",
+  "The Caesar salad was invented in Tijuana, Mexico — not Rome",
+  "Coffee was discovered when an Ethiopian goat herder noticed his goats dancing after eating berries",
+  // Surprising food facts
+  "Almonds are technically seeds, not nuts",
+  "Pistachios are technically fruits",
+  "Peanuts are legumes, not nuts — they grow underground",
+  "A single Brazil nut contains your entire daily selenium requirement",
   "Ginger is more effective than Dramamine for motion sickness",
   "Mushrooms are the only plant source of vitamin D",
   "Eating walnuts before bed can boost melatonin levels",
-  "Kiwi skin has 3x more fiber than the flesh",
-  "Frozen vegetables often have more nutrients than fresh — they're flash-frozen at peak ripeness",
-  "Black rice was once reserved exclusively for Chinese emperors",
-  "Your liver can regenerate itself from just 25% of its tissue",
-  "Saffron is more expensive by weight than gold",
-  "Pistachios are technically fruits",
-  "Eating an apple is more effective at waking you up than coffee",
-  "Celery requires more calories to digest than it contains",
-  "Pomegranates can contain up to 1400 seeds each",
-  "Garlic has been used as currency in ancient Egypt",
   "Sweet potatoes and regular potatoes are from completely different plant families",
   "Capsaicin in chili peppers tricks your brain into thinking you're on fire",
-  "Cashews grow from the bottom of cashew apples",
   "One egg contains all the nutrients to turn a single cell into a baby chicken",
   "Coconut water can be used as an emergency blood plasma substitute",
-  "Peanuts are legumes, not nuts — they grow underground",
   "Bananas are slightly radioactive due to their potassium content",
-  "Your stomach lining replaces itself every 3-4 days",
-  "Olive oil loses most of its antioxidants when heated above 180°C",
   "Red wine contains the same antioxidant — resveratrol — found in dark chocolate",
   "Asparagus grows up to 7 inches in a single day",
+  "Pomegranates can contain up to 1400 seeds each",
+  "Eating an apple is more effective at waking you up than coffee",
+  "Celery requires more calories to digest than it contains",
+  "Strawberries have more vitamin C per serving than oranges",
+  "A single strand of spaghetti is called a spaghetto",
+  "Honey is the only food that includes all the substances necessary to sustain life",
+  "Nutmeg is a hallucinogen in large doses — just 2 tablespoons can be toxic",
+  "Cranberries bounce when ripe — farmers use this to sort them",
+  "Figs are technically inverted flowers, not fruits",
+  "The world's hottest pepper, Pepper X, measures 2.69 million Scoville units",
+  "Ripe cranberries will bounce like rubber balls",
+  "Apples float because they're 25% air",
+  "Grapes explode when microwaved due to their high water content and sugar concentration",
+  "The strings on bananas are called phloem bundles — they distribute nutrients",
+  "Potatoes can absorb and reflect Wi-Fi signals similarly to the human body",
+  "Cucumbers are 96% water — the highest water content of any solid food",
+  "An ear of corn always has an even number of rows",
+  // Cooking & prep
+  "Adding salt to water raises its boiling point by less than 1°C — it's mainly for flavor",
+  "Letting meat rest after cooking allows juices to redistribute, keeping it 20% juicier",
+  "Brown eggs and white eggs are nutritionally identical — the color depends on the hen's breed",
+  "Wooden cutting boards are more sanitary than plastic — wood has natural antibacterial properties",
+  "Cast iron pans can leach iron into food, which actually helps people with iron deficiency",
+  "Microwaving vegetables preserves more nutrients than boiling — less water means less nutrient loss",
+  "Caramelization begins at 160°C — the sugar molecules break apart and reform into 100+ new compounds",
+  "Bread goes stale faster in the fridge than at room temperature due to starch retrogradation",
+  "The Maillard reaction that browns your steak creates over 600 different flavor compounds",
+  "Salting eggplant before cooking draws out bitter compounds and reduces oil absorption by 50%",
 ];
 
 function getUnseenFact() {
@@ -64,44 +133,236 @@ function getUnseenFact() {
   return pick;
 }
 
-// Force-assign card types to ensure visual variety
-// The AI can't be trusted to return correct types, so we assign them ourselves
-function normalizeInsights(raw, hasConditions) {
-  if (!raw || !Array.isArray(raw)) return [];
+// Build exact card order based on what's present — 16 confirmed layouts, never deviate
+function getInsightOrder(hasMissing, isWarning, hasQS, hasCondition) {
+  const order = [];
+  if (hasMissing && !isWarning) {
+    // Good + Missing: Missing → [For You] → Interaction → [QS] → Good → Fact
+    order.push("missing");
+    if (hasCondition) order.push("condition");
+    order.push("interaction");
+    if (hasQS) order.push("quickswap");
+    order.push("good", "fact");
+  } else if (hasMissing && isWarning) {
+    // Warning + Missing: Missing → Warning → [For You] → [QS] → Interaction → Fact
+    order.push("missing", "warning");
+    if (hasCondition) order.push("condition");
+    if (hasQS) order.push("quickswap");
+    order.push("interaction", "fact");
+  } else if (!hasMissing && !isWarning) {
+    // Good + No Missing: [QS] → Good → [For You] → Interaction → Fact
+    if (hasQS) order.push("quickswap");
+    order.push("good");
+    if (hasCondition) order.push("condition");
+    order.push("interaction", "fact");
+  } else {
+    // Warning + No Missing: [QS] → Warning → [For You] → Interaction → Fact
+    if (hasQS) order.push("quickswap");
+    order.push("warning");
+    if (hasCondition) order.push("condition");
+    order.push("interaction", "fact");
+  }
+  return order;
+}
 
-  // Extract text from each item regardless of format
-  const texts = raw.map((item) => {
-    if (typeof item === "string") return { text: item, title: item.title, suggestions: item.suggestions };
-    return {
-      text: item.text || item.description || item.content || item.detail || item.body || "",
-      title: item.title || null,
-      suggestions: item.suggestions || null,
-    };
-  }).filter(i => i.text);
+function normalizeInsights(raw, hasUpgrade, analysisData) {
+  const score = analysisData?.score ?? 0;
+  const ingredients = analysisData?.ingredients || [];
+  const ing0 = ingredients[0] || "this food";
+  const ing1 = ingredients[1] || "the broth";
 
-  // Force-assign types in this exact visual order:
-  // good (cardless) → missing (card) → interaction (cardless) → fact (card) → condition/highlight
-  const slots = ["good", "missing"];
-  if (hasConditions) slots.push("condition");
-  slots.push("interaction");
-  if (!hasConditions && texts.length > 3) slots.push("highlight");
-  slots.push("fact"); // always last
+  // Parse raw insights from AI
+  let parsed = [];
+  if (raw && Array.isArray(raw)) {
+    parsed = raw.map((item) => {
+      if (typeof item === "string") return null;
+      const text = item.text || item.description || item.content || item.detail || item.body || "";
+      if (!text) return null;
+      return {
+        type: (item.type || "").toLowerCase(),
+        text,
+        title: item.title || null,
+        suggestions: item.suggestions || null,
+      };
+    }).filter(Boolean);
+  }
 
-  return texts.slice(0, slots.length).map((item, i) => ({
-    type: slots[i],
-    text: item.text,
-    title: slots[i] === "missing" ? (item.title || "Something Missing") : (slots[i] === "condition" ? item.title : null),
-    suggestions: slots[i] === "missing" ? item.suggestions : null,
-    icon: null,
-  }));
+  // Merge highlight into good (or warning)
+  const hasGoodOrWarning = parsed.some((i) => i.type === "good" || i.type === "warning");
+  const merged = hasGoodOrWarning ? parsed.filter((i) => i.type !== "highlight") : parsed.map((i) => i.type === "highlight" ? { ...i, type: "good" } : i);
+
+  // Deduplicate
+  const seen = new Set();
+  const unique = merged.filter((item) => {
+    if (seen.has(item.type)) return false;
+    seen.add(item.type);
+    return true;
+  });
+
+  // GUARANTEE required types always exist — fill from actual meal data if AI missed them
+  const types = new Set(unique.map((i) => i.type));
+
+  // Every layout needs either "good" or "warning" (never both)
+  if (!types.has("good") && !types.has("warning")) {
+    if (score >= 50) {
+      unique.push({ type: "good", text: `Good balance with ${ing0.toLowerCase()} providing solid nutritional value.` });
+    } else {
+      unique.push({ type: "warning", text: `This meal is highly processed with limited nutritional diversity — consider adding whole foods.` });
+    }
+  }
+
+  // Every layout needs "interaction"
+  if (!types.has("interaction")) {
+    if (ingredients.length >= 2) {
+      unique.push({ type: "interaction", text: `The sodium in ${ing0.toLowerCase()} combined with ${ing1.toLowerCase()} increases overall salt intake — pairing with potassium-rich foods like banana or spinach would help balance electrolytes.` });
+    } else {
+      unique.push({ type: "interaction", text: `With only one main ingredient, there are no meaningful nutrient interactions — adding a vegetable or protein would create beneficial nutrient pairings.` });
+    }
+  }
+
+  // Every layout needs "fact"
+  if (!types.has("fact")) {
+    unique.push({ type: "fact", text: `${ing0} is one of the most consumed foods worldwide — over 100 billion servings are eaten annually across Asia alone.` });
+  }
+
+  // Detect what's present (after filling)
+  const hasMissing = unique.some((i) => i.type === "missing");
+  const isWarning = unique.some((i) => i.type === "warning");
+  const hasCondition = unique.some((i) => i.type === "condition");
+
+  // Get the exact order for this combination
+  const order = getInsightOrder(hasMissing, isWarning, !!hasUpgrade, hasCondition);
+
+  // Inject quickswap placeholder if needed
+  if (hasUpgrade && order.includes("quickswap")) {
+    unique.push({ type: "quickswap", text: "" });
+  }
+
+  // Sort into the exact confirmed order
+  const sorted = unique.sort((a, b) => {
+    const ai = order.indexOf(a.type);
+    const bi = order.indexOf(b.type);
+    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+  });
+
+  // Remove any types not in the order (unknown types)
+  return sorted.filter((item) => order.includes(item.type));
+}
+
+function IngredientsRow({ items, onAdd }) {
+  const ref = useRef(null);
+  const [showRight, setShowRight] = useState(false);
+  const [showLeft, setShowLeft] = useState(false);
+  const checkScroll = () => {
+    if (!ref.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = ref.current;
+    setShowLeft(scrollLeft > 10);
+    setShowRight(scrollWidth > clientWidth && scrollLeft < scrollWidth - clientWidth - 10);
+  };
+  useEffect(() => { checkScroll(); }, []);
+  const scroll = (dir) => {
+    if (ref.current) {
+      ref.current.scrollBy({ left: dir * 150, behavior: "smooth" });
+      setTimeout(checkScroll, 300);
+    }
+  };
+  return (
+    <div className="relative">
+      {showLeft && (
+        <button onClick={() => scroll(-1)} className="absolute left-0 top-0 bottom-0 z-10 w-8 flex items-center justify-center bg-gradient-to-r from-[#131313] to-transparent">
+          <span className="material-symbols-outlined text-[#8a8578]/50 text-sm">chevron_left</span>
+        </button>
+      )}
+      <div ref={ref} onScroll={checkScroll} className="overflow-x-auto no-scrollbar">
+        <div className="flex gap-2 w-max items-center">
+          {items.map((ing, i) => (
+            <span key={i} className="text-[11px] font-light text-[#8a8578]/60 px-3 py-1 rounded-full border border-white/[0.04] whitespace-nowrap">
+              {ing}
+            </span>
+          ))}
+          <button
+            onClick={onAdd}
+            className="w-7 h-7 rounded-full border border-white/[0.06] flex items-center justify-center flex-shrink-0 active:bg-white/[0.04] transition-colors"
+          >
+            <span className="material-symbols-outlined text-[#8a8578]/40 text-sm">add</span>
+          </button>
+        </div>
+      </div>
+      {showRight && (
+        <button onClick={() => scroll(1)} className="absolute right-0 top-0 bottom-0 z-10 w-8 flex items-center justify-center bg-gradient-to-l from-[#131313] to-transparent">
+          <span className="material-symbols-outlined text-[#8a8578]/50 text-sm">chevron_right</span>
+        </button>
+      )}
+    </div>
+  );
+}
+
+function AddIngredientModal({ onAdd, onClose, existingIngredients }) {
+  const [search, setSearch] = useState("");
+  const [db, setDb] = useState([]);
+  useEffect(() => {
+    import("../../lib/food-database").then((m) => setDb(m.FOOD_DATABASE || []));
+  }, []);
+  const filtered = search.trim().length >= 2
+    ? db.filter((f) =>
+        f.toLowerCase().includes(search.toLowerCase()) &&
+        !existingIngredients.some((e) => e.toLowerCase() === f.toLowerCase())
+      ).slice(0, 8)
+    : [];
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div
+        className="relative w-full max-w-md bg-[#1a1a1a] rounded-t-3xl px-6 pt-5 pb-10 border-t border-white/[0.06]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-center mb-4">
+          <div className="w-10 h-1 rounded-full bg-white/20" />
+        </div>
+        <p className="text-[10px] tracking-[0.25em] uppercase text-[#8a8578] font-bold mb-3">Add Ingredient</p>
+        <div className="flex items-center gap-2 bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3 focus-within:border-[#6b7a5e]/40 transition-colors">
+          <span className="material-symbols-outlined text-[#8a8578]/40 text-lg">search</span>
+          <input
+            type="text"
+            placeholder="Search foods..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            autoFocus
+            className="flex-1 bg-transparent text-[14px] font-light text-[#d4cfc4] placeholder:text-[#8a8578]/30 outline-none"
+          />
+        </div>
+        {filtered.length > 0 && (
+          <div className="mt-2 max-h-64 overflow-y-auto no-scrollbar rounded-xl border border-white/[0.06] bg-[#1c2623]">
+            {filtered.map((f) => (
+              <button
+                key={f}
+                onClick={() => { onAdd(f); onClose(); }}
+                className="w-full text-left px-4 py-3 text-[13px] font-light text-[#d4cfc4] active:bg-white/[0.04] border-b border-white/[0.03] last:border-0 transition-colors"
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+        )}
+        {search.trim().length >= 2 && filtered.length === 0 && (
+          <p className="text-[12px] font-light text-[#8a8578]/40 mt-3 text-center">
+            No matching food found
+          </p>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default function ResultsPage() {
+  const { user } = useAuth();
   const [imageUrl, setImageUrl] = useState(null);
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(true);
   const [fact, setFact] = useState("");
   const [frostAmount, setFrostAmount] = useState(0);
+  const [extraIngredients, setExtraIngredients] = useState([]);
+  const [showAddIngredient, setShowAddIngredient] = useState(false);
 
   const handleScroll = (e) => {
     const scrollTop = e.target.scrollTop;
@@ -113,16 +374,37 @@ export default function ResultsPage() {
   }, []);
 
   useEffect(() => {
+    // Check if viewing a saved scan from history (no re-analysis needed)
+    let savedScan = null;
+    try { savedScan = JSON.parse(sessionStorage.getItem("wholefed_saved_scan")); } catch {}
+    if (savedScan && new URLSearchParams(window.location.search).get("scan")) {
+      setImageUrl(savedScan.image || "/healthymeal1.jpg");
+      setAnalysis({
+        score: savedScan.score || 0,
+        variety: savedScan.variety || 0,
+        nutrition: savedScan.nutrition || 0,
+        verdict: savedScan.verdict || "",
+        ingredients: savedScan.ingredients || [],
+        insights: savedScan.insights || [],
+        annotations: savedScan.annotations || [],
+        upgrade: savedScan.upgrade || null,
+        title: savedScan.name || "Meal Scan",
+      });
+      setLoading(false);
+      sessionStorage.removeItem("wholefed_saved_scan");
+      return;
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const img = sessionStorage.getItem("wholefed_image");
-    const base64 = sessionStorage.getItem("wholefed_image_base64");
+    // Try sessionStorage first, then window global fallback
+    const img = sessionStorage.getItem("wholefed_image") || window.__wholefed_image;
+    const base64 = sessionStorage.getItem("wholefed_image_base64") || window.__wholefed_base64;
     setImageUrl(img || "/healthymeal1.jpg");
 
     const analyzeImage = async () => {
-      // Use base64 if available (uploaded photo), otherwise use the demo image URL
       let imageData = base64;
       if (!imageData) {
-        // Convert the demo image to base64
+        // No uploaded image — use demo image as last resort
         const res = await fetch("/healthymeal1.jpg");
         const blob = await res.blob();
         imageData = await new Promise((resolve) => {
@@ -135,24 +417,53 @@ export default function ResultsPage() {
       try {
         const conditions = getConditions();
         const profile = getProfile();
+        let labs = null;
+        const labsEnabled = localStorage.getItem("wholefed_labs_enabled") !== "false";
+        if (labsEnabled) {
+          try { labs = JSON.parse(localStorage.getItem("wholefed_labs")); } catch {}
+        }
         const res = await fetch("/api/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image: imageData, conditions, profile }),
+          body: JSON.stringify({ image: imageData, conditions, profile, labs }),
         });
         const data = await res.json();
         if (data.error) {
-          console.error("API error:", data.error);
-          // Fallback demo data
-          setAnalysis(getDemoData());
+          console.warn("API error:", data.error);
+          setAnalysis({ _error: true });
+          setLoading(false);
+          return;
         } else {
           setAnalysis(data);
+          // Save to scan history (localStorage + Supabase if authenticated)
+          saveScan({
+            id: Date.now(),
+            name: data.title || data.verdict?.split("—")[0]?.split("–")[0]?.trim().slice(0, 40) || "Meal Scan",
+            date: new Date().toISOString(),
+            score: data.score,
+            variety: data.variety,
+            nutrition: data.nutrition,
+            image: (base64 && base64.startsWith("data:")) ? base64 : (img || "/healthymeal1.jpg"),
+            verdict: data.verdict,
+            ingredients: data.ingredients,
+            insights: data.insights,
+            annotations: data.annotations,
+            upgrade: data.upgrade,
+          }, user?.id);
         }
       } catch (err) {
-        console.error("Fetch error:", err);
-        setAnalysis(getDemoData());
+        console.warn("Fetch failed:", err);
+        setAnalysis({ _error: true });
       }
       setLoading(false);
+      // Haptic feedback on score reveal
+      try {
+        if (window.Capacitor?.isNativePlatform?.()) {
+          import("@capacitor/haptics").then(({ Haptics, NotificationType }) => {
+            Haptics.notification({ type: NotificationType.Success });
+          });
+        }
+      } catch {}
     };
 
     analyzeImage();
@@ -175,22 +486,40 @@ export default function ResultsPage() {
     );
   }
 
-  console.log("AI response:", JSON.stringify(analysis, null, 2));
-  const { score, variety, nutrition, annotations, ingredients } = analysis;
-
-  // Get insights — try normalizing, fall back to demo if empty
-  let insights = normalizeInsights(analysis.insights);
-  console.log("Normalized insights:", insights.length, JSON.stringify(insights));
-  if (insights.length === 0 && analysis.insights?.length > 0) {
-    // Nuclear fallback — the AI returned something we can't parse, show demo cards
-    console.warn("Insights normalization failed, using demo data");
-    insights = getDemoData().insights;
+  if (analysis?._error) {
+    return (
+      <div className="fixed inset-0 bg-surface flex flex-col items-center justify-center gap-6 px-10">
+        <span className="material-symbols-outlined text-[48px] text-[#8a8578]">cloud_off</span>
+        <p className="text-[#d4cfc4] text-base font-light text-center">
+          Something went wrong analyzing your meal
+        </p>
+        <p className="text-[#8a8578] text-xs font-light text-center">
+          Please check your connection and try again.
+        </p>
+        <button
+          onClick={() => router.push("/")}
+          className="mt-4 px-8 py-3 rounded-full bg-[#bcccab]/20 text-[#bcccab] text-sm font-medium"
+        >
+          Try Again
+        </button>
+        <BottomNav />
+      </div>
+    );
   }
 
-  // Validate upgrade — reject if "from" food isn't in the detected ingredients
+  const { score: rawScore = 0, variety: rawVariety = 0, nutrition: rawNutrition = 0, annotations = [], ingredients = [] } = analysis || {};
+  const score = Math.round(rawScore);
+  const variety = Math.round(rawVariety);
+  const nutrition = Math.round(rawNutrition);
+
+  // Validate upgrade first — needed to determine insight order
   const upgrade = analysis.upgrade && ingredients?.some(
     ing => ing.toLowerCase().includes(analysis.upgrade.from?.toLowerCase())
   ) ? analysis.upgrade : null;
+
+  // Normalize insights — guaranteed to produce one of 16 valid layouts
+  // Required cards (good/warning, interaction, fact) are auto-filled from meal data if AI missed them
+  const insights = normalizeInsights(analysis.insights, !!upgrade, analysis);
 
   return (
     <div
@@ -229,45 +558,20 @@ export default function ResultsPage() {
           style={{ opacity: 1 - frostAmount }}
         >
             {annotations?.map((a, i) => {
-              const layoutMap = {
-                "top-left":    { pillTop: 15, pillLeft: 3,  dotTop: 30, dotLeft: 22 },
-                "top-right":   { pillTop: 15, pillLeft: 52, dotTop: 30, dotLeft: 55 },
-                "bottom-left": { pillTop: 65, pillLeft: 3,  dotTop: 55, dotLeft: 22 },
-                "bottom-right":{ pillTop: 65, pillLeft: 50, dotTop: 55, dotLeft: 52 },
-              };
-              // Fallback order if position not provided
-              const fallbackOrder = ["top-left", "top-right", "bottom-left", "bottom-right"];
-              const pos = a.position?.toLowerCase()?.replace(" ", "-") || fallbackOrder[i] || "top-left";
-              const l = layoutMap[pos] || layoutMap[fallbackOrder[i]] || layoutMap["top-left"];
+              // Use AI-provided x/y coordinates, clamped to safe area
+              const x = Math.max(3, Math.min(a.x ?? 50, 55));
+              const y = Math.max(15, Math.min(a.y ?? 50, 70));
               return (
-              <div key={i} className="absolute inset-0">
-                {/* Pill label */}
                 <div
+                  key={i}
                   className="absolute glass-panel px-3 py-1 rounded-full border border-white/20 flex items-center gap-1.5 shadow-xl z-20"
-                  style={{ top: `${l.pillTop}%`, left: `${l.pillLeft}%` }}
+                  style={{ top: `${y}%`, left: `${x}%` }}
                 >
                   <div className="w-1 h-1 rounded-full bg-[#bcccab] shadow-[0_0_6px_rgba(188,204,171,0.8)]" />
                   <span className="text-[8px] tracking-[0.2em] uppercase font-bold text-white whitespace-nowrap">
                     {a.label}
                   </span>
                 </div>
-                {/* Dot pointing to the food */}
-                <div
-                  className="absolute w-2 h-2 rounded-full bg-white shadow-[0_0_6px_rgba(255,255,255,0.6)] z-20"
-                  style={{ top: `${l.dotTop}%`, left: `${l.dotLeft}%` }}
-                />
-                {/* Connecting line */}
-                <svg className="absolute inset-0 w-full h-full z-10 pointer-events-none">
-                  <line
-                    x1={`${l.pillLeft + 8}%`}
-                    y1={`${l.pillTop + 3}%`}
-                    x2={`${l.dotLeft + 1}%`}
-                    y2={`${l.dotTop + 1}%`}
-                    stroke="rgba(255,255,255,0.5)"
-                    strokeWidth="1.5"
-                  />
-                </svg>
-              </div>
               );
             })}
           </div>
@@ -278,10 +582,10 @@ export default function ResultsPage() {
         <div className="flex justify-center pt-3 pb-2">
           <div className="w-10 h-1 rounded-full bg-white/20" />
         </div>
-        <section className="px-8 pt-4 flex flex-col gap-6">
+        <section className="px-8 pt-2 flex flex-col gap-4">
           {/* Score Ring — fancy double ring */}
-          <div className="flex justify-center items-center py-6">
-            <div className="relative w-48 h-48 flex items-center justify-center">
+          <div className="flex justify-center items-center py-3">
+            <div className="relative w-40 h-40 flex items-center justify-center">
               <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 200 200">
                 {/* Outer decorative ring — thin, full circle */}
                 <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
@@ -324,9 +628,9 @@ export default function ResultsPage() {
                 />
                 <defs>
                   <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor={score >= 70 ? "#a8c49e" : "#c49e9e"} />
-                    <stop offset="50%" stopColor={score >= 70 ? "#6b8a5e" : "#8a5e5e"} />
-                    <stop offset="100%" stopColor={score >= 70 ? "#2d5a23" : "#5a2d2d"} />
+                    <stop offset="0%" stopColor={score >= 70 ? "#a8c49e" : "#8a9e7a"} />
+                    <stop offset="50%" stopColor={score >= 70 ? "#6b8a5e" : "#5e7a4e"} />
+                    <stop offset="100%" stopColor={score >= 70 ? "#2d5a23" : "#3d5a2d"} />
                   </linearGradient>
                 </defs>
               </svg>
@@ -344,8 +648,8 @@ export default function ResultsPage() {
 
           {/* Verdict — above bars */}
           {analysis?.verdict && (
-            <div className="px-2">
-              <p className="text-[15px] font-light text-[#d4cfc4] leading-relaxed text-center">
+            <div className="px-2 -mt-2">
+              <p className="text-[13px] font-light text-[#d4cfc4]/80 leading-relaxed text-center">
                 {analysis.verdict}
               </p>
             </div>
@@ -363,7 +667,7 @@ export default function ResultsPage() {
                     {bar.label}
                   </span>
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-light text-[#d4cfc4]">{bar.value}</span>
+                    <span className="text-[11px] font-light text-[#d4cfc4]">{bar.value}/10</span>
                     <span className="material-symbols-outlined text-[#6b7a5e] text-sm">{bar.icon}</span>
                   </div>
                 </div>
@@ -371,7 +675,7 @@ export default function ResultsPage() {
                   <div
                     className="absolute inset-0 rounded-full"
                     style={{
-                      width: `${bar.value}%`,
+                      width: `${(bar.value / 10) * 100}%`,
                       background: "linear-gradient(90deg, #3d4b32 0%, #6b7a5e 50%, #8aab7f 100%)",
                       animation: "barFill 1.5s ease-out forwards",
                     }}
@@ -381,39 +685,44 @@ export default function ResultsPage() {
             ))}
           </div>
 
+          {/* Detected Ingredients Strip */}
+          {ingredients && ingredients.length > 0 && (
+            <IngredientsRow
+              items={[...ingredients, ...extraIngredients]}
+              onAdd={() => setShowAddIngredient(true)}
+            />
+          )}
+
           {/* Insight Cards — each type has a visually distinct layout */}
           <div className="space-y-5 pt-2">
-            {normalizeInsights(insights, getConditions().length > 0).map((insight, i) => {
+            {insights.map((insight, i) => {
               const type = insight.type?.toLowerCase() || "interaction";
 
-              {/* GOOD — check icon + text, then Quick Swap after */}
-              if (type === "good" || type === "highlight") return (
-                <div key={i}>
-                  <div className="py-3 px-2 flex items-start gap-3">
-                    <span className="material-symbols-outlined text-[#8aab7f] text-lg flex-shrink-0 mt-0.5" style={{ fontVariationSettings: "'FILL' 1" }}>
-                      {type === "good" ? "check_circle" : "star"}
-                    </span>
-                    <p className="text-[14px] font-light text-[#d4cfc4] leading-relaxed">{insight.text}</p>
+              {/* QUICK SWAP — standalone card (position determined by normalizeInsights) */}
+              if (type === "quickswap") return upgrade ? (
+                <div key={i} className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
+                  <p className="text-[10px] tracking-[0.25em] font-bold text-[#bcccab] uppercase mb-3">Quick Swap</p>
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg font-light text-[#e5e2e1]">{upgrade.from}</span>
+                    <span className="material-symbols-outlined text-[#8a8578] text-xl">east</span>
+                    <span className="text-lg font-medium text-white">{upgrade.to}</span>
                   </div>
-                  {/* Quick Swap — placed right after the good summary */}
-                  {i === 0 && upgrade && (
-                    <div className="glass-panel p-6 rounded-2xl border border-white/5 mt-5">
-                      <p className="text-[10px] tracking-[0.25em] font-bold text-[#bcccab] uppercase mb-3">Quick Swap</p>
-                      <div className="flex items-center gap-3">
-                        <span className="text-lg font-light text-[#e5e2e1]">{upgrade.from}</span>
-                        <span className="material-symbols-outlined text-[#8a8578] text-xl">east</span>
-                        <span className="text-lg font-medium text-white">{upgrade.to}</span>
-                      </div>
-                    </div>
-                  )}
+                </div>
+              ) : null;
+
+              {/* GOOD — checkmark icon */}
+              if (type === "good") return (
+                <div key={i} className="py-3 px-2 flex items-start gap-3">
+                  <span className="material-symbols-outlined text-[#8aab7f] text-lg flex-shrink-0 mt-0.5" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                  <p className="text-[14px] font-light text-[#d4cfc4] leading-relaxed">{insight.text}</p>
                 </div>
               );
 
-              {/* NUTRIENT INTERACTION — green circle + timeline */}
-              if (type === "interaction") return (
-                <div key={i} className="py-4 px-2">
-                  <p className="text-[10px] tracking-[0.25em] font-bold text-[#8a8578] uppercase mb-2">Nutrient Interaction</p>
-                  <p className="text-[14px] font-light text-[#acabaa] leading-relaxed">{insight.text}</p>
+              {/* WARNING — same style as good, warning icon, same green */}
+              if (type === "warning") return (
+                <div key={i} className="py-3 px-2 flex items-start gap-3">
+                  <span className="material-symbols-outlined text-[#8aab7f] text-lg flex-shrink-0 mt-0.5" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
+                  <p className="text-[14px] font-light text-[#d4cfc4] leading-relaxed">{insight.text}</p>
                 </div>
               );
 
@@ -425,30 +734,24 @@ export default function ResultsPage() {
                     <h3 className="text-lg font-light text-[#e5e2e1]">{insight.title}</h3>
                   )}
                   <p className="text-[13px] font-light text-[#acabaa] leading-relaxed">{insight.text}</p>
-                  {/* Suggestions */}
                   {insight.suggestions && insight.suggestions.length > 0 && (
-                    <div className="flex items-center justify-between pt-3 mt-3 border-t border-white/[0.04]">
+                    <div className="flex items-center justify-evenly pt-3 mt-3 border-t border-white/[0.04]">
                       {insight.suggestions.map((s, j) => (
-                        <span key={j} className="flex items-center gap-0 text-[11px] font-light text-[#bcccab]/50">
-                          {s.name}
-                          {j < insight.suggestions.length - 1 && <span className="mx-3 text-[#8a8578]/30">•</span>}
-                        </span>
+                        <div key={j} className="flex items-center">
+                          {j > 0 && <span className="text-[#8a8578]/30 mr-4">•</span>}
+                          <span className="text-[11px] font-light text-[#bcccab]/50">{s.name}</span>
+                        </div>
                       ))}
                     </div>
                   )}
                 </div>
               );
 
-              {/* DID YOU KNOW — divider + compact green tint */}
-              if (type === "fact") return (
-                <div key={i}>
-                <div className="bg-[#6b7a5e]/[0.06] p-5 rounded-xl border border-[#6b7a5e]/[0.08]">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="material-symbols-outlined text-[#bcccab]/60 text-base" style={{ fontVariationSettings: "'FILL' 1" }}>lightbulb</span>
-                    <p className="text-[10px] tracking-[0.25em] font-bold text-[#8a8578] uppercase">Did You Know</p>
-                  </div>
-                  <p className="text-[13px] font-light text-[#acabaa] leading-relaxed">{insight.text}</p>
-                </div>
+              {/* NUTRIENT INTERACTION */}
+              if (type === "interaction") return (
+                <div key={i} className="py-4 px-2">
+                  <p className="text-[10px] tracking-[0.25em] font-bold text-[#8a8578] uppercase mb-2">Nutrient Interaction</p>
+                  <p className="text-[14px] font-light text-[#acabaa] leading-relaxed">{insight.text}</p>
                 </div>
               );
 
@@ -466,45 +769,39 @@ export default function ResultsPage() {
                 </div>
               );
 
+              {/* DID YOU KNOW */}
+              if (type === "fact") return (
+                <div key={i} className="p-5 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="material-symbols-outlined text-[#bcccab]/60 text-base" style={{ fontVariationSettings: "'FILL' 1" }}>lightbulb</span>
+                    <p className="text-[10px] tracking-[0.25em] font-bold text-[#8a8578] uppercase">Did You Know</p>
+                  </div>
+                  <p className="text-[13px] font-light text-[#acabaa] leading-relaxed">{insight.text}</p>
+                </div>
+              );
+
               {/* DEFAULT */}
               return (
-                <div key={i} className="glass-panel p-5 rounded-2xl border border-white/5">
+                <div key={i} className="p-5 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
                   <p className="text-[14px] font-light text-[#acabaa] leading-relaxed">{insight.text}</p>
                 </div>
               );
             })}
+
           </div>
         </section>
       </div>
 
       <BottomNav />
+
+      {showAddIngredient && (
+        <AddIngredientModal
+          existingIngredients={[...ingredients, ...extraIngredients]}
+          onAdd={(food) => setExtraIngredients((prev) => [...prev, food])}
+          onClose={() => setShowAddIngredient(false)}
+        />
+      )}
     </div>
   );
 }
 
-function getDemoData() {
-  return {
-    score: 87,
-    variety: 78,
-    nutrition: 62,
-    verdict: "Solid protein from the eggs and good fats from the avocado — you're just missing a complex carb to round it out.",
-    upgrade: null,
-    annotations: [
-      { label: "Antioxidant", ingredient: "Tomatoes", position: "top-left" },
-      { label: "Cruciferous", ingredient: "Brussels Sprouts", position: "top-right" },
-      { label: "Healthy Fats", ingredient: "Avocado", position: "bottom-left" },
-      { label: "Complete Protein", ingredient: "Eggs", position: "bottom-right" },
-    ],
-    insights: [
-      { type: "good", text: "Excellent protein-to-fat ratio — eggs provide complete amino acids while avocado adds heart-healthy monounsaturated fats." },
-      { type: "missing", title: "Complex Carbs", text: "A source of slow-release energy would round this plate out perfectly.", suggestions: [
-        { name: "Sweet Potato" },
-        { name: "Quinoa" },
-        { name: "Brown Rice" },
-      ]},
-      { type: "interaction", text: "The fat in avocado is helping your body absorb the fat-soluble vitamins A and K from the brussels sprouts." },
-      { type: "fact", text: "The sulforaphane in those brussels sprouts is 3x more bioavailable when you chew them raw for 30 seconds before cooking." },
-    ],
-    ingredients: ["Tomatoes", "Brussels Sprouts", "Avocado", "Eggs", "Red Pepper Flakes"],
-  };
-}
