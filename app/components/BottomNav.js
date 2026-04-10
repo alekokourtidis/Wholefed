@@ -12,14 +12,30 @@ export default function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
 
+  const handleTap = (tab) => {
+    // If user taps "Scan" while already on the home page, fire the scan event
+    // so the camera/shutter actually triggers (Apple reviewers tap this label).
+    if (tab.href === "/" && pathname === "/") {
+      window.dispatchEvent(new CustomEvent("wholefed:scan"));
+      return;
+    }
+    router.push(tab.href);
+  };
+
   return (
-    <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-24 px-8 pt-2 pb-[env(safe-area-inset-bottom)] bg-black/40 backdrop-blur-2xl border-t border-white/[0.08]">
+    <nav
+      className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-end px-8 pt-3 bg-black/40 backdrop-blur-2xl border-t border-white/[0.08]"
+      style={{
+        minHeight: "5rem",
+        paddingBottom: "calc(env(safe-area-inset-bottom) + 0.75rem)",
+      }}
+    >
       {tabs.map((tab) => {
         const active = pathname === tab.href;
         return (
           <button
             key={tab.href}
-            onClick={() => router.push(tab.href)}
+            onClick={() => handleTap(tab)}
             className={`flex flex-col items-center justify-center transition-all duration-300 ${
               active
                 ? "text-[#6b7a5e] scale-110"

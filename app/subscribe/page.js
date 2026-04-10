@@ -47,7 +47,13 @@ export default function SubscribePage() {
   };
 
   return (
-    <div className="fixed inset-0 bg-surface text-on-surface flex flex-col px-10">
+    <div
+      className="fixed inset-0 bg-surface text-on-surface flex flex-col px-10 overflow-y-auto"
+      style={{
+        paddingTop: "env(safe-area-inset-top)",
+        paddingBottom: "calc(env(safe-area-inset-bottom) + 1rem)",
+      }}
+    >
       {/* Top — logo + title + subtitle */}
       <div className="pt-16 text-center">
         <h1 className="text-[#d4cfc4] font-thin tracking-[0.4em] text-xs uppercase mb-5">
@@ -79,14 +85,22 @@ export default function SubscribePage() {
         </div>
       </div>
 
-      {/* Bottom — price + CTA */}
+      {/* Bottom — subscription details + CTA */}
       <div className="pb-10">
-        <div className="text-center mb-5">
-          <p className="text-[12px] font-light text-[#bcccab] tracking-wide mb-2">
-            3-day free trial
+        {/* Required auto-renewable subscription disclosure */}
+        <div className="text-center mb-4">
+          <p className="text-[11px] tracking-[0.15em] uppercase text-[#bcccab] mb-1">
+            Wholefed Pro — Monthly
+          </p>
+          <p className="text-[12px] font-light text-[#bcccab] mb-2">
+            3-day free trial, then
           </p>
           <span className="text-[36px] font-extralight text-[#e5e2e1]">$4.99</span>
           <span className="text-[15px] font-light text-[#8a8578]"> / month</span>
+          <p className="text-[10px] font-light text-[#8a8578]/70 mt-2 leading-relaxed">
+            Auto-renews monthly at $4.99/month until cancelled. Cancel anytime
+            in your Apple ID Subscriptions at least 24 hours before renewal.
+          </p>
         </div>
 
         <button
@@ -94,28 +108,43 @@ export default function SubscribePage() {
           disabled={loading}
           className="w-full py-[18px] rounded-2xl bg-[#7d8f70] text-white text-[16px] font-medium tracking-wide active:bg-[#6b7a5e] transition-colors disabled:opacity-50"
         >
-          {loading ? "Processing..." : "Scan My First Meal Free"}
+          {loading ? "Processing..." : "Start Free Trial"}
         </button>
 
         {error && (
           <p className="text-center text-[11px] text-red-400 mt-2">{error}</p>
         )}
 
-        <p className="text-center text-[11px] text-[#8a8578]/40 mt-3">
-          Cancel anytime. No charge during trial.
-        </p>
+        {/* Functional EULA + Privacy links — required by Guideline 3.1.2 */}
+        <div className="flex justify-center items-center gap-4 mt-4">
+          <button
+            onClick={() => router.push("/terms")}
+            className="text-[12px] underline text-[#bcccab]"
+          >
+            Terms of Use (EULA)
+          </button>
+          <span className="text-[12px] text-[#8a8578]/40">·</span>
+          <button
+            onClick={() => router.push("/privacy")}
+            className="text-[12px] underline text-[#bcccab]"
+          >
+            Privacy Policy
+          </button>
+        </div>
 
-        <div className="flex justify-center items-center gap-3 mt-4">
-          <button onClick={handleRestore} disabled={loading} className="text-[11px] text-[#8a8578]/30">Restore</button>
-          <span className="text-[11px] text-[#8a8578]/15">|</span>
-          <button onClick={() => router.push("/terms")} className="text-[11px] text-[#8a8578]/30">Terms</button>
-          <span className="text-[11px] text-[#8a8578]/15">|</span>
-          <button onClick={() => router.push("/privacy")} className="text-[11px] text-[#8a8578]/30">Privacy</button>
+        <div className="flex justify-center items-center gap-3 mt-3">
+          <button
+            onClick={handleRestore}
+            disabled={loading}
+            className="text-[11px] text-[#8a8578]/60 underline"
+          >
+            Restore Purchases
+          </button>
         </div>
 
         <button
           onClick={() => router.back()}
-          className="w-full text-center mt-3 text-[12px] text-[#8a8578]/25"
+          className="w-full text-center mt-3 text-[12px] text-[#8a8578]/40"
         >
           Not now
         </button>

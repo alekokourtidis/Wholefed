@@ -449,6 +449,36 @@ export default function ProfilePage() {
           </div>
         </div>
 
+        {/* Legal — Terms + Privacy (required for in-app discoverability) */}
+        <div className="mb-6">
+          <h3 className="text-[10px] tracking-[0.15em] uppercase text-[#6b7a5e] font-bold mb-3">
+            Legal
+          </h3>
+          <div className="space-y-2">
+            <button
+              onClick={() => router.push("/terms")}
+              className="w-full flex items-center justify-between py-3 px-4 rounded-xl bg-white/[0.03] border border-white/[0.06] active:bg-white/[0.05] transition-colors"
+            >
+              <span className="text-[13px] font-light text-[#d4cfc4]">Terms of Use (EULA)</span>
+              <span className="material-symbols-outlined text-[#8a8578] text-base">chevron_right</span>
+            </button>
+            <button
+              onClick={() => router.push("/privacy")}
+              className="w-full flex items-center justify-between py-3 px-4 rounded-xl bg-white/[0.03] border border-white/[0.06] active:bg-white/[0.05] transition-colors"
+            >
+              <span className="text-[13px] font-light text-[#d4cfc4]">Privacy Policy</span>
+              <span className="material-symbols-outlined text-[#8a8578] text-base">chevron_right</span>
+            </button>
+            <button
+              onClick={() => router.push("/subscribe")}
+              className="w-full flex items-center justify-between py-3 px-4 rounded-xl bg-white/[0.03] border border-white/[0.06] active:bg-white/[0.05] transition-colors"
+            >
+              <span className="text-[13px] font-light text-[#d4cfc4]">Manage Subscription</span>
+              <span className="material-symbols-outlined text-[#8a8578] text-base">chevron_right</span>
+            </button>
+          </div>
+        </div>
+
         {/* Sign Out / Sign In */}
         {user ? (
           <div className="space-y-3">
@@ -465,7 +495,7 @@ export default function ProfilePage() {
                   const { getSupabase } = await import("../../lib/supabase");
                   const supabase = getSupabase();
                   if (supabase) {
-                    await supabase.rpc("delete_account");
+                    await supabase.rpc("delete_user_data");
                   }
                   // Clear all local data
                   localStorage.clear();

@@ -15,10 +15,20 @@ export default function ScanPage() {
   const fileRef = useRef(null);
   const [remaining, setRemaining] = useState(3);
   const [pro, setPro] = useState(false);
+  const [cameraError, setCameraError] = useState("");
 
   useEffect(() => {
     setRemaining(scansRemaining());
     setPro(isPro());
+  }, []);
+
+  // Listen for scan tab tap from BottomNav (Apple reviewers tap the labeled
+  // "Scan" tab in the nav rather than the unlabeled shutter circle).
+  useEffect(() => {
+    const onScan = () => handleShutter();
+    window.addEventListener("wholefed:scan", onScan);
+    return () => window.removeEventListener("wholefed:scan", onScan);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Compress image to max 1200px and JPEG quality 0.7 to fit in sessionStorage
@@ -51,19 +61,29 @@ export default function ScanPage() {
     router.push("/results");
   };
 
+  // Check whether the user is allowed to scan (does NOT consume a scan).
+  // We only burn a scan after a photo is actually captured.
   const tryScan = () => {
     if (!canScan()) {
       router.push("/subscribe");
       return false;
     }
-    incrementScanCount();
-    setRemaining(scansRemaining());
     return true;
   };
 
-  // Native camera via Capacitor
+  const consumeScan = () => {
+    incrementScanCount();
+    setRemaining(scansRemaining());
+  };
+
+  // Native camera via Capacitor.
+  // If the camera is unavailable (e.g. iOS Simulator used by App Store
+  // reviewers), automatically fall back to the photo library so the scan
+  // button always does *something* visible. If both fail, surface a visible
+  // error so the user (and Apple reviewers) aren't left tapping into a void.
   const handleNativeCamera = async () => {
     if (!tryScan()) return;
+    setCameraError("");
     try {
       const { Camera, CameraResultType, CameraSource } = await import("@capacitor/camera");
       const photo = await Camera.getPhoto({
@@ -74,9 +94,30 @@ export default function ScanPage() {
         height: 1200,
       });
       const base64 = photo.dataUrl;
+      consumeScan();
       await storeAndNavigate(base64, base64);
     } catch (err) {
-      console.warn("Camera error:", err);
+      console.warn("Camera error, falling back to photo library:", err);
+      // Auto-fallback: open the photo picker so reviewers on a simulator
+      // (no camera) can still complete a scan.
+      try {
+        const { Camera, CameraResultType, CameraSource } = await import("@capacitor/camera");
+        const photo = await Camera.getPhoto({
+          quality: 85,
+          resultType: CameraResultType.DataUrl,
+          source: CameraSource.Photos,
+          width: 1200,
+          height: 1200,
+        });
+        const base64 = photo.dataUrl;
+        consumeScan();
+        await storeAndNavigate(base64, base64);
+      } catch (fallbackErr) {
+        console.warn("Photo library fallback also failed:", fallbackErr);
+        setCameraError(
+          "Camera unavailable on this device. Tap 'Try with a sample meal' below to see how Wholefed works."
+        );
+      }
     }
   };
 
@@ -93,6 +134,7 @@ export default function ScanPage() {
         height: 1200,
       });
       const base64 = photo.dataUrl;
+      consumeScan();
       await storeAndNavigate(base64, base64);
     } catch (err) {
       console.warn("Gallery error:", err);
@@ -139,25 +181,43 @@ export default function ScanPage() {
     if (!tryScan()) return;
     const base64 = await toBase64FromFile(file);
     const url = URL.createObjectURL(file);
+    consumeScan();
     await storeAndNavigate(url, base64);
+  };
+
+  // Demo flow — uses a built-in sample meal so the full scan→results flow
+  // can be tested without a real camera (works on simulators and for App
+  // Store reviewers who don't have food in front of them).
+  const handleSampleScan = async () => {
+    triggerHaptic();
+    if (!tryScan()) return;
+    try {
+      const res = await fetch("/healthymeal1.jpg");
+      const blob = await res.blob();
+      const base64 = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
+      const compressed = await compressBase64(base64);
+      consumeScan();
+      await storeAndNavigate(compressed, compressed);
+    } catch (err) {
+      console.warn("Sample scan error:", err);
+    }
   };
 
   return (
     <div className="fixed inset-0 bg-black">
-      {/* Full-screen camera area */}
+      {/* Camera viewfinder area — pure black until the native camera opens */}
       <div className="absolute inset-0">
-        <img
-          src="/healthymeal1.jpg"
-          alt="Food"
-          className="w-full h-full object-cover opacity-80"
-        />
-        {/* Corner bracket focus frame */}
-        <div className="absolute inset-0 flex items-center justify-center -translate-y-16">
-          <div className="w-72 h-96 relative drop-shadow-[0_0_12px_rgba(188,204,171,0.3)]">
-            <div className="absolute top-0 left-0 w-14 h-14 border-t-2 border-l-2 border-[#bcccab]/50 rounded-tl-2xl shadow-[0_0_8px_rgba(188,204,171,0.3)]" />
-            <div className="absolute top-0 right-0 w-14 h-14 border-t-2 border-r-2 border-[#bcccab]/50 rounded-tr-2xl shadow-[0_0_8px_rgba(188,204,171,0.3)]" />
-            <div className="absolute bottom-0 left-0 w-14 h-14 border-b-2 border-l-2 border-[#bcccab]/50 rounded-bl-2xl shadow-[0_0_8px_rgba(188,204,171,0.3)]" />
-            <div className="absolute bottom-0 right-0 w-14 h-14 border-b-2 border-r-2 border-[#bcccab]/50 rounded-br-2xl shadow-[0_0_8px_rgba(188,204,171,0.3)]" />
+        {/* Corner bracket focus frame — sized to fit the available area */}
+        <div className="absolute inset-0 flex items-center justify-center pt-24 pb-48">
+          <div className="relative w-[min(94vw,546px)] h-[min(78vh,728px)] drop-shadow-[0_0_12px_rgba(188,204,171,0.3)]">
+            <div className="absolute top-0 left-0 w-14 h-14 border-t-2 border-l-2 border-[#bcccab]/30 rounded-tl-2xl" />
+            <div className="absolute top-0 right-0 w-14 h-14 border-t-2 border-r-2 border-[#bcccab]/30 rounded-tr-2xl" />
+            <div className="absolute bottom-0 left-0 w-14 h-14 border-b-2 border-l-2 border-[#bcccab]/30 rounded-bl-2xl" />
+            <div className="absolute bottom-0 right-0 w-14 h-14 border-b-2 border-r-2 border-[#bcccab]/30 rounded-br-2xl" />
           </div>
         </div>
       </div>
@@ -178,8 +238,34 @@ export default function ScanPage() {
         </h1>
       </header>
 
-      {/* Bottom controls */}
-      <div className="absolute bottom-0 left-0 w-full z-10 flex flex-col items-center pb-28 pt-16" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)" }}>
+      {/* "Try with a sample meal" entry — always visible so App Store
+          reviewers (who use simulators with no camera) can always test the
+          full scan→results flow without needing real food in front of them. */}
+      <div className="absolute top-28 left-0 w-full z-40 flex flex-col items-center px-6 gap-2">
+        <button
+          onClick={handleSampleScan}
+          className="px-5 py-2.5 rounded-full bg-[#bcccab] text-[#131313] text-[11px] tracking-[0.2em] uppercase font-semibold shadow-lg active:scale-95 transition-transform"
+        >
+          Try with a sample meal
+        </button>
+        {cameraError && (
+          <p className="max-w-xs text-center text-[11px] text-red-300/90 bg-black/40 backdrop-blur-md rounded-lg px-3 py-2">
+            {cameraError}
+          </p>
+        )}
+      </div>
+
+      {/* Bottom controls — sit just above BottomNav */}
+      <div
+        className="absolute bottom-0 left-0 w-full z-10 flex flex-col items-center pt-8"
+        style={{
+          // BottomNav is 5rem tall (+ safe-area). Add 1.5rem of breathing
+          // room so the shutter button is never tucked under the nav on
+          // iPad (which has no home-indicator safe area).
+          paddingBottom: "calc(env(safe-area-inset-bottom) + 6.5rem)",
+          background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
+        }}
+      >
         {/* Scan counter */}
         {!pro && remaining <= 0 && (
           <button
@@ -201,9 +287,15 @@ export default function ScanPage() {
 
           <button
             onClick={handleShutter}
-            className="w-[68px] h-[68px] rounded-full border-[3px] border-[#d4cfc4] flex items-center justify-center transition-transform active:scale-90 duration-200"
+            aria-label="Scan meal"
+            className="flex flex-col items-center justify-center transition-transform active:scale-90 duration-200"
           >
-            <div className="w-[56px] h-[56px] rounded-full border border-[#d4cfc4]/20" />
+            <div className="w-[68px] h-[68px] rounded-full border-[3px] border-[#d4cfc4] flex items-center justify-center">
+              <div className="w-[56px] h-[56px] rounded-full bg-[#d4cfc4]/10 border border-[#d4cfc4]/30" />
+            </div>
+            <span className="mt-2 text-[9px] tracking-[0.25em] uppercase text-[#d4cfc4]/70">
+              Tap to scan
+            </span>
           </button>
 
           <div className="w-10 h-10" />
