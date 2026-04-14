@@ -76,71 +76,6 @@ export default function ScanPage() {
     setRemaining(scansRemaining());
   };
 
-  // Native camera via Capacitor.
-  // If the camera is unavailable (e.g. iOS Simulator used by App Store
-  // reviewers), automatically fall back to the photo library so the scan
-  // button always does *something* visible. If both fail, surface a visible
-  // error so the user (and Apple reviewers) aren't left tapping into a void.
-  const handleNativeCamera = async () => {
-    if (!tryScan()) return;
-    setCameraError("");
-    try {
-      const { Camera, CameraResultType, CameraSource } = await import("@capacitor/camera");
-      const photo = await Camera.getPhoto({
-        quality: 85,
-        resultType: CameraResultType.DataUrl,
-        source: CameraSource.Camera,
-        width: 1200,
-        height: 1200,
-      });
-      const base64 = photo.dataUrl;
-      consumeScan();
-      await storeAndNavigate(base64, base64);
-    } catch (err) {
-      console.warn("Camera error, falling back to photo library:", err);
-      // Auto-fallback: open the photo picker so reviewers on a simulator
-      // (no camera) can still complete a scan.
-      try {
-        const { Camera, CameraResultType, CameraSource } = await import("@capacitor/camera");
-        const photo = await Camera.getPhoto({
-          quality: 85,
-          resultType: CameraResultType.DataUrl,
-          source: CameraSource.Photos,
-          width: 1200,
-          height: 1200,
-        });
-        const base64 = photo.dataUrl;
-        consumeScan();
-        await storeAndNavigate(base64, base64);
-      } catch (fallbackErr) {
-        console.warn("Photo library fallback also failed:", fallbackErr);
-        setCameraError(
-          "Camera unavailable on this device. Tap 'Try with a sample meal' below to see how Wholefed works."
-        );
-      }
-    }
-  };
-
-  // Native photo picker via Capacitor
-  const handleNativeGallery = async () => {
-    if (!tryScan()) return;
-    try {
-      const { Camera, CameraResultType, CameraSource } = await import("@capacitor/camera");
-      const photo = await Camera.getPhoto({
-        quality: 85,
-        resultType: CameraResultType.DataUrl,
-        source: CameraSource.Photos,
-        width: 1200,
-        height: 1200,
-      });
-      const base64 = photo.dataUrl;
-      consumeScan();
-      await storeAndNavigate(base64, base64);
-    } catch (err) {
-      console.warn("Gallery error:", err);
-    }
-  };
-
   const triggerHaptic = async () => {
     try {
       if (isNative()) {
@@ -150,13 +85,15 @@ export default function ScanPage() {
     } catch {}
   };
 
+  // Use the standard HTML file input for camera on ALL platforms (native +
+  // web). The Capacitor Camera plugin has proven unreliable across iOS
+  // versions (fails silently on iOS 26, hangs on some devices). The HTML
+  // <input type="file" accept="image/*" capture="environment"> always works
+  // in WKWebView and opens the exact same system camera UI.
   const handleShutter = () => {
     triggerHaptic();
-    if (isNative()) {
-      handleNativeCamera();
-      return;
-    }
-    // Web fallback — use file input with camera capture
+    setCameraError("");
+    if (!tryScan()) return;
     if (fileRef.current) {
       fileRef.current.setAttribute("capture", "environment");
       fileRef.current.click();
@@ -164,11 +101,8 @@ export default function ScanPage() {
   };
 
   const handleGallery = () => {
-    if (isNative()) {
-      handleNativeGallery();
-      return;
-    }
-    // Web fallback — file picker
+    setCameraError("");
+    if (!tryScan()) return;
     if (fileRef.current) {
       fileRef.current.removeAttribute("capture");
       fileRef.current.click();
