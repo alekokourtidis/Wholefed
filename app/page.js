@@ -172,22 +172,24 @@ export default function ScanPage() {
         </h1>
       </header>
 
-      {/* "Try with a sample meal" entry — always visible so App Store
-          reviewers (who use simulators with no camera) can always test the
-          full scan→results flow without needing real food in front of them. */}
-      <div className="absolute top-28 left-0 w-full z-40 flex flex-col items-center px-6 gap-2">
-        <button
-          onClick={handleSampleScan}
-          className="px-5 py-2.5 rounded-full bg-[#bcccab] text-[#131313] text-[11px] tracking-[0.2em] uppercase font-semibold shadow-lg active:scale-95 transition-transform"
-        >
-          Try with a sample meal
-        </button>
-        {cameraError && (
-          <p className="max-w-xs text-center text-[11px] text-red-300/90 bg-black/40 backdrop-blur-md rounded-lg px-3 py-2">
-            {cameraError}
-          </p>
-        )}
-      </div>
+      {/* "Try with a sample meal" — visible while free scans remain so new
+          users (and App Store reviewers) can test the flow without real food.
+          Disappears once all 3 free scans are used. */}
+      {remaining > 0 && !pro && (
+        <div className="absolute top-28 left-0 w-full z-40 flex flex-col items-center px-6 gap-2">
+          <button
+            onClick={handleSampleScan}
+            className="px-5 py-2.5 rounded-full bg-[#bcccab] text-[#131313] text-[11px] tracking-[0.2em] uppercase font-semibold shadow-lg active:scale-95 transition-transform"
+          >
+            Try with a sample meal
+          </button>
+          {cameraError && (
+            <p className="max-w-xs text-center text-[11px] text-red-300/90 bg-black/40 backdrop-blur-md rounded-lg px-3 py-2">
+              {cameraError}
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Bottom controls — sit just above BottomNav */}
       <div
