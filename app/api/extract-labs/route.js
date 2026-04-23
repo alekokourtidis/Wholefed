@@ -64,15 +64,17 @@ Return ONLY valid JSON. No markdown. No explanation.`;
   }
 
   const data = await res.json();
-  const text = data.choices[0].message.content;
+  const text = data.choices?.[0]?.message?.content;
+
+  if (!text) {
+    return Response.json({ error: "No response from AI" }, { status: 502 });
+  }
 
   try {
     const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
     const labs = JSON.parse(cleaned);
-    console.log(`[extract-labs] Found ${labs.markers?.length || 0} biomarkers`);
     return Response.json(labs);
   } catch {
-    console.error("[extract-labs] Failed to parse:", text.slice(-200));
     return Response.json({ error: "Failed to parse lab results", raw: text }, { status: 500 });
   }
 }

@@ -127,6 +127,7 @@ export default function ScanPage() {
     if (!tryScan()) return;
     try {
       const res = await fetch("/healthymeal1.jpg");
+      if (!res.ok) throw new Error("Sample image not found");
       const blob = await res.blob();
       const base64 = await new Promise((resolve) => {
         const reader = new FileReader();

@@ -21,14 +21,18 @@ export default function SubscribePage() {
   const handleSubscribe = async () => {
     setLoading(true);
     setError("");
-    const result = await purchasePro();
-    if (result.success) {
-      setPro(true);
-      router.push("/");
-    } else if (result.cancelled) {
-      // User cancelled — do nothing
-    } else if (result.error) {
-      setError(result.error);
+    try {
+      const result = await purchasePro();
+      if (result.success) {
+        setPro(true);
+        router.push("/");
+      } else if (result.cancelled) {
+        // User cancelled — do nothing
+      } else if (result.error) {
+        setError(result.error);
+      }
+    } catch {
+      setError("Unable to connect to the App Store. Please try again.");
     }
     setLoading(false);
   };
@@ -36,12 +40,16 @@ export default function SubscribePage() {
   const handleRestore = async () => {
     setLoading(true);
     setError("");
-    const result = await restorePurchases();
-    if (result.success) {
-      setPro(true);
-      router.push("/");
-    } else {
-      setError("No previous subscription found");
+    try {
+      const result = await restorePurchases();
+      if (result.success) {
+        setPro(true);
+        router.push("/");
+      } else {
+        setError("No previous subscription found");
+      }
+    } catch {
+      setError("Unable to connect to the App Store. Please try again.");
     }
     setLoading(false);
   };

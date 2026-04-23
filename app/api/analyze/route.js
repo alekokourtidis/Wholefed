@@ -198,18 +198,19 @@ Return ONLY valid JSON. No markdown. No explanation.`;
   }
 
   const data = await res.json();
-  const text = data.choices[0].message.content;
+  const text = data.choices?.[0]?.message?.content;
+
+  if (!text) {
+    return Response.json({ error: "No response from AI" }, { status: 502 });
+  }
 
   try {
     const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
     const analysis = JSON.parse(cleaned);
-    // Log insight count for debugging
-    console.log(`[analyze] title="${analysis.title}", score=${analysis.score}, insights=${analysis.insights?.length || 0}, ingredients=${analysis.ingredients?.length || 0}`);
     // Cache the result — same image won't hit the API again
     analysisCache.set(cacheKey, analysis);
     return Response.json(analysis);
   } catch {
-    console.error("[analyze] Failed to parse:", text.slice(-200));
     return Response.json({ error: "Failed to parse AI response", raw: text }, { status: 500 });
   }
 }

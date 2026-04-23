@@ -406,6 +406,7 @@ export default function ResultsPage() {
       if (!imageData) {
         // No uploaded image — use demo image as last resort
         const res = await fetch("/healthymeal1.jpg");
+        if (!res.ok) throw new Error("Sample image not found");
         const blob = await res.blob();
         imageData = await new Promise((resolve) => {
           const reader = new FileReader();
@@ -513,7 +514,7 @@ export default function ResultsPage() {
   const nutrition = Math.round(rawNutrition);
 
   // Validate upgrade first — needed to determine insight order
-  const upgrade = analysis.upgrade && ingredients?.some(
+  const upgrade = analysis?.upgrade && ingredients?.some(
     ing => ing.toLowerCase().includes(analysis.upgrade.from?.toLowerCase())
   ) ? analysis.upgrade : null;
 

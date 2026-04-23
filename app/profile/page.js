@@ -501,8 +501,8 @@ export default function ProfilePage() {
                   localStorage.clear();
                   await signOut();
                   router.push("/");
-                } catch (err) {
-                  alert("Failed to delete account. Please try again.");
+                } catch {
+                  setLabError("Failed to delete account. Please try again.");
                 }
               }}
               className="w-full py-3.5 rounded-xl bg-white/[0.04] text-red-400/60 text-[11px] tracking-[0.2em] uppercase font-medium hover:bg-red-500/10 transition-colors"

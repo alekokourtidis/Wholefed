@@ -17,14 +17,17 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    const { error: err } = await signInWithEmail(email.trim());
-    if (err) {
-      setError(err.message);
-      setLoading(false);
-    } else {
-      setSent(true);
-      setLoading(false);
+    try {
+      const { error: err } = await signInWithEmail(email.trim());
+      if (err) {
+        setError(err.message);
+      } else {
+        setSent(true);
+      }
+    } catch {
+      setError("Unable to connect. Please check your internet and try again.");
     }
+    setLoading(false);
   };
 
   return (
