@@ -54,15 +54,35 @@ create policy "Users can delete own scans" on scans for delete using (auth.uid()
 -- Index for fast history queries
 create index if not exists scans_user_created on scans (user_id, created_at desc);
 
--- Auto-create profile on first sign-up
+-- Grant the auth service permission to insert into the tables the trigger writes to.
+-- Without these grants, "Database error saving new user" is returned on sign-up.
+grant insert, select, update on public.profiles to supabase_auth_admin;
+grant insert, select, update on public.user_conditions to supabase_auth_admin;
+
+-- Auto-create profile on first sign-up. Wrapped in per-insert exception handlers so a
+-- downstream failure never blocks auth user creation (which is what surfaces to the UI).
 create or replace function handle_new_user()
-returns trigger as $$
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
 begin
-  insert into profiles (id) values (new.id);
-  insert into user_conditions (user_id) values (new.id);
+  begin
+    insert into public.profiles (id) values (new.id) on conflict do nothing;
+  exception when others then
+    raise warning 'profiles insert failed for %: % (%)', new.id, sqlerrm, sqlstate;
+  end;
+
+  begin
+    insert into public.user_conditions (user_id) values (new.id) on conflict do nothing;
+  exception when others then
+    raise warning 'user_conditions insert failed for %: % (%)', new.id, sqlerrm, sqlstate;
+  end;
+
   return new;
 end;
-$$ language plpgsql security definer;
+$$;
 
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created

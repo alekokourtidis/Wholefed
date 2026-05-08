@@ -20,7 +20,7 @@ export default function LoginPage() {
     try {
       const { error: err } = await signInWithEmail(email.trim());
       if (err) {
-        setError(err.message);
+        setError("We couldn't send your link right now. Please try again in a moment.");
       } else {
         setSent(true);
       }
