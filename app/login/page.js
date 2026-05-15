@@ -20,7 +20,7 @@ export default function LoginPage() {
     try {
       const { error: err } = await signInWithEmail(email.trim());
       if (err) {
-        setError("We couldn't send your link right now. Please try again in a moment.");
+        setError(err.message || "We couldn't send your link right now. Please try again in a moment.");
       } else {
         setSent(true);
       }
@@ -34,11 +34,14 @@ export default function LoginPage() {
     <div className="fixed inset-0 bg-surface flex flex-col items-center justify-center px-8">
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center space-y-2">
+          <p className="text-[10px] tracking-[0.3em] uppercase text-[#bcccab]/70">
+            Optional
+          </p>
           <h1 className="text-2xl font-extralight text-[#e5e2e1] tracking-wide">
-            Sign In
+            Sync Across Devices
           </h1>
           <p className="text-[13px] font-light text-[#8a8578]">
-            Save your scans across devices
+            Wholefed works fully without an account. Sign in only if you want your scans on multiple devices.
           </p>
         </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import BottomNav from "../components/BottomNav";
 import { getConditions, getProfile } from "../../lib/user-profile";
 import { useAuth } from "../../lib/auth";
@@ -355,6 +356,7 @@ function AddIngredientModal({ onAdd, onClose, existingIngredients }) {
 }
 
 export default function ResultsPage() {
+  const router = useRouter();
   const { user } = useAuth();
   const [imageUrl, setImageUrl] = useState(null);
   const [analysis, setAnalysis] = useState(null);
