@@ -365,6 +365,11 @@ export default function ResultsPage() {
   const [frostAmount, setFrostAmount] = useState(0);
   const [extraIngredients, setExtraIngredients] = useState([]);
   const [showAddIngredient, setShowAddIngredient] = useState(false);
+  const [userConditions, setUserConditions] = useState([]);
+
+  useEffect(() => {
+    try { setUserConditions(getConditions() || []); } catch {}
+  }, []);
 
   const handleScroll = (e) => {
     const scrollTop = e.target.scrollTop;
@@ -759,18 +764,23 @@ export default function ResultsPage() {
               );
 
               {/* FOR YOU (condition) — left green border */}
-              if (type === "condition") return (
-                <div key={i} className="flex gap-4 pl-4 border-l-2 border-[#6b7a5e]/40 py-2">
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="material-symbols-outlined text-[#bcccab] text-base" style={{ fontVariationSettings: "'FILL' 1" }}>monitor_heart</span>
-                      <p className="text-[10px] tracking-[0.25em] font-bold text-[#8a8578] uppercase">For You</p>
+              if (type === "condition") {
+                const conditionLabel = userConditions.length > 0
+                  ? `Personalized for ${userConditions.slice(0, 2).join(" + ")}${userConditions.length > 2 ? ` +${userConditions.length - 2}` : ""}`
+                  : "Personalized for your health";
+                return (
+                  <div key={i} className="flex gap-4 pl-4 border-l-2 border-[#6b7a5e]/40 py-2">
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="material-symbols-outlined text-[#bcccab] text-base" style={{ fontVariationSettings: "'FILL' 1" }}>monitor_heart</span>
+                        <p className="text-[10px] tracking-[0.25em] font-bold text-[#bcccab] uppercase">{conditionLabel}</p>
+                      </div>
+                      {insight.title && <h3 className="text-base font-light text-[#e5e2e1] mb-1">{insight.title}</h3>}
+                      <p className="text-[13px] font-light text-[#acabaa] leading-relaxed">{insight.text}</p>
                     </div>
-                    {insight.title && <h3 className="text-base font-light text-[#e5e2e1] mb-1">{insight.title}</h3>}
-                    <p className="text-[13px] font-light text-[#acabaa] leading-relaxed">{insight.text}</p>
                   </div>
-                </div>
-              );
+                );
+              }
 
               {/* DID YOU KNOW */}
               if (type === "fact") return (
