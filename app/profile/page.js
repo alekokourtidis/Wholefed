@@ -167,14 +167,6 @@ export default function ProfilePage() {
               Member since {memberSince}
             </p>
           )}
-          {!user && (
-            <button
-              onClick={() => router.push("/login")}
-              className="mt-3 px-5 py-2 rounded-xl bg-[#6b7a5e] text-white text-[12px] font-medium tracking-wide active:scale-[0.98] transition-all"
-            >
-              Sign In
-            </button>
-          )}
           {pro && (
             <div className="mt-2 flex items-center gap-2 px-3 py-1 rounded-full border border-[#bcccab]/20">
               <div className="w-1.5 h-1.5 rounded-full bg-[#bcccab]" />
@@ -510,14 +502,7 @@ export default function ProfilePage() {
               Delete Account
             </button>
           </div>
-        ) : (
-          <button
-            onClick={() => router.push("/login")}
-            className="w-full py-3.5 rounded-xl bg-white/[0.04] text-[#8a8578] text-[11px] tracking-[0.2em] uppercase font-medium hover:bg-white/[0.06] transition-colors"
-          >
-            Sign In
-          </button>
-        )}
+        ) : null}
       </main>
 
       <BottomNav />
