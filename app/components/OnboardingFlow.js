@@ -68,6 +68,7 @@ const STEPS = [
     title: "The Full Breakdown",
     body: "Detected ingredients, what's missing, food interactions, and a personalized note tied to your conditions. This is what makes Wholefed different from a calorie counter.",
     pad: 8,
+    scrollBlock: "start",
   },
   {
     path: "/",
@@ -154,7 +155,7 @@ export default function OnboardingFlow() {
       const vh = window.innerHeight;
       const offscreen = r.top < 80 || r.bottom > vh - 260;
       if (offscreen) {
-        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        target.scrollIntoView({ behavior: "smooth", block: current.scrollBlock || "center" });
         await new Promise((r) => setTimeout(r, 520));
       }
       if (cancelled) return;
@@ -239,15 +240,6 @@ export default function OnboardingFlow() {
   const handleSkip = () => finish();
 
   const vh = typeof window !== "undefined" ? window.innerHeight : 800;
-  const vw = typeof window !== "undefined" ? window.innerWidth : 400;
-  const targetBottom = rect.top + rect.height;
-  const spaceBelow = vh - targetBottom;
-  const placeAbove = spaceBelow < 260;
-  const tooltipMaxWidth = 320;
-  const tooltipLeft = Math.max(
-    16,
-    Math.min(rect.left + rect.width / 2 - tooltipMaxWidth / 2, vw - tooltipMaxWidth - 16)
-  );
 
   const pad = current.pad || 0;
   const cutoutTop = Math.max(0, rect.top - pad);
@@ -255,6 +247,12 @@ export default function OnboardingFlow() {
   const cutoutWidth = rect.width + pad * 2;
   const cutoutHeight = rect.height + pad * 2;
   const cutoutRadius = 16;
+
+  // Popup goes in the half of the viewport opposite to where the spotlight
+  // is. Stays at a fixed top/bottom anchor so it never drifts and never gets
+  // squeezed off-screen by a tall target.
+  const spotlightCenter = cutoutTop + Math.min(cutoutHeight, vh) / 2;
+  const popupAtBottom = spotlightCenter < vh / 2;
 
   return (
     <div
@@ -281,19 +279,20 @@ export default function OnboardingFlow() {
         }}
       />
 
-      {/* Tooltip card */}
+      {/* Tooltip card — anchored to top or bottom of viewport, opposite the
+          spotlight. Never drifts because position is fixed to viewport edges,
+          not relative to the target. */}
       <div
         className="fixed pointer-events-auto"
         style={{
-          top: placeAbove ? "auto" : targetBottom + pad + 16,
-          bottom: placeAbove ? vh - (rect.top - pad) + 16 : "auto",
-          left: tooltipLeft,
-          width: `${tooltipMaxWidth}px`,
-          maxWidth: "calc(100vw - 32px)",
-          transition: "top 360ms cubic-bezier(0.4, 0, 0.2, 1), bottom 360ms cubic-bezier(0.4, 0, 0.2, 1), left 360ms cubic-bezier(0.4, 0, 0.2, 1)",
+          top: popupAtBottom ? "auto" : "calc(env(safe-area-inset-top) + 80px)",
+          bottom: popupAtBottom ? "calc(env(safe-area-inset-bottom) + 110px)" : "auto",
+          left: 16,
+          right: 16,
+          transition: "opacity 220ms ease",
         }}
       >
-        <div data-onboarding-card className="bg-[#1c2623]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-5 space-y-3 shadow-2xl">
+        <div data-onboarding-card className="bg-[#1c2623]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-5 space-y-3 shadow-2xl mx-auto" style={{ maxWidth: 360 }}>
           <h3 className="text-[16px] font-light text-[#e5e2e1] tracking-wide">{current.title}</h3>
           <p className="text-[13px] font-light text-[#acabaa] leading-relaxed">{current.body}</p>
           <div className="flex items-center justify-between pt-1">
