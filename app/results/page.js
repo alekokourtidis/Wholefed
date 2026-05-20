@@ -593,7 +593,7 @@ export default function ResultsPage() {
         </div>
         <section className="px-8 pt-2 flex flex-col gap-4">
           {/* Score Ring — fancy double ring */}
-          <div className="flex justify-center items-center py-3">
+          <div className="flex justify-center items-center py-3" data-onboarding="score-ring">
             <div className="relative w-40 h-40 flex items-center justify-center">
               <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 200 200">
                 {/* Outer decorative ring — thin, full circle */}
