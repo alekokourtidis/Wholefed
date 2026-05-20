@@ -24,6 +24,8 @@ export default function ProfilePage() {
   const [labError, setLabError] = useState("");
   const [labsEnabled, setLabsEnabled] = useState(true);
   const [showAllMarkers, setShowAllMarkers] = useState(false);
+  const [customName, setCustomName] = useState("");
+  const [editingName, setEditingName] = useState(false);
   const labFileRef = useRef(null);
 
   useEffect(() => {
@@ -35,9 +37,18 @@ export default function ProfilePage() {
       setLabs(getLabResults());
       const labToggle = localStorage.getItem("wholefed_labs_enabled");
       setLabsEnabled(labToggle !== "false");
+      const savedName = localStorage.getItem("wholefed_display_name") || "";
+      setCustomName(savedName);
     };
     load();
   }, [user]);
+
+  const saveCustomName = (value) => {
+    const trimmed = value.trim().slice(0, 30);
+    setCustomName(trimmed);
+    localStorage.setItem("wholefed_display_name", trimmed);
+    setEditingName(false);
+  };
 
   const toggleLabs = () => {
     const next = !labsEnabled;
@@ -114,8 +125,7 @@ export default function ProfilePage() {
     router.push("/");
   };
 
-  // Display name: email prefix or "Guest"
-  const displayName = user?.email?.split("@")[0] || "Guest";
+  const displayName = customName || user?.email?.split("@")[0] || "Guest";
   const initials = displayName.slice(0, 2).toUpperCase();
   const memberSince = user?.created_at
     ? new Date(user.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" })
@@ -161,12 +171,31 @@ export default function ProfilePage() {
           <div className="w-20 h-20 rounded-full bg-[#1c2623] ring-2 ring-[#bcccab]/20 ring-offset-4 ring-offset-[#131313] flex items-center justify-center mb-4">
             <span className="text-xl font-light text-[#d4cfc4]">{initials}</span>
           </div>
-          <h2 className="text-lg font-light text-[#e5e2e1]">{displayName}</h2>
-          {memberSince && (
-            <p className="text-[9px] tracking-[0.12em] uppercase text-[#8a8578] mt-1">
-              Member since {memberSince}
-            </p>
+          {editingName ? (
+            <input
+              type="text"
+              autoFocus
+              defaultValue={customName}
+              maxLength={30}
+              onBlur={(e) => saveCustomName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") saveCustomName(e.target.value);
+                if (e.key === "Escape") setEditingName(false);
+              }}
+              className="text-lg font-light text-[#e5e2e1] bg-transparent border-b border-[#bcccab]/30 text-center outline-none focus:border-[#bcccab] px-2 py-1 max-w-[200px]"
+              placeholder="Your name"
+            />
+          ) : (
+            <button
+              onClick={() => setEditingName(true)}
+              className="text-lg font-light text-[#e5e2e1] active:opacity-60 transition-opacity"
+            >
+              {displayName}
+            </button>
           )}
+          <p className="text-[9px] tracking-[0.12em] uppercase text-[#8a8578] mt-1">
+            {customName ? "Tap name to edit" : "Tap to set your name"}
+          </p>
           {pro && (
             <div className="mt-2 flex items-center gap-2 px-3 py-1 rounded-full border border-[#bcccab]/20">
               <div className="w-1.5 h-1.5 rounded-full bg-[#bcccab]" />
