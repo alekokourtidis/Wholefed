@@ -147,8 +147,8 @@ export default function ScanPage() {
       {/* Camera viewfinder area — pure black until the native camera opens */}
       <div className="absolute inset-0">
         {/* Corner bracket focus frame — sized to fit the available area */}
-        <div className="absolute inset-0 flex items-center justify-center pt-36 pb-48">
-          <div className="relative w-[min(94vw,546px)] h-[min(78vh,728px)] drop-shadow-[0_0_12px_rgba(188,204,171,0.3)]">
+        <div className="absolute inset-0 flex items-center justify-center pt-32 pb-48">
+          <div className="relative w-[min(94vw,546px)] h-[min(60vh,560px)] drop-shadow-[0_0_12px_rgba(188,204,171,0.3)]">
             <div className="absolute top-0 left-0 w-14 h-14 border-t-2 border-l-2 border-[#bcccab]/30 rounded-tl-2xl" />
             <div className="absolute top-0 right-0 w-14 h-14 border-t-2 border-r-2 border-[#bcccab]/30 rounded-tr-2xl" />
             <div className="absolute bottom-0 left-0 w-14 h-14 border-b-2 border-l-2 border-[#bcccab]/30 rounded-bl-2xl" />
