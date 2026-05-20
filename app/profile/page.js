@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import BottomNav from "../components/BottomNav";
 import { searchConditions } from "../../lib/conditions";
-import { getConditions, getProfile } from "../../lib/user-profile";
+import { getConditions, getProfile, getConditionScoreEnabled, setConditionScoreEnabled } from "../../lib/user-profile";
 import { syncConditions, syncProfile, loadConditions } from "../../lib/condition-storage";
 import { useAuth, signOut } from "../../lib/auth";
 import { isPro } from "../../lib/scans";
@@ -26,6 +26,7 @@ export default function ProfilePage() {
   const [showAllMarkers, setShowAllMarkers] = useState(false);
   const [customName, setCustomName] = useState("");
   const [editingName, setEditingName] = useState(false);
+  const [conditionScoreOn, setConditionScoreOn] = useState(false);
   const labFileRef = useRef(null);
 
   useEffect(() => {
@@ -39,6 +40,7 @@ export default function ProfilePage() {
       setLabsEnabled(labToggle !== "false");
       const savedName = localStorage.getItem("wholefed_display_name") || "";
       setCustomName(savedName);
+      setConditionScoreOn(getConditionScoreEnabled());
     };
     load();
   }, [user]);
@@ -279,6 +281,27 @@ export default function ProfilePage() {
             <p className="text-[11px] text-[#8a8578]/40 mt-3">
               No conditions added — your scores still work great.
             </p>
+          )}
+
+          {conditions.length > 0 && (
+            <div className="mt-5 flex items-start justify-between gap-4 pt-4 border-t border-white/[0.04]">
+              <div className="flex-1">
+                <p className="text-[12px] font-light text-[#d4cfc4]">Adjust score for my conditions</p>
+                <p className="text-[10px] text-[#8a8578]/60 mt-0.5 leading-relaxed">
+                  Off by default. When on, meal scores deduct extra points for foods that conflict with your conditions.
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  const next = !conditionScoreOn;
+                  setConditionScoreOn(next);
+                  setConditionScoreEnabled(next);
+                }}
+                className={`relative w-10 h-6 rounded-full transition-colors flex-shrink-0 mt-0.5 ${conditionScoreOn ? "bg-[#6b7a5e]" : "bg-white/[0.08]"}`}
+              >
+                <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform ${conditionScoreOn ? "translate-x-[18px]" : "translate-x-0.5"}`} />
+              </button>
+            </div>
           )}
         </div>
 

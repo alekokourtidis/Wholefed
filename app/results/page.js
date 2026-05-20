@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import BottomNav from "../components/BottomNav";
-import { getConditions, getProfile } from "../../lib/user-profile";
+import { getConditions, getProfile, getConditionScoreEnabled } from "../../lib/user-profile";
 import { useAuth } from "../../lib/auth";
 import { saveScan } from "../../lib/scan-storage";
 
@@ -425,6 +425,7 @@ export default function ResultsPage() {
       try {
         const conditions = getConditions();
         const profile = getProfile();
+        const conditionScoreEnabled = getConditionScoreEnabled();
         let labs = null;
         const labsEnabled = localStorage.getItem("wholefed_labs_enabled") !== "false";
         if (labsEnabled) {
@@ -433,7 +434,7 @@ export default function ResultsPage() {
         const res = await fetch("/api/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image: imageData, conditions, profile, labs }),
+          body: JSON.stringify({ image: imageData, conditions, profile, labs, conditionScoreEnabled }),
         });
         const data = await res.json();
         if (data.error) {

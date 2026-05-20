@@ -13,10 +13,10 @@ async function hashImage(image, conditions, profile) {
 }
 
 export async function POST(request) {
-  const { image, conditions, profile, labs } = await request.json();
+  const { image, conditions, profile, labs, conditionScoreEnabled } = await request.json();
 
-  // Check cache — same image + same conditions = same result
-  const cacheKey = await hashImage(image, conditions, profile);
+  // Check cache — same image + same conditions + same toggle = same result
+  const cacheKey = await hashImage(image, conditions, profile) + (conditionScoreEnabled ? ":cs1" : ":cs0");
   if (analysisCache.has(cacheKey)) {
     return Response.json(analysisCache.get(cacheKey));
   }
@@ -25,7 +25,7 @@ export async function POST(request) {
   let personalization = "";
   if (conditions && conditions.length > 0) {
     personalization += `\n\nIMPORTANT — This user has the following health conditions: ${conditions.join(", ")}.
-You MUST factor these into your analysis:
+You MUST factor these into your INSIGHTS (not the numeric score unless instructed below):
 - Flag any foods in this meal that could worsen their conditions
 - Highlight foods that actively help their conditions
 - In "missing" insights, suggest additions that specifically benefit their conditions
@@ -42,7 +42,11 @@ For example:
 - Gout → flag high-purine foods
 - Lactose intolerance → flag dairy
 - Kidney disease → flag high potassium/phosphorus/sodium
-Be specific to THEIR conditions, not generic health advice.`;
+Be specific to THEIR conditions, not generic health advice.
+
+SCORE ADJUSTMENT FOR CONDITIONS: ${conditionScoreEnabled
+  ? "ENABLED. After applying the standard deduction stack, ALSO deduct up to 15 additional points if this meal contains foods that directly conflict with the user's specific conditions (e.g., heavy saturated fat for high cholesterol, high glycemic load for diabetes, high sodium for hypertension). Be proportional: a small conflict = -3 to -5, a major conflict = -10 to -15. Mention this adjustment in the verdict."
+  : "DISABLED. The numeric score must be PURELY based on general nutritional quality. DO NOT adjust the score up or down based on the user's health conditions. Conditions only affect the INSIGHT cards, not the score number."}`;
   }
 
   if (profile) {
