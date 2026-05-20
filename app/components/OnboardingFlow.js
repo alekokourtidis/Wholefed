@@ -52,9 +52,22 @@ const STEPS = [
     path: "/results",
     selector: '[data-onboarding="score-ring"]',
     title: "Your Meal Score",
-    body: "This is the overall health score. Scroll down to see what's good, what's missing, food interactions, and a personalized note for you.",
+    body: "This is the overall health score. Built from how complete the macros are, processing level, and what's missing.",
     pad: 12,
-    allowScroll: true,
+  },
+  {
+    path: "/results",
+    selector: '[data-onboarding="verdict"]',
+    title: "What's Going On",
+    body: "A one-line read on what's working in this meal and what's holding the score back. Keep scrolling to see the breakdown.",
+    pad: 8,
+  },
+  {
+    path: "/results",
+    selector: '[data-onboarding="insights"]',
+    title: "The Full Breakdown",
+    body: "Detected ingredients, what's missing, food interactions, and a personalized note tied to your conditions. This is what makes Wholefed different from a calorie counter.",
+    pad: 8,
   },
   {
     path: "/",
@@ -126,6 +139,25 @@ export default function OnboardingFlow() {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, [active, step, pathname, measure]);
+
+  // When the step changes (and the new target's path matches the current
+  // path), scroll the target into view so the user actually sees it. Avoids
+  // the "spotlight is below the fold and the user has no idea" problem.
+  useEffect(() => {
+    if (!active || !current) return;
+    if (current.path !== pathname) return;
+    const t = setTimeout(() => {
+      const el = document.querySelector(current.selector);
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const offscreen = r.top < 80 || r.bottom > vh - 240;
+      if (offscreen) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 200);
+    return () => clearTimeout(t);
+  }, [active, step, pathname, current]);
 
   if (!active || !current) return null;
   if (!rect) return null;

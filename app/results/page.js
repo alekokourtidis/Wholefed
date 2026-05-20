@@ -686,7 +686,7 @@ export default function ResultsPage() {
 
           {/* Verdict — above bars */}
           {analysis?.verdict && (
-            <div className="px-2 -mt-2">
+            <div className="px-2 -mt-2" data-onboarding="verdict">
               <p className="text-[13px] font-light text-[#d4cfc4]/80 leading-relaxed text-center">
                 {analysis.verdict}
               </p>
@@ -732,7 +732,7 @@ export default function ResultsPage() {
           )}
 
           {/* Insight Cards — each type has a visually distinct layout */}
-          <div className="space-y-5 pt-2">
+          <div className="space-y-5 pt-2" data-onboarding="insights">
             {insights.map((insight, i) => {
               const type = insight.type?.toLowerCase() || "interaction";
 
