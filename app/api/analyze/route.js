@@ -86,40 +86,65 @@ ${personalization}
 
 Return a JSON object with exactly this structure:
 
-SCORING — Be brutally honest. Every meal is unique — give a UNIQUE score.
-Consider: how many food groups, nutrient density, processing level, macro balance, and portion quality.
+SCORING — Build the score from explicit components. Two different meals should NEVER end at the exact same score unless they are nutritionally identical.
 Do NOT round to multiples of 5 or 10. Use precise numbers.
 
-CRITICAL ANTI-CLUSTERING RULE: Look at each meal's specific details. A tuna sushi roll (72) is NOT the same as a chicken salad (68) or a beef stir-fry (64). Small differences matter:
-- White rice = simple carb, scores LOWER than brown rice or quinoa
-- Raw vegetables score higher than cooked
-- Fried food scores lower than grilled
-- More distinct ingredients = higher variety score
-- Sauces with sugar/sodium reduce score
+METHOD — Start at 100 and DEDUCT. This makes the path to a perfect meal explicit and achievable.
 
-RANGES:
-- 90-100: Exceptional — 5+ whole food groups, no processed items. Almost never.
-- 75-89: Good — solid whole foods, maybe one gap.
-- 60-74: Decent — mostly good but some processed elements or missing groups.
-- 45-59: Average — mix of whole and processed, clear gaps.
-- 30-44: Poor — mostly processed or very limited variety.
-- 15-29: Bad — fast food, heavy processed.
-- 5-14: Very bad — pure junk.
-- 1-4: Rock bottom — zero nutritional value.
+BASE: Every meal starts at 100.
 
-CALIBRATION (follow these, scores spread across the full range):
-- Instant cup noodles: score 3, variety 1, nutrition 1
-- Bag of chips alone: score 6, variety 1, nutrition 1
-- Fast food burger + fries: score 19, variety 3, nutrition 2
-- Pizza slice: score 27, variety 3, nutrition 3
-- Chicken breast + white rice only: score 38, variety 3, nutrition 5
-- Pasta with meat sauce: score 44, variety 4, nutrition 4
-- Beef sandwich with lettuce/tomato: score 49, variety 5, nutrition 5
-- Tuna sushi roll (white rice): score 57, variety 5, nutrition 6
-- Chicken stir-fry with vegetables: score 64, variety 6, nutrition 7
-- Eggs + avocado + tomatoes + greens: score 76, variety 7, nutrition 8
-- Grilled salmon + salad + quinoa: score 83, variety 8, nutrition 9
-- Diverse bowl: salmon, avocado, greens, sweet potato, seeds: score 91, variety 9, nutrition 9
+REQUIRED MACRO COMPONENTS (deduct if missing):
+- Quality protein source absent (no fish/poultry/eggs/tofu/legumes/lean meat): -18
+- Healthy fat source absent (no avocado/olive oil/nuts/seeds/fatty fish/olives): -12
+- Complex carb absent (no whole grains/sweet potato/quinoa/oats/legumes; white rice/white bread does NOT count): -10
+- Vegetable/produce absent (no veg, including mushrooms/tomatoes/avocado/peppers): -15
+  (avocado can count for BOTH healthy fat AND veg in deductions)
+
+QUALITY DEDUCTIONS (stack if multiple apply):
+- Refined grain present (white rice, white bread, regular pasta): -6
+- Fried element present (anything fried, even partially): -10
+- Processed protein present (deli meat, sausage, bacon, chicken nuggets): -10
+- Heavy sugary sauce/dressing (BBQ, ketchup with sugar, honey mustard, sweet glaze): -8
+- High sodium sauce (soy sauce loaded, ranch, processed dressing): -5
+- Added sugar visible (syrup, sweetener, dessert component): -10
+- Cheese as primary protein or in large amount: -6
+- Single vegetable variety only (one type of veg, no diversity): -3
+- Portion clearly oversized or undersized: -4
+- Mostly beige (no color variety, no green): -5
+
+QUALITY BONUSES (add back if applicable, max +10 total bonuses):
+- Fermented food included (kimchi, sauerkraut, yogurt, kefir): +3
+- Raw vegetables present alongside cooked: +2
+- Omega-3 source (fatty fish, flax, chia, walnuts): +3
+- 3+ distinct color groups on plate: +3
+- Visible herbs/spices used (turmeric, cilantro, basil, etc.): +2
+
+A truly clean balanced meal (grilled salmon + quinoa + roasted broccoli + avocado + lemon + herbs) loses ZERO points and earns bonuses → can legitimately score 100.
+
+Show your work mentally before answering. Different meals SHOULD produce different scores because the deduction stack is different.
+
+RANGES (descriptive, the math above determines actual score):
+- 90-100: Genuinely exceptional. All macros, no junk, color variety. Achievable, not theoretical.
+- 75-89: Good. One gap (e.g. no complex carb) or one mild quality issue.
+- 60-74: Decent. Multiple gaps or one moderate junk element.
+- 45-59: Average. Mix of whole and processed, clear gaps.
+- 30-44: Poor. Mostly processed or very limited variety.
+- 15-29: Bad. Fast food, heavy processed.
+- 5-14: Very bad. Pure junk.
+- 1-4: Rock bottom.
+
+CALIBRATION EXAMPLES (use the deduction method, these are just sanity checks):
+- Grilled salmon + quinoa + broccoli + avocado + olive oil + herbs: ~98 (no deductions, +bonuses)
+- Eggs + avocado + tomatoes + greens + olive oil: ~88 (missing complex carb -10, +bonuses)
+- Chicken stir-fry with white rice and vegetables: ~64 (refined grain -6, soy sauce -5)
+- Tuna sushi roll (white rice, fish, nori, cucumber): ~57 (white rice -6, sodium -5, limited veg -3)
+- Beef sandwich with lettuce/tomato/cheese: ~49 (cheese -6, refined bread -6, limited veg -3)
+- Pasta with meat sauce, no greens: ~42 (no veg -15, refined grain -6)
+- Chicken breast + white rice only: ~38 (no veg -15, no fat -12, refined grain -6)
+- Pizza slice: ~27 (refined grain -6, cheese -6, no real veg -15, processed -10)
+- Fast food burger + fries: ~19 (fried -10, processed protein -10, refined grain -6, no real veg -15)
+- Bag of chips alone: ~6
+- Instant cup noodles: ~3
 
 If a meal is ALL processed with no whole foods, variety MUST be 1/10 and nutrition MUST be 1/10.
 
