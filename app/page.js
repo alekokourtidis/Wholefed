@@ -138,56 +138,143 @@ export default function ScanPage() {
     await storeAndNavigate(url, base64);
   };
 
-  // Demo flow — uses a built-in sample meal AND a hardcoded "perfect"
-  // analysis so the demo always shows what a top-tier meal looks like.
-  // No API call, no variability, instant result. Used in onboarding and
-  // by Apple reviewers / users who do not have food in front of them.
-  const SAMPLE_ANALYSIS = {
-    title: "Wild Salmon Power Bowl",
-    score: 100,
-    variety: 10,
-    nutrition: 10,
-    verdict: "A textbook perfect meal: complete protein from wild salmon, healthy fats from avocado and olive oil, slow-burning carbs from quinoa, plus a rainbow of vegetables and fresh herbs. Hits every macro, zero processed elements.",
-    ingredients: [
-      "Wild Salmon",
-      "Quinoa",
-      "Avocado",
-      "Broccoli",
-      "Cherry Tomatoes",
-      "Baby Spinach",
-      "Olive Oil",
-      "Lemon",
-      "Fresh Dill",
-      "Pumpkin Seeds",
-    ],
+  // Sample meal pool. The FIRST tap always shows the original 88-score
+  // avocado-toast-bowl so onboarding has a predictable result. Tap #2 and
+  // tap #3 pick randomly (without repeat) from the 40-80 score pool so
+  // users see real variety: a decent score, a mediocre one, etc.
+  // All canned — no API call, no variability per analysis.
+  const FIRST_SAMPLE = {
+    image: "/healthymeal1.jpg",
+    title: "Avocado Toast Bowl",
+    score: 88,
+    variety: 8,
+    nutrition: 9,
+    verdict: "Strong meal. Eggs and avocado cover protein and healthy fats, greens and tomatoes add color and antioxidants. The one gap is a complex carb to round it out.",
+    ingredients: ["Eggs", "Avocado", "Cherry Tomatoes", "Baby Spinach", "Olive Oil", "Sea Salt", "Black Pepper"],
     upgrade: null,
     annotations: [
-      { label: "Omega-3 Rich", ingredient: "Wild Salmon", x: 35, y: 45 },
-      { label: "Healthy Fats", ingredient: "Avocado", x: 65, y: 40 },
-      { label: "Complete Carbs", ingredient: "Quinoa", x: 50, y: 70 },
-      { label: "Cruciferous", ingredient: "Broccoli", x: 25, y: 70 },
+      { label: "Complete Protein", ingredient: "Eggs", x: 30, y: 45 },
+      { label: "Healthy Fats", ingredient: "Avocado", x: 60, y: 50 },
+      { label: "Lycopene Rich", ingredient: "Cherry Tomatoes", x: 75, y: 65 },
     ],
     insights: [
-      {
-        type: "good",
-        text: "Every macro is covered. Protein, healthy fats, complex carbs, and a diverse mix of vegetables — the gold standard for a balanced meal.",
-      },
-      {
-        type: "interaction",
-        text: "The fat in the avocado boosts absorption of the carotenoids in the tomatoes and spinach by up to 4x compared to eating them on their own.",
-      },
-      {
-        type: "fact",
-        text: "Quinoa is one of the only plant foods that contains all nine essential amino acids, making it a complete protein on par with animal sources.",
-      },
+      { type: "good", text: "Eggs and avocado give you a complete protein and a heavy dose of monounsaturated fats — a great hormone-supporting combination." },
+      { type: "missing", title: "Add Complex Carbs", text: "A slice of sourdough or some quinoa would round this out and give sustained energy.", suggestions: [{ emoji: "🍠", name: "Sweet Potato" }, { emoji: "🌾", name: "Quinoa" }] },
+      { type: "interaction", text: "The fat in the avocado boosts absorption of the lycopene in the tomatoes by up to 4x compared to eating them dry." },
+      { type: "fact", text: "Egg yolks are one of the richest dietary sources of choline, a nutrient most adults don't get enough of and that's critical for brain and liver function." },
     ],
   };
+
+  const RANDOM_POOL = [
+    {
+      image: "/healthymeal1.jpg",
+      title: "Chicken & Rice Bowl",
+      score: 67,
+      variety: 6,
+      nutrition: 7,
+      verdict: "Decent lunch. Chicken delivers solid protein and the broccoli helps, but the white rice and soy-heavy sauce drag this down. Switch to brown rice and you're in the 80s.",
+      ingredients: ["Grilled Chicken Breast", "White Rice", "Broccoli", "Carrots", "Soy Sauce", "Sesame Seeds", "Scallions"],
+      upgrade: { from: "White Rice", to: "Brown Rice" },
+      annotations: [
+        { label: "Lean Protein", ingredient: "Grilled Chicken Breast", x: 40, y: 45 },
+        { label: "Simple Carbs", ingredient: "White Rice", x: 55, y: 60 },
+        { label: "Cruciferous", ingredient: "Broccoli", x: 25, y: 70 },
+      ],
+      insights: [
+        { type: "good", text: "Lean protein and at least one cruciferous vegetable — the bones of a real meal." },
+        { type: "missing", title: "Better Carb Source", text: "White rice is a fast-burning simple carb. Brown rice or quinoa gives you fiber and slower-release energy.", suggestions: [{ emoji: "🍚", name: "Brown Rice" }, { emoji: "🌾", name: "Quinoa" }] },
+        { type: "interaction", text: "Vitamin C from broccoli helps your body absorb the heme iron in chicken about 2x more efficiently." },
+        { type: "fact", text: "Chicken breast has roughly the same protein per gram as whey isolate, but with a fraction of the absorption speed — better for sustained satiety." },
+      ],
+    },
+    {
+      image: "/healthymeal1.jpg",
+      title: "Beef Burrito",
+      score: 52,
+      variety: 5,
+      nutrition: 5,
+      verdict: "Mid-tier. Real protein and some vegetables underneath, but the refined-flour tortilla and cheese pile on simple carbs and saturated fat. A bowl version without the wrap would jump 15+ points.",
+      ingredients: ["Flour Tortilla", "Ground Beef", "Shredded Cheese", "Iceberg Lettuce", "Sour Cream", "Salsa", "White Rice"],
+      upgrade: { from: "Flour Tortilla", to: "Burrito Bowl (no tortilla)" },
+      annotations: [
+        { label: "Refined Grain", ingredient: "Flour Tortilla", x: 50, y: 40 },
+        { label: "Saturated Fat", ingredient: "Shredded Cheese", x: 60, y: 55 },
+        { label: "Protein", ingredient: "Ground Beef", x: 40, y: 50 },
+      ],
+      insights: [
+        { type: "good", text: "There's real protein from the beef and at least a bit of fresh produce from the salsa." },
+        { type: "missing", title: "Add Fiber & Color", text: "Beans, black beans, or a side of guacamole would massively boost the fiber and healthy-fat profile.", suggestions: [{ emoji: "🥑", name: "Guacamole" }, { emoji: "🫘", name: "Black Beans" }] },
+        { type: "interaction", text: "The fat from the cheese and sour cream slows glucose spikes from the white tortilla — a small upside in an otherwise carb-heavy meal." },
+        { type: "fact", text: "A 10-inch flour tortilla has roughly the same refined-carb load as 3 slices of white bread." },
+      ],
+    },
+    {
+      image: "/healthymeal1.jpg",
+      title: "Buddha Bowl",
+      score: 76,
+      variety: 8,
+      nutrition: 8,
+      verdict: "Genuinely good meal. Plant protein from the chickpeas, complex carbs from sweet potato, healthy fat from tahini, and four different vegetables. Would have hit 85+ with a stronger protein source.",
+      ingredients: ["Roasted Chickpeas", "Sweet Potato", "Kale", "Red Cabbage", "Tahini Dressing", "Pumpkin Seeds", "Lemon"],
+      upgrade: null,
+      annotations: [
+        { label: "Plant Protein", ingredient: "Roasted Chickpeas", x: 35, y: 45 },
+        { label: "Beta Carotene", ingredient: "Sweet Potato", x: 55, y: 55 },
+        { label: "Iron Rich", ingredient: "Kale", x: 30, y: 65 },
+      ],
+      insights: [
+        { type: "good", text: "Four distinct vegetables, real complex carbs, and plant protein with healthy fats from the tahini. This is what a balanced plant-forward meal looks like." },
+        { type: "interaction", text: "The lemon's vitamin C boosts iron absorption from the kale by roughly 5-6x compared to eating greens with no acid present." },
+        { type: "fact", text: "Red cabbage has more vitamin C per gram than oranges, and the color comes from anthocyanins — the same antioxidants in blueberries." },
+      ],
+    },
+    {
+      image: "/healthymeal1.jpg",
+      title: "Sushi Roll Plate",
+      score: 61,
+      variety: 6,
+      nutrition: 6,
+      verdict: "Decent on paper but the white rice does most of the work calorically. The fish is excellent and the seaweed contributes minerals you rarely get elsewhere. Sashimi or brown-rice rolls would push this to the 80s.",
+      ingredients: ["Tuna", "Salmon", "White Rice", "Nori", "Cucumber", "Avocado", "Soy Sauce", "Pickled Ginger"],
+      upgrade: { from: "White Rice", to: "Brown Rice (or sashimi)" },
+      annotations: [
+        { label: "Omega-3 Rich", ingredient: "Salmon", x: 40, y: 45 },
+        { label: "Mineral Rich", ingredient: "Nori", x: 50, y: 35 },
+        { label: "Simple Carbs", ingredient: "White Rice", x: 55, y: 60 },
+      ],
+      insights: [
+        { type: "good", text: "Two omega-3 sources and a serving of nori — the iodine and trace minerals from seaweed are hard to get from any other food." },
+        { type: "missing", title: "More Veggies", text: "Add a side salad or seaweed salad to bring the variety and fiber up.", suggestions: [{ emoji: "🥗", name: "Seaweed Salad" }, { emoji: "🥒", name: "Edamame" }] },
+        { type: "interaction", text: "The acidity of pickled ginger between bites genuinely resets your palate AND helps stimulate digestive enzymes for the protein." },
+        { type: "fact", text: "Wild salmon has nearly 10x the omega-3 to omega-6 ratio of farmed salmon, which is why color and source matter more than people think." },
+      ],
+    },
+  ];
 
   const handleSampleScan = async () => {
     triggerHaptic();
     if (!tryScan()) return;
     try {
-      const res = await fetch("/healthymeal1.jpg");
+      const scansAlreadyUsed = 3 - scansRemaining();
+      let sample;
+      if (scansAlreadyUsed === 0) {
+        // First sample tap always shows the original avocado bowl
+        sample = FIRST_SAMPLE;
+      } else {
+        // 2nd / 3rd tap: pick a random non-repeated sample from the 40-80 pool
+        const usedRaw = sessionStorage.getItem("wholefed_sample_used") || "[]";
+        let used;
+        try { used = JSON.parse(usedRaw); } catch { used = []; }
+        const availableIdx = RANDOM_POOL.map((_, i) => i).filter((i) => !used.includes(i));
+        const pickFrom = availableIdx.length > 0 ? availableIdx : RANDOM_POOL.map((_, i) => i);
+        const choiceIdx = pickFrom[Math.floor(Math.random() * pickFrom.length)];
+        sample = RANDOM_POOL[choiceIdx];
+        try {
+          sessionStorage.setItem("wholefed_sample_used", JSON.stringify([...used, choiceIdx]));
+        } catch {}
+      }
+
+      const res = await fetch(sample.image);
       if (!res.ok) throw new Error("Sample image not found");
       const blob = await res.blob();
       const base64 = await new Promise((resolve) => {
@@ -196,10 +283,10 @@ export default function ScanPage() {
         reader.readAsDataURL(blob);
       });
       const compressed = await compressBase64(base64);
-      // Stash the canned analysis so /results can render it directly,
-      // no API roundtrip, no variability.
+
+      const { image, ...analysis } = sample;
       try {
-        sessionStorage.setItem("wholefed_sample_analysis", JSON.stringify(SAMPLE_ANALYSIS));
+        sessionStorage.setItem("wholefed_sample_analysis", JSON.stringify(analysis));
       } catch {}
       consumeScan();
       await storeAndNavigate(compressed, compressed);

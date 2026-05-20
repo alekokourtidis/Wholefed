@@ -52,7 +52,7 @@ const STEPS = [
     path: "/results",
     selector: '[data-onboarding="score-ring"]',
     title: "Your Meal Score",
-    body: "This is your overall health score. Scroll down to see insights, food interactions, and what a perfect meal looks like.",
+    body: "This is the overall health score. Scroll down to see what's good, what's missing, food interactions, and a personalized note for you.",
     pad: 12,
     allowScroll: true,
   },
