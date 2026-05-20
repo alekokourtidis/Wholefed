@@ -2,6 +2,7 @@ import { Manrope } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "../lib/auth";
 import SubscriptionInit from "./components/SubscriptionInit";
+import OnboardingFlow from "./components/OnboardingFlow";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -37,6 +38,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <SubscriptionInit />
           {children}
+          <OnboardingFlow />
         </AuthProvider>
       </body>
     </html>
