@@ -209,7 +209,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Personalize Your Analysis */}
-        <div className="mb-10">
+        <div className="mb-10" data-onboarding="conditions">
           <h3 className="text-[10px] tracking-[0.15em] uppercase text-[#6b7a5e] font-bold mb-2">
             Personalize Your Analysis
           </h3>
@@ -315,7 +315,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Lab Results */}
-        <div className="mb-10">
+        <div className="mb-10" data-onboarding="bloodwork">
           <div className="flex items-center justify-between mb-2">
             <button
               onClick={() => setShowLabs(!showLabs)}

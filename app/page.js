@@ -40,8 +40,13 @@ export default function ScanPage() {
   // "Scan" tab in the nav rather than the unlabeled shutter circle).
   useEffect(() => {
     const onScan = () => handleShutter();
+    const onSample = () => handleSampleScan();
     window.addEventListener("wholefed:scan", onScan);
-    return () => window.removeEventListener("wholefed:scan", onScan);
+    window.addEventListener("wholefed:trySample", onSample);
+    return () => {
+      window.removeEventListener("wholefed:scan", onScan);
+      window.removeEventListener("wholefed:trySample", onSample);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -194,6 +199,7 @@ export default function ScanPage() {
         <div className="absolute top-28 left-0 w-full z-40 flex flex-col items-center px-6 gap-2">
           <button
             onClick={handleSampleScan}
+            data-onboarding="sample-meal"
             className="px-5 py-2.5 rounded-full bg-[#bcccab] text-[#131313] text-[11px] tracking-[0.2em] uppercase font-semibold shadow-lg active:scale-95 transition-transform"
           >
             Try with a sample meal
@@ -229,6 +235,7 @@ export default function ScanPage() {
         <div className="flex items-center gap-10">
           <button
             onClick={handleGallery}
+            data-onboarding="gallery"
             className="w-10 h-10 rounded-lg bg-white/[0.08] border border-white/[0.12] flex items-center justify-center active:scale-95 transition-transform"
           >
             <span className="material-symbols-outlined text-base text-[#d4cfc4]" style={{ fontVariationSettings: "'wght' 300" }}>
@@ -238,6 +245,7 @@ export default function ScanPage() {
 
           <button
             onClick={handleShutter}
+            data-onboarding="shutter"
             aria-label="Scan meal"
             className="flex flex-col items-center justify-center transition-transform active:scale-90 duration-200"
           >
