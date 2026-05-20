@@ -20,6 +20,20 @@ export default function ScanPage() {
   useEffect(() => {
     setRemaining(scansRemaining());
     setPro(isPro());
+
+    // Request camera permission proactively on launch so the iOS prompt
+    // appears immediately rather than the first time the user taps the
+    // shutter. No-op on web or if already granted/denied.
+    (async () => {
+      if (!isNative()) return;
+      try {
+        const { Camera } = await import("@capacitor/camera");
+        const status = await Camera.checkPermissions();
+        if (status.camera === "prompt" || status.camera === "prompt-with-rationale") {
+          await Camera.requestPermissions({ permissions: ["camera"] });
+        }
+      } catch {}
+    })();
   }, []);
 
   // Listen for scan tab tap from BottomNav (Apple reviewers tap the labeled
