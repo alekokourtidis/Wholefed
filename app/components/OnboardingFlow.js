@@ -52,14 +52,14 @@ const STEPS = [
     path: "/results",
     selector: '[data-onboarding="score-ring"]',
     title: "Your Meal Score",
-    body: "This is the overall health score. Built from how complete the macros are, processing level, and what's missing.",
+    body: "Overall health score for this meal. Built from macro completeness, processing level, and what's missing.",
     pad: 12,
   },
   {
     path: "/results",
-    selector: '[data-onboarding="verdict"]',
-    title: "What's Going On",
-    body: "A one-line read on what's working in this meal and what's holding the score back. Keep scrolling to see the breakdown.",
+    selector: '[data-onboarding="bars"]',
+    title: "Variety & Nutrition",
+    body: "Two sub-scores: variety is how many distinct food groups are present, nutrition is the overall density. Both feed the main score.",
     pad: 8,
   },
   {
@@ -159,6 +159,24 @@ export default function OnboardingFlow() {
     return () => clearTimeout(t);
   }, [active, step, pathname, current]);
 
+  // Lock user-initiated scrolling while onboarding is active so the tooltip
+  // and spotlight never drift out of place. Programmatic scrollIntoView (used
+  // above to move between sections) is unaffected.
+  useEffect(() => {
+    if (!active) return;
+    const prevent = (e) => {
+      // Allow scroll/touch inside the tooltip card itself
+      if (e.target.closest?.("[data-onboarding-card]")) return;
+      e.preventDefault();
+    };
+    document.addEventListener("touchmove", prevent, { passive: false });
+    document.addEventListener("wheel", prevent, { passive: false });
+    return () => {
+      document.removeEventListener("touchmove", prevent);
+      document.removeEventListener("wheel", prevent);
+    };
+  }, [active]);
+
   if (!active || !current) return null;
   if (!rect) return null;
 
@@ -249,7 +267,7 @@ export default function OnboardingFlow() {
           transition: "top 360ms cubic-bezier(0.4, 0, 0.2, 1), bottom 360ms cubic-bezier(0.4, 0, 0.2, 1), left 360ms cubic-bezier(0.4, 0, 0.2, 1)",
         }}
       >
-        <div className="bg-[#1c2623]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-5 space-y-3 shadow-2xl">
+        <div data-onboarding-card className="bg-[#1c2623]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-5 space-y-3 shadow-2xl">
           <h3 className="text-[16px] font-light text-[#e5e2e1] tracking-wide">{current.title}</h3>
           <p className="text-[13px] font-light text-[#acabaa] leading-relaxed">{current.body}</p>
           <div className="flex items-center justify-between pt-1">

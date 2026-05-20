@@ -694,7 +694,7 @@ export default function ResultsPage() {
           )}
 
           {/* Variety + Nutrition bars */}
-          <div className="space-y-5 px-2">
+          <div className="space-y-5 px-2" data-onboarding="bars">
             {[
               { label: "Variety", value: variety, icon: "spa" },
               { label: "Nutrition", value: nutrition, icon: "bolt" },
