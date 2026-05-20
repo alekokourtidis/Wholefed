@@ -76,6 +76,12 @@ INGREDIENT DETECTION — Be exhaustive:
 - If you see grains mixed with herbs (like tabbouleh, couscous), identify the dish, not just "grains".
 - If something could be multiple things, list the most likely identification.
 - Return ALL ingredients in the "ingredients" array, not just the top 3-4. Aim for completeness.
+
+PRODUCE / VEGETABLE CLASSIFICATION — Apply this rule strictly:
+- Mushrooms (any kind), tomatoes, avocado, olives, peppers (bell, chili), eggplant, squash, zucchini, and cucumber ALL count as vegetables/produce for the "missing vegetables" check, even though botanically some are fruits or fungi.
+- Before generating a "missing vegetables" or "missing produce" insight, scan your own ingredients list. If ANY of the above are present, do NOT flag missing vegetables.
+- Leafy greens, cruciferous (broccoli, cauliflower), root vegetables (carrots, beets), and onions/garlic also count.
+- Only flag "missing vegetables" if the plate is GENUINELY all meat/grain/dairy with zero produce items above.
 ${personalization}
 
 Return a JSON object with exactly this structure:
@@ -188,7 +194,7 @@ Return ONLY valid JSON. No markdown. No explanation.`;
         },
       ],
       max_tokens: 2000,
-      temperature: 0,
+      temperature: 0.55,
     }),
   });
 
