@@ -292,14 +292,23 @@ export default function ProfilePage() {
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => {
                   const next = !conditionScoreOn;
                   setConditionScoreOn(next);
                   setConditionScoreEnabled(next);
                 }}
-                className={`relative w-10 h-6 rounded-full transition-colors flex-shrink-0 mt-0.5 ${conditionScoreOn ? "bg-[#6b7a5e]" : "bg-white/[0.08]"}`}
+                aria-pressed={conditionScoreOn}
+                className="relative w-11 h-6 rounded-full transition-colors flex-shrink-0 mt-0.5 border border-white/10"
+                style={{ backgroundColor: conditionScoreOn ? "#6b7a5e" : "rgba(255,255,255,0.04)" }}
               >
-                <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform ${conditionScoreOn ? "translate-x-[18px]" : "translate-x-0.5"}`} />
+                <span
+                  className="absolute top-0.5 w-5 h-5 rounded-full transition-all"
+                  style={{
+                    left: conditionScoreOn ? "22px" : "2px",
+                    backgroundColor: conditionScoreOn ? "#ffffff" : "#8a8578",
+                  }}
+                />
               </button>
             </div>
           )}
