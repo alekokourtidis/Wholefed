@@ -138,9 +138,51 @@ export default function ScanPage() {
     await storeAndNavigate(url, base64);
   };
 
-  // Demo flow — uses a built-in sample meal so the full scan→results flow
-  // can be tested without a real camera (works on simulators and for App
-  // Store reviewers who don't have food in front of them).
+  // Demo flow — uses a built-in sample meal AND a hardcoded "perfect"
+  // analysis so the demo always shows what a top-tier meal looks like.
+  // No API call, no variability, instant result. Used in onboarding and
+  // by Apple reviewers / users who do not have food in front of them.
+  const SAMPLE_ANALYSIS = {
+    title: "Wild Salmon Power Bowl",
+    score: 100,
+    variety: 10,
+    nutrition: 10,
+    verdict: "A textbook perfect meal: complete protein from wild salmon, healthy fats from avocado and olive oil, slow-burning carbs from quinoa, plus a rainbow of vegetables and fresh herbs. Hits every macro, zero processed elements.",
+    ingredients: [
+      "Wild Salmon",
+      "Quinoa",
+      "Avocado",
+      "Broccoli",
+      "Cherry Tomatoes",
+      "Baby Spinach",
+      "Olive Oil",
+      "Lemon",
+      "Fresh Dill",
+      "Pumpkin Seeds",
+    ],
+    upgrade: null,
+    annotations: [
+      { label: "Omega-3 Rich", ingredient: "Wild Salmon", x: 35, y: 45 },
+      { label: "Healthy Fats", ingredient: "Avocado", x: 65, y: 40 },
+      { label: "Complete Carbs", ingredient: "Quinoa", x: 50, y: 70 },
+      { label: "Cruciferous", ingredient: "Broccoli", x: 25, y: 70 },
+    ],
+    insights: [
+      {
+        type: "good",
+        text: "Every macro is covered. Protein, healthy fats, complex carbs, and a diverse mix of vegetables — the gold standard for a balanced meal.",
+      },
+      {
+        type: "interaction",
+        text: "The fat in the avocado boosts absorption of the carotenoids in the tomatoes and spinach by up to 4x compared to eating them on their own.",
+      },
+      {
+        type: "fact",
+        text: "Quinoa is one of the only plant foods that contains all nine essential amino acids, making it a complete protein on par with animal sources.",
+      },
+    ],
+  };
+
   const handleSampleScan = async () => {
     triggerHaptic();
     if (!tryScan()) return;
@@ -154,6 +196,11 @@ export default function ScanPage() {
         reader.readAsDataURL(blob);
       });
       const compressed = await compressBase64(base64);
+      // Stash the canned analysis so /results can render it directly,
+      // no API roundtrip, no variability.
+      try {
+        sessionStorage.setItem("wholefed_sample_analysis", JSON.stringify(SAMPLE_ANALYSIS));
+      } catch {}
       consumeScan();
       await storeAndNavigate(compressed, compressed);
     } catch (err) {

@@ -43,7 +43,7 @@ const STEPS = [
     path: "/",
     selector: '[data-onboarding="sample-meal"]',
     title: "See It In Action",
-    body: "Let's try a sample meal so you can see the full analysis flow before you scan your own.",
+    body: "Let's try a sample meal so you can see exactly what a top-tier analysis looks like.",
     pad: 12,
     ctaText: "Scan sample meal",
     ctaAction: "trySample",
@@ -52,18 +52,18 @@ const STEPS = [
     path: "/results",
     selector: '[data-onboarding="score-ring"]',
     title: "Your Meal Score",
-    body: "This is your overall health score for the meal. Scroll down to see insights, missing nutrients, and food interactions.",
+    body: "This is your overall health score. Scroll down to see insights, food interactions, and what a perfect meal looks like.",
     pad: 12,
+    allowScroll: true,
   },
   {
     path: "/",
     selector: '[data-onboarding="shutter"]',
-    title: "Now Try Your Own",
-    body: "You're all set. Tap the shutter to scan a meal in front of you right now.",
+    title: "Ready When You Are",
+    body: "That is the full flow. Whenever you want to scan your own meal, tap this shutter. No pressure to do it right now.",
     pad: 16,
     final: true,
-    ctaText: "Open camera",
-    ctaAction: "triggerShutter",
+    ctaText: "Got it",
   },
 ];
 
@@ -73,7 +73,6 @@ export default function OnboardingFlow() {
   const [active, setActive] = useState(false);
   const [step, setStep] = useState(0);
   const [rect, setRect] = useState(null);
-  const [visible, setVisible] = useState(false);
   const rafRef = useRef(null);
 
   useEffect(() => {
@@ -86,25 +85,15 @@ export default function OnboardingFlow() {
 
   const current = active ? STEPS[step] : null;
 
+  // Measure target; KEEP last known rect if target isn't found yet so the
+  // spotlight does not disappear during route transitions (eliminates flicker).
   const measure = useCallback(() => {
     if (!current) return;
-    if (current.path !== pathname) {
-      setVisible(false);
-      setRect(null);
-      return;
-    }
+    if (current.path !== pathname) return;
     const el = document.querySelector(current.selector);
-    if (!el) {
-      setVisible(false);
-      setRect(null);
-      return;
-    }
+    if (!el) return;
     const r = el.getBoundingClientRect();
-    if (r.width === 0 || r.height === 0) {
-      setVisible(false);
-      setRect(null);
-      return;
-    }
+    if (r.width === 0 || r.height === 0) return;
     setRect((prev) => {
       const next = { top: r.top, left: r.left, width: r.width, height: r.height };
       if (
@@ -129,7 +118,7 @@ export default function OnboardingFlow() {
     };
     window.addEventListener("resize", onChange);
     window.addEventListener("scroll", onChange, true);
-    const interval = setInterval(measure, 200);
+    const interval = setInterval(measure, 150);
     return () => {
       window.removeEventListener("resize", onChange);
       window.removeEventListener("scroll", onChange, true);
@@ -138,17 +127,7 @@ export default function OnboardingFlow() {
     };
   }, [active, step, pathname, measure]);
 
-  // Fade-in once the rect is known
-  useEffect(() => {
-    if (rect) {
-      const t = setTimeout(() => setVisible(true), 30);
-      return () => clearTimeout(t);
-    }
-    setVisible(false);
-  }, [rect]);
-
   if (!active || !current) return null;
-  if (current.path !== pathname) return null;
   if (!rect) return null;
 
   const finish = () => {
@@ -158,19 +137,9 @@ export default function OnboardingFlow() {
 
   const handleNext = () => {
     if (current.ctaAction === "trySample") {
-      // Advance step now so we are ready for /results, then fire scan
-      setVisible(false);
-      setRect(null);
       setStep(step + 1);
       setTimeout(() => {
         window.dispatchEvent(new CustomEvent("wholefed:trySample"));
-      }, 120);
-      return;
-    }
-    if (current.ctaAction === "triggerShutter") {
-      finish();
-      setTimeout(() => {
-        window.dispatchEvent(new CustomEvent("wholefed:scan"));
       }, 80);
       return;
     }
@@ -180,15 +149,10 @@ export default function OnboardingFlow() {
     }
     const nextIndex = step + 1;
     const nextStep = STEPS[nextIndex];
-    setVisible(false);
-    setRect(null);
-    // give the fade-out a beat before navigating
-    setTimeout(() => {
-      setStep(nextIndex);
-      if (nextStep.path !== pathname) {
-        router.push(nextStep.path);
-      }
-    }, 200);
+    setStep(nextIndex);
+    if (nextStep.path !== pathname) {
+      router.push(nextStep.path);
+    }
   };
 
   const handleSkip = () => finish();
@@ -212,16 +176,12 @@ export default function OnboardingFlow() {
   const cutoutRadius = 16;
 
   return (
-    <div
-      className="fixed inset-0 z-[55] pointer-events-none"
-      style={{
-        opacity: visible ? 1 : 0,
-        transition: "opacity 320ms ease",
-      }}
-    >
-      {/* Dim everywhere except the cutout via giant box-shadow trick */}
+    <div className="fixed inset-0 z-[55] pointer-events-none">
+      {/* Spotlight ring with box-shadow trick. pointer-events: none so
+          taps and scroll pass through to the underlying app. The tooltip
+          card below captures clicks for the Got it / Skip buttons. */}
       <div
-        className="fixed pointer-events-auto"
+        className="fixed pointer-events-none"
         style={{
           top: cutoutTop,
           left: cutoutLeft,
@@ -267,7 +227,7 @@ export default function OnboardingFlow() {
               onClick={handleNext}
               className="px-4 py-2 rounded-lg bg-[#6b7a5e] text-white text-[12px] font-medium tracking-wide active:scale-95 transition-transform"
             >
-              {current.final || current.ctaText ? current.ctaText || "Done" : "Got it"}
+              {current.ctaText || "Got it"}
             </button>
           </div>
         </div>

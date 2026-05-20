@@ -408,6 +408,35 @@ export default function ResultsPage() {
     const base64 = sessionStorage.getItem("wholefed_image_base64") || window.__wholefed_base64;
     setImageUrl(img || "/healthymeal1.jpg");
 
+    // Sample meal short-circuit — onboarding / "Try with a sample meal"
+    // stashes a canned analysis so we render an idealized result instantly
+    // without spending an API call or risking variability.
+    let sampleAnalysis = null;
+    try {
+      const raw = sessionStorage.getItem("wholefed_sample_analysis");
+      if (raw) sampleAnalysis = JSON.parse(raw);
+    } catch {}
+    if (sampleAnalysis) {
+      setAnalysis(sampleAnalysis);
+      saveScan({
+        id: Date.now(),
+        name: sampleAnalysis.title,
+        date: new Date().toISOString(),
+        score: sampleAnalysis.score,
+        variety: sampleAnalysis.variety,
+        nutrition: sampleAnalysis.nutrition,
+        image: (base64 && base64.startsWith("data:")) ? base64 : (img || "/healthymeal1.jpg"),
+        verdict: sampleAnalysis.verdict,
+        ingredients: sampleAnalysis.ingredients,
+        insights: sampleAnalysis.insights,
+        annotations: sampleAnalysis.annotations,
+        upgrade: sampleAnalysis.upgrade,
+      }, user?.id);
+      setLoading(false);
+      sessionStorage.removeItem("wholefed_sample_analysis");
+      return;
+    }
+
     const analyzeImage = async () => {
       let imageData = base64;
       if (!imageData) {
