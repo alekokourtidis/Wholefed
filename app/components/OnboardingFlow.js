@@ -86,6 +86,7 @@ export default function OnboardingFlow() {
   const [active, setActive] = useState(false);
   const [step, setStep] = useState(0);
   const [rect, setRect] = useState(null);
+  const [ready, setReady] = useState(false);
   const rafRef = useRef(null);
 
   useEffect(() => {
@@ -122,42 +123,68 @@ export default function OnboardingFlow() {
     });
   }, [current, pathname]);
 
+  // Scroll-then-show: each time the step or path changes, hide the overlay,
+  // scroll the target into view, wait for the scroll to settle, THEN measure
+  // and reveal the spotlight + tooltip in their final positions. Avoids the
+  // "popup floats off after scroll" bug.
+  useEffect(() => {
+    if (!active || !current) return;
+    if (current.path !== pathname) {
+      setReady(false);
+      return;
+    }
+    let cancelled = false;
+    setReady(false);
+    const sequence = async () => {
+      // small grace period for the DOM to settle after route transitions
+      await new Promise((r) => setTimeout(r, 80));
+      if (cancelled) return;
+      const el = document.querySelector(current.selector);
+      if (!el) {
+        // poll for the target appearing (e.g. /results still loading)
+        for (let i = 0; i < 40 && !cancelled; i++) {
+          await new Promise((r) => setTimeout(r, 100));
+          const e2 = document.querySelector(current.selector);
+          if (e2) break;
+        }
+      }
+      const target = document.querySelector(current.selector);
+      if (!target || cancelled) return;
+      const r = target.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const offscreen = r.top < 80 || r.bottom > vh - 260;
+      if (offscreen) {
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        await new Promise((r) => setTimeout(r, 520));
+      }
+      if (cancelled) return;
+      measure();
+      // brief settle so the spotlight ring's CSS transition does not
+      // overlap with the layout finishing
+      await new Promise((r) => setTimeout(r, 60));
+      if (!cancelled) setReady(true);
+    };
+    sequence();
+    return () => {
+      cancelled = true;
+    };
+  }, [active, step, pathname, current, measure]);
+
+  // Lightweight tracking only — keep rect updated on resize. We deliberately
+  // do NOT re-measure on scroll while ready=true, because scroll is locked
+  // and re-measuring during programmatic scroll causes the popup to drift.
   useEffect(() => {
     if (!active) return;
-    measure();
-    const onChange = () => {
+    const onResize = () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = requestAnimationFrame(measure);
     };
-    window.addEventListener("resize", onChange);
-    window.addEventListener("scroll", onChange, true);
-    const interval = setInterval(measure, 150);
+    window.addEventListener("resize", onResize);
     return () => {
-      window.removeEventListener("resize", onChange);
-      window.removeEventListener("scroll", onChange, true);
-      clearInterval(interval);
+      window.removeEventListener("resize", onResize);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [active, step, pathname, measure]);
-
-  // When the step changes (and the new target's path matches the current
-  // path), scroll the target into view so the user actually sees it. Avoids
-  // the "spotlight is below the fold and the user has no idea" problem.
-  useEffect(() => {
-    if (!active || !current) return;
-    if (current.path !== pathname) return;
-    const t = setTimeout(() => {
-      const el = document.querySelector(current.selector);
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const offscreen = r.top < 80 || r.bottom > vh - 240;
-      if (offscreen) {
-        el.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    }, 200);
-    return () => clearTimeout(t);
-  }, [active, step, pathname, current]);
+  }, [active, measure]);
 
   // Lock user-initiated scrolling while onboarding is active so the tooltip
   // and spotlight never drift out of place. Programmatic scrollIntoView (used
@@ -180,10 +207,9 @@ export default function OnboardingFlow() {
   if (!active || !current) return null;
   if (!rect) return null;
 
-  // Hide (via opacity) when we're between routes or the rect is for a
-  // different path than the current one. This eliminates the brief moment
-  // where the spotlight sits at stale coordinates during navigation.
-  const pathReady = current.path === pathname;
+  // Hide overlay until we've scrolled the target into view AND measured
+  // the final rect. This is the fix for the popup drifting after auto-scroll.
+  const pathReady = current.path === pathname && ready;
 
   const finish = () => {
     localStorage.setItem("wholefed_onboarding_done", "true");
