@@ -130,6 +130,11 @@ export default function OnboardingFlow() {
   if (!active || !current) return null;
   if (!rect) return null;
 
+  // Hide (via opacity) when we're between routes or the rect is for a
+  // different path than the current one. This eliminates the brief moment
+  // where the spotlight sits at stale coordinates during navigation.
+  const pathReady = current.path === pathname;
+
   const finish = () => {
     localStorage.setItem("wholefed_onboarding_done", "true");
     setActive(false);
@@ -176,7 +181,13 @@ export default function OnboardingFlow() {
   const cutoutRadius = 16;
 
   return (
-    <div className="fixed inset-0 z-[55] pointer-events-none">
+    <div
+      className="fixed inset-0 z-[55] pointer-events-none"
+      style={{
+        opacity: pathReady ? 1 : 0,
+        transition: "opacity 220ms ease",
+      }}
+    >
       {/* Spotlight ring with box-shadow trick. pointer-events: none so
           taps and scroll pass through to the underlying app. The tooltip
           card below captures clicks for the Got it / Skip buttons. */}
