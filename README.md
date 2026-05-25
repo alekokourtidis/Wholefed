@@ -1,6 +1,19 @@
-# Wholefed
+# Wholefed 📱🥗
 
-AI-powered food scanner that tells you how clean your meal is. Scan your plate, get a tier (Pure / Clean / Fair / Rough / Toxic), understand what's good, what's not, and what's missing — in plain English. Not a calorie counter. Not a diet app. Just: is this food actually good for you?
+**AI-Powered Food Intelligence Platform**
+
+Wholefed revolutionizes nutrition analysis by using computer vision and AI to provide instant, intelligent feedback on meal quality. Simply scan your plate and receive personalized health insights that go far beyond calories.
+
+![Wholefed Demo](https://via.placeholder.com/600x400/2c3e50/ecf0f1?text=Wholefed+Scan+Demo)
+
+## ✨ Key Features
+
+- **AI Vision Analysis** - Instant meal recognition using GPT-4o Vision
+- **Smart Health Scoring** - Dual-axis evaluation (Variety + Nutrition)  
+- **Nutrient Interaction Engine** - Identifies how foods work together
+- **Personalized Recommendations** - Based on health conditions and patterns
+- **Educational Insights** - Rotating "Did You Know" facts for each scan
+- **Pattern Recognition** - Tracks eating habits over time
 
 ## What It Is
 
