@@ -250,50 +250,50 @@ function normalizeInsights(raw, hasUpgrade, analysisData) {
   return sorted.filter((item) => order.includes(item.type));
 }
 
-function IngredientsRow({ items, onAdd }) {
-  const ref = useRef(null);
-  const [showRight, setShowRight] = useState(false);
-  const [showLeft, setShowLeft] = useState(false);
-  const checkScroll = () => {
-    if (!ref.current) return;
-    const { scrollLeft, scrollWidth, clientWidth } = ref.current;
-    setShowLeft(scrollLeft > 10);
-    setShowRight(scrollWidth > clientWidth && scrollLeft < scrollWidth - clientWidth - 10);
-  };
-  useEffect(() => { checkScroll(); }, []);
-  const scroll = (dir) => {
-    if (ref.current) {
-      ref.current.scrollBy({ left: dir * 150, behavior: "smooth" });
-      setTimeout(checkScroll, 300);
-    }
-  };
+function IngredientsRow({ items, onAdd, onRemove, editing, setEditing }) {
   return (
-    <div className="relative">
-      {showLeft && (
-        <button onClick={() => scroll(-1)} className="absolute left-0 top-0 bottom-0 z-10 w-8 flex items-center justify-center bg-gradient-to-r from-[#131313] to-transparent">
-          <span className="material-symbols-outlined text-[#8a8578]/50 text-sm">chevron_left</span>
+    <div className="space-y-2">
+      <div className="flex items-center justify-between px-1">
+        <span className="text-[10px] tracking-[0.25em] font-bold text-[#8a8578] uppercase">
+          Detected Ingredients
+        </span>
+        <button
+          onClick={() => setEditing(!editing)}
+          className="text-[10px] tracking-[0.15em] uppercase font-medium text-[#bcccab] px-2 py-1 active:opacity-60"
+        >
+          {editing ? "Done" : "Edit"}
         </button>
-      )}
-      <div ref={ref} onScroll={checkScroll} className="overflow-x-auto no-scrollbar">
-        <div className="flex gap-2 w-max items-center">
-          {items.map((ing, i) => (
-            <span key={i} className="text-[11px] font-light text-[#8a8578]/60 px-3 py-1 rounded-full border border-white/[0.04] whitespace-nowrap">
-              {ing}
-            </span>
-          ))}
-          <button
-            onClick={onAdd}
-            className="w-7 h-7 rounded-full border border-white/[0.06] flex items-center justify-center flex-shrink-0 active:bg-white/[0.04] transition-colors"
-          >
-            <span className="material-symbols-outlined text-[#8a8578]/40 text-sm">add</span>
-          </button>
-        </div>
       </div>
-      {showRight && (
-        <button onClick={() => scroll(1)} className="absolute right-0 top-0 bottom-0 z-10 w-8 flex items-center justify-center bg-gradient-to-l from-[#131313] to-transparent">
-          <span className="material-symbols-outlined text-[#8a8578]/50 text-sm">chevron_right</span>
+      <div className="flex flex-wrap gap-2">
+        {items.map((ing, i) => (
+          <span
+            key={i}
+            className="text-[12px] font-light text-[#d4cfc4] px-3 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.02] inline-flex items-center gap-1.5"
+          >
+            {ing}
+            {editing && (
+              <button
+                onClick={() => onRemove(ing)}
+                className="text-[#8a8578] hover:text-red-400 active:scale-90 transition-all"
+                aria-label={`Remove ${ing}`}
+              >
+                <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'wght' 400" }}>
+                  close
+                </span>
+              </button>
+            )}
+          </span>
+        ))}
+        <button
+          onClick={onAdd}
+          className="text-[12px] font-medium text-[#bcccab] px-3 py-1.5 rounded-full border border-[#bcccab]/30 bg-[#6b7a5e]/10 active:scale-95 transition-all inline-flex items-center gap-1.5"
+        >
+          <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'wght' 400" }}>
+            add
+          </span>
+          Add ingredient
         </button>
-      )}
+      </div>
     </div>
   );
 }
@@ -364,6 +364,8 @@ export default function ResultsPage() {
   const [fact, setFact] = useState("");
   const [frostAmount, setFrostAmount] = useState(0);
   const [extraIngredients, setExtraIngredients] = useState([]);
+  const [removedIngredients, setRemovedIngredients] = useState([]);
+  const [editingIngredients, setEditingIngredients] = useState(false);
   const [showAddIngredient, setShowAddIngredient] = useState(false);
   const [userConditions, setUserConditions] = useState([]);
 
@@ -406,7 +408,10 @@ export default function ResultsPage() {
     // Try sessionStorage first, then window global fallback
     const img = sessionStorage.getItem("wholefed_image") || window.__wholefed_image;
     const base64 = sessionStorage.getItem("wholefed_image_base64") || window.__wholefed_base64;
-    setImageUrl(img || "/healthymeal1.jpg");
+    const textDescription = sessionStorage.getItem("wholefed_text_description");
+    const isTextScanPreCheck =
+      !!textDescription || (typeof base64 === "string" && base64.startsWith("text:"));
+    setImageUrl(isTextScanPreCheck ? null : (img || "/healthymeal1.jpg"));
 
     // Sample meal short-circuit — onboarding / "Try with a sample meal"
     // stashes a canned analysis so we render an idealized result instantly
@@ -439,7 +444,10 @@ export default function ResultsPage() {
 
     const analyzeImage = async () => {
       let imageData = base64;
-      if (!imageData) {
+      const isTextScan = isTextScanPreCheck;
+      if (isTextScan) {
+        // Already set imageUrl to null above
+      } else if (!imageData) {
         // No uploaded image — use demo image as last resort
         const res = await fetch("/healthymeal1.jpg");
         if (!res.ok) throw new Error("Sample image not found");
@@ -460,10 +468,13 @@ export default function ResultsPage() {
         if (labsEnabled) {
           try { labs = JSON.parse(localStorage.getItem("wholefed_labs")); } catch {}
         }
+        const body = isTextScan
+          ? { description: textDescription || base64?.replace(/^text:/, ""), conditions, profile, labs, conditionScoreEnabled }
+          : { image: imageData, conditions, profile, labs, conditionScoreEnabled };
         const res = await fetch("/api/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image: imageData, conditions, profile, labs, conditionScoreEnabled }),
+          body: JSON.stringify(body),
         });
         const data = await res.json();
         if (data.error) {
@@ -566,11 +577,34 @@ export default function ResultsPage() {
     >
       {/* Sticky photo at top */}
       <div className="sticky top-0 h-[45vh] w-full z-0 overflow-hidden">
-        <img
-          src={imageUrl}
-          alt="Your meal"
-          className="w-full h-full object-cover"
-        />
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt="Your meal"
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1c2623] via-[#0f1a16] to-[#131313] px-8">
+            <div className="text-center space-y-3 max-w-md">
+              <span className="material-symbols-outlined text-[#bcccab] text-4xl" style={{ fontVariationSettings: "'wght' 200" }}>
+                edit_note
+              </span>
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[#bcccab]/70">
+                Text scan
+              </p>
+              {(() => {
+                let desc = "";
+                try { desc = sessionStorage.getItem("wholefed_text_description") || ""; } catch {}
+                if (!desc) return null;
+                return (
+                  <p className="text-[14px] font-light text-[#d4cfc4] italic leading-relaxed">
+                    &ldquo;{desc}&rdquo;
+                  </p>
+                );
+              })()}
+            </div>
+          </div>
+        )}
         {/* Frost overlay */}
         {frostAmount > 0 && (
           <div
@@ -726,8 +760,17 @@ export default function ResultsPage() {
           {/* Detected Ingredients Strip */}
           {ingredients && ingredients.length > 0 && (
             <IngredientsRow
-              items={[...ingredients, ...extraIngredients]}
+              items={[...ingredients, ...extraIngredients].filter((i) => !removedIngredients.includes(i))}
               onAdd={() => setShowAddIngredient(true)}
+              onRemove={(ing) => {
+                if (extraIngredients.includes(ing)) {
+                  setExtraIngredients((prev) => prev.filter((i) => i !== ing));
+                } else {
+                  setRemovedIngredients((prev) => [...prev, ing]);
+                }
+              }}
+              editing={editingIngredients}
+              setEditing={setEditingIngredients}
             />
           )}
 

@@ -251,6 +251,37 @@ export default function ScanPage() {
     },
   ];
 
+  // Text-only flow: user types a meal description (no image). Sends to
+  // /api/analyze with description instead of image; results page treats it
+  // as a text scan.
+  const [showTextEntry, setShowTextEntry] = useState(false);
+  const [textInput, setTextInput] = useState("");
+  const [textSubmitting, setTextSubmitting] = useState(false);
+
+  const submitTextDescription = async () => {
+    const desc = textInput.trim();
+    if (!desc) return;
+    if (!tryScan()) return;
+    setTextSubmitting(true);
+    try {
+      // Stash the description as the "image" payload via a special prefix
+      // that /results recognizes and forwards to /api/analyze as text.
+      const payload = `text:${desc}`;
+      try {
+        sessionStorage.setItem("wholefed_image", "");
+        sessionStorage.setItem("wholefed_image_base64", payload);
+        sessionStorage.setItem("wholefed_text_description", desc);
+      } catch {}
+      consumeScan();
+      router.push("/results");
+    } catch (err) {
+      console.warn("Text scan error:", err);
+    }
+    setTextSubmitting(false);
+    setShowTextEntry(false);
+    setTextInput("");
+  };
+
   const handleSampleScan = async () => {
     triggerHaptic();
     if (!tryScan()) return;
@@ -391,9 +422,56 @@ export default function ScanPage() {
             </span>
           </button>
 
-          <div className="w-10 h-10" />
+          <button
+            onClick={() => setShowTextEntry(true)}
+            className="w-10 h-10 rounded-lg bg-white/[0.08] border border-white/[0.12] flex items-center justify-center active:scale-95 transition-transform"
+            aria-label="Type meal description"
+          >
+            <span className="material-symbols-outlined text-base text-[#d4cfc4]" style={{ fontVariationSettings: "'wght' 300" }}>
+              edit
+            </span>
+          </button>
         </div>
       </div>
+
+      {/* Text entry modal — type a meal description instead of photographing it */}
+      {showTextEntry && (
+        <div className="fixed inset-0 z-[70] bg-black/85 backdrop-blur-xl flex items-end sm:items-center justify-center px-4 pb-8">
+          <div className="w-full max-w-md bg-[#1c2623] border border-white/10 rounded-3xl p-6 space-y-4">
+            <div>
+              <h2 className="text-lg font-light text-[#e5e2e1] mb-1">Describe Your Meal</h2>
+              <p className="text-[12px] font-light text-[#8a8578]">
+                Type what you ate. The more specific, the better the analysis.
+              </p>
+            </div>
+            <textarea
+              value={textInput}
+              onChange={(e) => setTextInput(e.target.value)}
+              placeholder="e.g. Grilled salmon with quinoa, roasted broccoli, avocado slices, and olive oil"
+              autoFocus
+              rows={5}
+              maxLength={500}
+              className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 text-[14px] font-light text-[#d4cfc4] placeholder:text-[#8a8578]/40 outline-none focus:border-[#6b7a5e]/40 transition-colors resize-none"
+            />
+            <p className="text-[10px] text-right text-[#8a8578]/40">{textInput.length}/500</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => { setShowTextEntry(false); setTextInput(""); }}
+                className="flex-1 py-3 rounded-xl bg-white/[0.04] text-[#d4cfc4] text-[13px] font-medium tracking-wide active:scale-[0.98] transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitTextDescription}
+                disabled={!textInput.trim() || textSubmitting}
+                className="flex-1 py-3 rounded-xl bg-[#6b7a5e] text-white text-[13px] font-medium tracking-wide active:scale-[0.98] transition-all disabled:opacity-40"
+              >
+                {textSubmitting ? "Analyzing..." : "Analyze"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <BottomNav />
     </div>

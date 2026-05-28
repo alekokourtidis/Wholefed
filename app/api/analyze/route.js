@@ -13,10 +13,12 @@ async function hashImage(image, conditions, profile) {
 }
 
 export async function POST(request) {
-  const { image, conditions, profile, labs, conditionScoreEnabled } = await request.json();
+  const { image, conditions, profile, labs, conditionScoreEnabled, description } = await request.json();
+  const isTextMode = !!description && (!image || image.startsWith("text:"));
 
-  // Check cache — same image + same conditions + same toggle = same result
-  const cacheKey = await hashImage(image, conditions, profile) + (conditionScoreEnabled ? ":cs1" : ":cs0");
+  // Check cache — same image/text + same conditions + same toggle = same result
+  const cacheBase = isTextMode ? `text:${description}` : image;
+  const cacheKey = await hashImage(cacheBase, conditions, profile) + (conditionScoreEnabled ? ":cs1" : ":cs0");
   if (analysisCache.has(cacheKey)) {
     return Response.json(analysisCache.get(cacheKey));
   }
@@ -71,21 +73,41 @@ SCORE ADJUSTMENT FOR CONDITIONS: ${conditionScoreEnabled
     personalization += `\nUse these REAL lab values to personalize your analysis. Reference their SPECIFIC numbers when relevant (e.g., "With your LDL at 165, the saturated fat here isn't ideal"). The "condition" insight card should reference bloodwork findings.`;
   }
 
-  const prompt = `You are an elite nutritionist analyzing a meal photo. Be precise, factual, and specific to what you actually see. No filler. No motivational fluff.
+  const prompt = `You are an elite nutritionist ${isTextMode ? "analyzing a meal that the user described in text" : "analyzing a meal photo"}. Be precise, factual, and specific to what you actually ${isTextMode ? "read in the description" : "see in the photo"}. No filler. No motivational fluff.
 
 INGREDIENT DETECTION — Be exhaustive:
-- Look VERY carefully at every distinct food component on the plate. Most meals have 5-10+ ingredients.
+- ${isTextMode ? "Treat every food the user named as PRESENT. Do not add foods they didn't mention. Do not omit foods they did mention." : "Look VERY carefully at every distinct food component on the plate. Most meals have 5-10+ ingredients."}
 - Identify specific preparations: "Scrambled Eggs" not just "Eggs", "Smoked Salmon" not just "Fish", "Tabbouleh" not just "Grains".
-- Look for sauces, condiments, dips, and garnishes — they count. Schug, hummus, tahini, pesto, salsa, etc.
+- ${isTextMode ? "Sauces and condiments the user mentioned count." : "Look for sauces, condiments, dips, and garnishes — they count. Schug, hummus, tahini, pesto, salsa, etc."}
 - If you see grains mixed with herbs (like tabbouleh, couscous), identify the dish, not just "grains".
-- If something could be multiple things, list the most likely identification.
 - Return ALL ingredients in the "ingredients" array, not just the top 3-4. Aim for completeness.
 
+${isTextMode ? "" : `HIGH-MISS ITEMS — Pay extra attention to these, they are commonly missed:
+- Butternut squash, acorn squash, kabocha squash, delicata squash, pumpkin (orange/yellow flesh, often roasted in cubes or slices) — count as COMPLEX CARBS not vegetables.
+- Sweet potato (orange/yellow flesh, often roasted) — complex carb.
+- Leafy greens (spinach, kale, arugula, baby greens, watercress) — these are often UNDERNEATH other items or piled to the side. Specifically scan for green leaves at the edges of the plate or peeking out from under proteins.
+- Fresh herbs (parsley, cilantro, dill, basil, chives, mint) — small flecks of green that add real flavor; don't miss them.
+- Microgreens, sprouts, alfalfa — easy to miss; look for thin shoots.
+- Berries (blueberries, blackberries, raspberries, strawberries, pomegranate seeds) — small round colorful items.
+- Seeds (sesame, pumpkin, sunflower, chia, flax) — tiny but nutritionally significant.
+- Cheese crumbles vs sauce — distinguish.
+- Whole grains (quinoa, farro, brown rice, wild rice) vs white grains — color and texture matter.
+`}
+
 PRODUCE / VEGETABLE CLASSIFICATION — Apply this rule strictly:
-- Mushrooms (any kind), tomatoes, avocado, olives, peppers (bell, chili), eggplant, squash, zucchini, and cucumber ALL count as vegetables/produce for the "missing vegetables" check, even though botanically some are fruits or fungi.
-- Before generating a "missing vegetables" or "missing produce" insight, scan your own ingredients list. If ANY of the above are present, do NOT flag missing vegetables.
-- Leafy greens, cruciferous (broccoli, cauliflower), root vegetables (carrots, beets), and onions/garlic also count.
-- Only flag "missing vegetables" if the plate is GENUINELY all meat/grain/dairy with zero produce items above.
+- Mushrooms (any kind), tomatoes, avocado, olives, peppers (bell, chili), eggplant, zucchini, and cucumber ALL count as vegetables/produce.
+- Butternut squash, acorn squash, kabocha squash, delicata squash, pumpkin, and sweet potato count as COMPLEX CARBS (not just vegetables). They satisfy the complex-carb macro requirement.
+- Leafy greens (spinach, kale, arugula, romaine, baby greens), cruciferous (broccoli, cauliflower, brussels sprouts), root vegetables (carrots, beets), and onions/garlic count as vegetables.
+- Berries and fresh fruit count as produce for the "missing vegetables" check.
+- Before generating a "missing vegetables" insight, scan your ingredients list. If ANY of the above are present, do NOT flag missing vegetables.
+
+FRESH FOOD GUARDRAILS — Never get this wrong:
+- Fresh raw fruit (berries, pomegranate, apples, citrus, melon, etc.) is NEVER "processed". NEVER flag fresh fruit as high in sodium. Berries have essentially zero sodium.
+- Fresh raw vegetables are NEVER "processed". They are the opposite of processed.
+- Plain yogurt, eggs, raw nuts, raw seeds, plain dairy, fresh fish/meat, beans, and whole grains are NOT processed.
+- "Processed" means: visible packaging, candy, chips, soda, deli meat, sausage, bacon, hot dogs, sugar-laden sauces, fast food, instant noodles, breakfast cereal with added sugar, frosted/breaded items.
+- "High sodium" means: cured meats, soy sauce, processed condiments, fast food, canned soup, chips. NOT fresh produce. NOT fresh meat. NOT raw eggs.
+- If you cannot point to a SPECIFIC processed or high-sodium item by name in the meal, do NOT claim the meal is processed or high in sodium.
 ${personalization}
 
 Return a JSON object with exactly this structure:
@@ -93,14 +115,14 @@ Return a JSON object with exactly this structure:
 SCORING — Build the score from explicit components. Two different meals should NEVER end at the exact same score unless they are nutritionally identical.
 Do NOT round to multiples of 5 or 10. Use precise numbers.
 
-METHOD — Start at 100 and DEDUCT. This makes the path to a perfect meal explicit and achievable.
+METHOD — Start at 94 and DEDUCT (or ADD bonuses up to 100). This makes 90s easily achievable for complete clean meals, and 100 a rare ceiling that requires exceptional elements.
 
-BASE: Every meal starts at 100.
+BASE: Every meal starts at 94. A complete clean meal with no quality issues lands at 94. Bonuses push the very best meals to 100. Most realistic top-tier meals score 94-97.
 
 REQUIRED MACRO COMPONENTS (deduct if missing):
 - Quality protein source absent (no fish/poultry/eggs/tofu/legumes/lean meat): -18
 - Healthy fat source absent (no avocado/olive oil/nuts/seeds/fatty fish/olives): -12
-- Complex carb absent (no whole grains/sweet potato/quinoa/oats/legumes; white rice/white bread does NOT count): -10
+- Complex carb absent (no whole grains/sweet potato/butternut squash/winter squash/quinoa/oats/legumes; white rice/white bread does NOT count): -10
 - Vegetable/produce absent (no veg, including mushrooms/tomatoes/avocado/peppers): -15
   (avocado can count for BOTH healthy fat AND veg in deductions)
 
@@ -116,35 +138,47 @@ QUALITY DEDUCTIONS (stack if multiple apply):
 - Portion clearly oversized or undersized: -4
 - Mostly beige (no color variety, no green): -5
 
-QUALITY BONUSES (add back if applicable, max +10 total bonuses):
-- Fermented food included (kimchi, sauerkraut, yogurt, kefir): +3
-- Raw vegetables present alongside cooked: +2
-- Omega-3 source (fatty fish, flax, chia, walnuts): +3
-- 3+ distinct color groups on plate: +3
-- Visible herbs/spices used (turmeric, cilantro, basil, etc.): +2
+QUALITY BONUSES (add ON TOP of base 94, max +6 total to reach 100):
+- Fermented food included (kimchi, sauerkraut, yogurt, kefir, miso): +2
+- Omega-3 source (fatty fish, flax, chia, walnuts): +2
+- 3+ distinct color groups on plate: +2
+- Visible fresh herbs (cilantro, basil, dill, parsley, mint, chives): +2
+- Raw + cooked vegetables both present: +1
+- Includes a uniquely nutrient-dense ingredient (sea vegetable, fermented vegetable, raw fish, microgreens, organ meat): +2
 
-A truly clean balanced meal (grilled salmon + quinoa + roasted broccoli + avocado + lemon + herbs) loses ZERO points and earns bonuses → can legitimately score 100.
+WHAT 100 LOOKS LIKE — a meal that hits ALL macro requirements AND has at least 3 of the bonus elements above. Example: grilled wild salmon + roasted butternut squash + sauteed kale + avocado + fresh dill + sauerkraut. Hits all macros (94), gains omega-3 (+2), fresh herbs (+2), fermented (+2) → 100. This should be RARE.
 
-Show your work mentally before answering. Different meals SHOULD produce different scores because the deduction stack is different.
+WHAT 94-97 LOOKS LIKE — a complete clean meal with at most 1-2 bonus elements. Example: grilled chicken + quinoa + roasted broccoli + olive oil → 94 (no bonus). Add lemon + parsley → 96 (+2 herbs).
 
-RANGES (descriptive, the math above determines actual score):
-- 90-100: Genuinely exceptional. All macros, no junk, color variety. Achievable, not theoretical.
-- 75-89: Good. One gap (e.g. no complex carb) or one mild quality issue.
-- 60-74: Decent. Multiple gaps or one moderate junk element.
-- 45-59: Average. Mix of whole and processed, clear gaps.
+Show your work mentally before answering. Two different meals SHOULD produce different scores because the deduction stack is different.
+
+RANGES:
+- 94-100: Complete clean meals (94 base). 100 is exceptional and rare.
+- 80-93: Complete or near-complete, but one macro gap OR one mild quality issue.
+- 65-79: Decent foundation but multiple gaps OR one moderate junk element OR low nutrient density (technically complete macros but boring/limited ingredients).
+- 45-64: Average. Mix of whole and processed, clear gaps.
 - 30-44: Poor. Mostly processed or very limited variety.
 - 15-29: Bad. Fast food, heavy processed.
 - 5-14: Very bad. Pure junk.
 - 1-4: Rock bottom.
 
-CALIBRATION EXAMPLES (use the deduction method, these are just sanity checks):
-- Grilled salmon + quinoa + broccoli + avocado + olive oil + herbs: ~98 (no deductions, +bonuses)
-- Eggs + avocado + tomatoes + greens + olive oil: ~88 (missing complex carb -10, +bonuses)
-- Chicken stir-fry with white rice and vegetables: ~64 (refined grain -6, soy sauce -5)
-- Tuna sushi roll (white rice, fish, nori, cucumber): ~57 (white rice -6, sodium -5, limited veg -3)
-- Beef sandwich with lettuce/tomato/cheese: ~49 (cheese -6, refined bread -6, limited veg -3)
-- Pasta with meat sauce, no greens: ~42 (no veg -15, refined grain -6)
-- Chicken breast + white rice only: ~38 (no veg -15, no fat -12, refined grain -6)
+NUTRIENT DENSITY SANITY CHECK — if a meal technically hits all macros but is nutritionally bland (e.g., bread + plain yogurt + olive oil = covers carb/protein/fat but has no vegetables and minimal variety), the missing-vegetable deduction already applies. Don't over-deduct beyond the stated rules.
+
+CALIBRATION EXAMPLES (sanity checks against the deduction method):
+- Grilled salmon + quinoa + broccoli + avocado + olive oil + fresh herbs: 94 base + bonuses (herbs+omega3) = 98
+- Eggs + smoked salmon + spinach + tomato + avocado + butternut squash (sweet potato look-alike): 94 base, all macros covered (butternut squash = complex carb) + bonuses (omega-3 from salmon, 3+ colors, leafy greens) = 100
+- Eggs + avocado + tomatoes + greens + olive oil (no complex carb): 94 - 10 = 84 + small bonuses → 86
+- Bread + plain yogurt + olive oil (no vegetables): 94 - 15 (no veg) - 6 (refined grain) = 73
+- Chicken stir-fry with white rice + vegetables: 94 - 6 (white rice) - 5 (soy sauce) = 83
+- Tuna sushi roll (white rice + fish + nori + cucumber): 94 - 6 (white rice) - 5 (sodium) - 3 (limited veg) = 80
+- Beef sandwich with lettuce + tomato + cheese on white bread: 94 - 6 (cheese) - 6 (refined bread) - 3 (limited veg) = 79
+- Pasta with meat sauce, no greens: 94 - 15 (no veg) - 6 (refined grain) = 73
+- Chicken breast + white rice only: 94 - 15 (no veg) - 12 (no fat) - 6 (refined grain) = 61
+- Pizza slice: 94 - 6 (refined grain) - 6 (cheese) - 15 (no real veg) - 10 (processed) = 57
+- Fast food burger + fries: 94 - 10 (fried) - 10 (processed protein) - 6 (refined grain) - 15 (no real veg) = 53
+- Just blueberries + pomegranate (snack, not full meal): 94 - 18 (no protein) - 12 (no fat) - 10 (no complex carb other than fruit) = 54. Verdict should note this is "more of a snack than a meal" not call it processed.
+- Bag of chips alone: 94 - 18 - 12 - 10 - 15 - 10 (processed) = 19
+- Instant cup noodles: 94 - 18 - 12 - 15 - 10 - 6 (refined) - 5 (sodium) = 28
 - Pizza slice: ~27 (refined grain -6, cheese -6, no real veg -15, processed -10)
 - Fast food burger + fries: ~19 (fried -10, processed protein -10, refined grain -6, no real veg -15)
 - Bag of chips alone: ~6
@@ -192,9 +226,9 @@ INSIGHTS — Each type renders differently in the UI. Include each insight's "ty
 - Every insight MUST have "type" and "text" fields.
 - Return insights including ONLY the types that genuinely apply:
   1. EITHER "good" OR "warning" (REQUIRED, NEVER BOTH):
-     - "good" — if the meal has genuine positive qualities. One positive observation. Just "text", no title. One sentence.
-     - "warning" — if the meal is unhealthy/harmful. One negative observation about health risk. Just "text", no title. One sentence.
-     - Use "good" for scores >= 50, "warning" for scores < 50. NEVER return both.
+     - "good" — if the meal has any genuine positive qualities (which is true for any meal made of real whole foods, even if incomplete). One positive observation. Just "text", no title. One sentence.
+     - "warning" — ONLY when the meal contains genuinely harmful items: fast food, deep-fried items, heavy added sugar, processed/cured meats (bacon/sausage/deli), packaged junk (chips, instant noodles, soda, candy), or sodium-loaded sauces. NEVER use "warning" for fresh fruit, fresh vegetables, eggs, raw nuts, plain yogurt, or whole grains, even if the meal is nutritionally incomplete. Incomplete ≠ unhealthy.
+     - Decision rule: use "good" UNLESS you can name a specific harmful processed item in the ingredients. A bowl of just berries is "good" (and the verdict can note it's small/snack-sized). Cheese fries is "warning".
   2. "missing" (ONLY if something is genuinely lacking) — include "title" (2-4 words, Capitalized), "text", AND "suggestions" array with 2-3 foods: [{"emoji": "🍠", "name": "Sweet Potato"}, ...]. If the meal is well-rounded, SKIP this entirely. Do NOT invent a deficiency.
   3. "interaction" (REQUIRED) — a real nutrient interaction between two foods in this meal. Just "text". Must mention TWO specific foods.
   4. "fact" (REQUIRED) — a genuinely surprising fact about a specific ingredient. Not common knowledge. Just "text".
@@ -204,6 +238,15 @@ ${conditions && conditions.length > 0 ? '- You MUST also include a "condition" t
 - NO generic advice. Reference actual ingredients you identified.
 
 Return ONLY valid JSON. No markdown. No explanation.`;
+
+  const messageContent = isTextMode
+    ? [
+        { type: "text", text: `${prompt}\n\nUSER'S MEAL DESCRIPTION:\n"${description}"\n\nAnalyze the meal exactly as described. Do not invent ingredients the user didn't name. Treat the description as ground truth for what's in the meal.` },
+      ]
+    : [
+        { type: "text", text: prompt },
+        { type: "image_url", image_url: { url: image, detail: "high" } },
+      ];
 
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -216,10 +259,7 @@ Return ONLY valid JSON. No markdown. No explanation.`;
       messages: [
         {
           role: "user",
-          content: [
-            { type: "text", text: prompt },
-            { type: "image_url", image_url: { url: image, detail: "high" } },
-          ],
+          content: messageContent,
         },
       ],
       max_tokens: 2000,
