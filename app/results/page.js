@@ -267,10 +267,10 @@ function IngredientsRow({ items, onAdd, onRemove }) {
             </span>
             <button
               onClick={() => onRemove(ing)}
-              className="absolute -top-1.5 -right-1.5 w-[18px] h-[18px] rounded-full flex items-center justify-center bg-[#2a2a2a] border border-white/15 text-[#bcccab] active:scale-90 transition-transform shadow-md"
+              className="absolute -top-1 -right-1 w-[14px] h-[14px] rounded-full flex items-center justify-center bg-white/[0.06] text-white/40 active:scale-90 active:text-white/80 transition-all"
               aria-label={`Remove ${ing}`}
             >
-              <span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'wght' 600" }}>
+              <span className="material-symbols-outlined text-[10px]" style={{ fontVariationSettings: "'wght' 400" }}>
                 close
               </span>
             </button>

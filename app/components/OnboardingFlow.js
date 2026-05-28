@@ -256,7 +256,15 @@ export default function OnboardingFlow() {
 
   return (
     <div
-      className="fixed inset-0 z-[55] pointer-events-none"
+      className="fixed inset-0 z-[55] pointer-events-auto"
+      onClick={(e) => {
+        // Block all taps on the underlying app except those that hit the
+        // tooltip card. This locks the user to onboarding controls only.
+        if (!e.target.closest?.("[data-onboarding-card]")) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
+      }}
       style={{
         opacity: pathReady ? 1 : 0,
         transition: "opacity 220ms ease",
