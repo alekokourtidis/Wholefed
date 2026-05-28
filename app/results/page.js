@@ -267,10 +267,10 @@ function IngredientsRow({ items, onAdd, onRemove }) {
             </span>
             <button
               onClick={() => onRemove(ing)}
-              className="absolute -top-1 -right-1 w-[14px] h-[14px] rounded-full flex items-center justify-center bg-white/[0.06] text-white/40 active:scale-90 active:text-white/80 transition-all"
+              className="absolute -top-1 -right-1 w-[9px] h-[9px] rounded-full flex items-center justify-center text-white/35 active:scale-90 active:text-white/80 transition-all"
               aria-label={`Remove ${ing}`}
             >
-              <span className="material-symbols-outlined text-[10px]" style={{ fontVariationSettings: "'wght' 400" }}>
+              <span className="material-symbols-outlined text-[8px]" style={{ fontVariationSettings: "'wght' 400" }}>
                 close
               </span>
             </button>
@@ -278,12 +278,12 @@ function IngredientsRow({ items, onAdd, onRemove }) {
         ))}
         <button
           onClick={onAdd}
-          className="text-[12px] font-medium text-[#bcccab] px-3 py-1.5 rounded-full border border-[#bcccab]/30 bg-[#6b7a5e]/10 active:scale-95 transition-all inline-flex items-center gap-1.5"
+          className="text-[12px] font-light text-[#bcccab] px-3 py-1.5 rounded-full border border-[#bcccab]/25 bg-[#6b7a5e]/[0.08] active:scale-95 transition-all inline-flex items-center gap-1"
         >
-          <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'wght' 400" }}>
+          <span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'wght' 400" }}>
             add
           </span>
-          Add ingredient
+          Add
         </button>
       </div>
     </div>
@@ -652,7 +652,7 @@ export default function ResultsPage() {
       </div>
 
       {/* Analysis panel — slides up over the photo */}
-      <div className="relative z-10 bg-surface rounded-t-3xl -mt-6 min-h-screen pb-32">
+      <div className="relative z-10 bg-surface rounded-t-3xl -mt-6 min-h-screen pb-44">
         <div className="flex justify-center pt-3 pb-2">
           <div className="w-10 h-1 rounded-full bg-white/20" />
         </div>
@@ -875,18 +875,26 @@ export default function ResultsPage() {
             })}
 
           </div>
-
-          {/* Rescan button — primary action at the bottom of the analysis */}
-          <button
-            onClick={() => router.push("/")}
-            className="mt-6 w-full py-4 rounded-2xl bg-[#6b7a5e] text-white text-[14px] font-medium tracking-wide active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-          >
-            <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'wght' 400" }}>
-              photo_camera
-            </span>
-            Scan another meal
-          </button>
         </section>
+      </div>
+
+      {/* Sticky Rescan button — always visible above the bottom nav,
+          regardless of scroll position. */}
+      <div
+        className="fixed left-0 right-0 z-40 px-6"
+        style={{
+          bottom: "calc(env(safe-area-inset-bottom) + 5.25rem)",
+        }}
+      >
+        <button
+          onClick={() => router.push("/")}
+          className="w-full py-3.5 rounded-2xl bg-[#6b7a5e] text-white text-[14px] font-medium tracking-wide active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-2xl shadow-black/60"
+        >
+          <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'wght' 400" }}>
+            photo_camera
+          </span>
+          Scan another meal
+        </button>
       </div>
 
       <BottomNav />
