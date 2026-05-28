@@ -575,6 +575,21 @@ export default function ResultsPage() {
       className="fixed inset-0 bg-surface text-on-surface overflow-y-auto no-scrollbar"
       onScroll={handleScroll}
     >
+      {/* Back to scan button — floating top-right over the photo */}
+      <button
+        onClick={() => router.push("/")}
+        aria-label="Done, back to scan"
+        className="fixed z-30 right-4 flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-black/55 backdrop-blur-xl border border-white/15 active:scale-95 transition-transform"
+        style={{ top: "calc(env(safe-area-inset-top) + 12px)" }}
+      >
+        <span className="material-symbols-outlined text-white text-[16px]" style={{ fontVariationSettings: "'wght' 400" }}>
+          photo_camera
+        </span>
+        <span className="text-[11px] tracking-[0.15em] uppercase font-semibold text-white">
+          Rescan
+        </span>
+      </button>
+
       {/* Sticky photo at top */}
       <div className="sticky top-0 h-[45vh] w-full z-0 overflow-hidden">
         {imageUrl ? (
@@ -624,12 +639,13 @@ export default function ResultsPage() {
               "linear-gradient(to bottom, rgba(14,14,14,0.3) 0%, transparent 25%, transparent 60%, rgba(14,14,14,0.8) 100%), radial-gradient(circle, transparent 40%, rgba(14,14,14,0.5) 100%)",
           }}
         />
-        {/* Floating annotation pills */}
+        {/* Floating annotation pills — only when we have a real photo. For
+            text scans there is no image to overlay on. */}
         <div
           className="absolute inset-0 z-10 pointer-events-none transition-opacity duration-500"
           style={{ opacity: 1 - frostAmount }}
         >
-            {annotations?.map((a, i) => {
+            {imageUrl && annotations?.map((a, i) => {
               // Use AI-provided x/y coordinates, clamped to safe area
               const x = Math.max(3, Math.min(a.x ?? 50, 55));
               const y = Math.max(15, Math.min(a.y ?? 50, 70));

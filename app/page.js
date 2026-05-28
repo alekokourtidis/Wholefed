@@ -73,6 +73,10 @@ export default function ScanPage() {
   const toBase64FromFile = (file) => compressBase64(URL.createObjectURL(file));
 
   const storeAndNavigate = async (displayUrl, base64) => {
+    // Clear any stale scan-mode state from previous scans so the results
+    // page doesn't think we're still in text or sample mode.
+    try { sessionStorage.removeItem("wholefed_text_description"); } catch {}
+    try { sessionStorage.removeItem("wholefed_saved_scan"); } catch {}
     try { sessionStorage.setItem("wholefed_image", displayUrl); } catch {}
     try { sessionStorage.setItem("wholefed_image_base64", base64); } catch {}
     window.__wholefed_base64 = base64;
@@ -268,6 +272,8 @@ export default function ScanPage() {
       // that /results recognizes and forwards to /api/analyze as text.
       const payload = `text:${desc}`;
       try {
+        sessionStorage.removeItem("wholefed_sample_analysis");
+        sessionStorage.removeItem("wholefed_saved_scan");
         sessionStorage.setItem("wholefed_image", "");
         sessionStorage.setItem("wholefed_image_base64", payload);
         sessionStorage.setItem("wholefed_text_description", desc);
@@ -317,6 +323,7 @@ export default function ScanPage() {
 
       const { image, ...analysis } = sample;
       try {
+        sessionStorage.removeItem("wholefed_text_description");
         sessionStorage.setItem("wholefed_sample_analysis", JSON.stringify(analysis));
       } catch {}
       consumeScan();
