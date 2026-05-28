@@ -409,9 +409,19 @@ export default function ResultsPage() {
     const img = sessionStorage.getItem("wholefed_image") || window.__wholefed_image;
     const base64 = sessionStorage.getItem("wholefed_image_base64") || window.__wholefed_base64;
     const textDescription = sessionStorage.getItem("wholefed_text_description");
+    // STRICT RULE: text mode is ONLY when there's no actual image. If we have
+    // a real data:image base64, this is an image scan, period. Stale
+    // text_description from a previous scan cannot make this a text scan.
+    const hasRealImage = typeof base64 === "string" && base64.startsWith("data:");
     const isTextScanPreCheck =
-      !!textDescription || (typeof base64 === "string" && base64.startsWith("text:"));
+      !hasRealImage &&
+      (!!textDescription || (typeof base64 === "string" && base64.startsWith("text:")));
     setImageUrl(isTextScanPreCheck ? null : (img || "/healthymeal1.jpg"));
+    // Belt and suspenders: if this is an image scan, wipe any stale text
+    // description so it doesn't leak into the next scan.
+    if (hasRealImage) {
+      try { sessionStorage.removeItem("wholefed_text_description"); } catch {}
+    }
 
     // Sample meal short-circuit — onboarding / "Try with a sample meal"
     // stashes a canned analysis so we render an idealized result instantly
