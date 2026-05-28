@@ -267,9 +267,9 @@ function IngredientsRow({ items, onAdd, onRemove, onRescore, hasChanges }) {
             </span>
             <button
               onClick={() => onRemove(ing)}
-              className="absolute -top-0.5 -right-0.5 w-[9px] h-[9px] flex items-center justify-center text-white/40 active:text-white/90 active:scale-90 transition-all leading-none"
+              className="absolute -top-1 -right-1 w-[13px] h-[13px] flex items-center justify-center text-white/45 active:text-white/90 active:scale-90 transition-all leading-none"
               aria-label={`Remove ${ing}`}
-              style={{ fontSize: "9px" }}
+              style={{ fontSize: "13px" }}
             >
               ×
             </button>
@@ -282,14 +282,17 @@ function IngredientsRow({ items, onAdd, onRemove, onRescore, hasChanges }) {
         >
           + Add
         </button>
-        {hasChanges && (
-          <button
-            onClick={onRescore}
-            className="text-[12px] font-medium text-white px-3 py-1.5 rounded-full bg-[#6b7a5e] active:scale-95 transition-all leading-none"
-          >
-            Re-score
-          </button>
-        )}
+        <button
+          onClick={hasChanges ? onRescore : undefined}
+          disabled={!hasChanges}
+          className={`text-[12px] px-3 py-1.5 rounded-full transition-all leading-none ${
+            hasChanges
+              ? "font-medium text-white bg-[#6b7a5e] active:scale-95"
+              : "font-light text-white/35 bg-white/[0.04] border border-white/[0.06] cursor-default"
+          }`}
+        >
+          Re-score
+        </button>
       </div>
     </div>
   );
