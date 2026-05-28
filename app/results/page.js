@@ -250,38 +250,28 @@ function normalizeInsights(raw, hasUpgrade, analysisData) {
   return sorted.filter((item) => order.includes(item.type));
 }
 
-function IngredientsRow({ items, onAdd, onRemove, editing, setEditing }) {
+function IngredientsRow({ items, onAdd, onRemove }) {
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between px-1">
-        <span className="text-[10px] tracking-[0.25em] font-bold text-[#8a8578] uppercase">
-          Detected Ingredients
-        </span>
-        <button
-          onClick={() => setEditing(!editing)}
-          className="text-[10px] tracking-[0.15em] uppercase font-medium text-[#bcccab] px-2 py-1 active:opacity-60"
-        >
-          {editing ? "Done" : "Edit"}
-        </button>
-      </div>
+      <span className="text-[10px] tracking-[0.25em] font-bold text-[#8a8578] uppercase block px-1">
+        Detected Ingredients
+      </span>
       <div className="flex flex-wrap gap-2">
         {items.map((ing, i) => (
           <span
             key={i}
-            className="text-[12px] font-light text-[#d4cfc4] px-3 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.02] inline-flex items-center gap-1.5"
+            className="text-[12px] font-light text-[#d4cfc4] pl-3 pr-2 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.02] inline-flex items-center gap-1.5"
           >
             {ing}
-            {editing && (
-              <button
-                onClick={() => onRemove(ing)}
-                className="text-[#8a8578] hover:text-red-400 active:scale-90 transition-all"
-                aria-label={`Remove ${ing}`}
-              >
-                <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'wght' 400" }}>
-                  close
-                </span>
-              </button>
-            )}
+            <button
+              onClick={() => onRemove(ing)}
+              className="w-[18px] h-[18px] rounded-full flex items-center justify-center text-[#8a8578] hover:text-red-400 hover:bg-red-500/10 active:scale-90 transition-all"
+              aria-label={`Remove ${ing}`}
+            >
+              <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'wght' 500" }}>
+                close
+              </span>
+            </button>
           </span>
         ))}
         <button
@@ -365,7 +355,6 @@ export default function ResultsPage() {
   const [frostAmount, setFrostAmount] = useState(0);
   const [extraIngredients, setExtraIngredients] = useState([]);
   const [removedIngredients, setRemovedIngredients] = useState([]);
-  const [editingIngredients, setEditingIngredients] = useState(false);
   const [showAddIngredient, setShowAddIngredient] = useState(false);
   const [userConditions, setUserConditions] = useState([]);
 
@@ -795,8 +784,6 @@ export default function ResultsPage() {
                   setRemovedIngredients((prev) => [...prev, ing]);
                 }
               }}
-              editing={editingIngredients}
-              setEditing={setEditingIngredients}
             />
           )}
 
