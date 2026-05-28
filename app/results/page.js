@@ -250,7 +250,7 @@ function normalizeInsights(raw, hasUpgrade, analysisData) {
   return sorted.filter((item) => order.includes(item.type));
 }
 
-function IngredientsRow({ items, onAdd, onRemove }) {
+function IngredientsRow({ items, onAdd, onRemove, onRescore, hasChanges }) {
   return (
     <div className="space-y-2">
       <span className="text-[10px] tracking-[0.25em] font-bold text-[#8a8578] uppercase block px-1">
@@ -267,24 +267,29 @@ function IngredientsRow({ items, onAdd, onRemove }) {
             </span>
             <button
               onClick={() => onRemove(ing)}
-              className="absolute -top-1 -right-1 w-[9px] h-[9px] rounded-full flex items-center justify-center text-white/35 active:scale-90 active:text-white/80 transition-all"
+              className="absolute -top-0.5 -right-0.5 w-[9px] h-[9px] flex items-center justify-center text-white/40 active:text-white/90 active:scale-90 transition-all leading-none"
               aria-label={`Remove ${ing}`}
+              style={{ fontSize: "9px" }}
             >
-              <span className="material-symbols-outlined text-[8px]" style={{ fontVariationSettings: "'wght' 400" }}>
-                close
-              </span>
+              ×
             </button>
           </div>
         ))}
         <button
           onClick={onAdd}
-          className="text-[12px] font-light text-[#bcccab] px-3 py-1.5 rounded-full border border-[#bcccab]/25 bg-[#6b7a5e]/[0.08] active:scale-95 transition-all inline-flex items-center gap-1"
+          className="text-[12px] font-light text-[#bcccab] px-3 py-1.5 rounded-full border border-[#bcccab]/25 bg-[#6b7a5e]/[0.08] active:scale-95 transition-all leading-none"
+          aria-label="Add ingredient"
         >
-          <span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'wght' 400" }}>
-            add
-          </span>
-          Add
+          + Add
         </button>
+        {hasChanges && (
+          <button
+            onClick={onRescore}
+            className="text-[12px] font-medium text-white px-3 py-1.5 rounded-full bg-[#6b7a5e] active:scale-95 transition-all leading-none"
+          >
+            Re-score
+          </button>
+        )}
       </div>
     </div>
   );
@@ -713,7 +718,7 @@ export default function ResultsPage() {
                 <span className="text-[56px] font-extralight text-[#e5e2e1] leading-none tracking-[-0.03em]">
                   {score}
                 </span>
-                <span className="text-[9px] tracking-[0.3em] uppercase text-[#8a8578] mt-1.5 font-medium">
+                <span className="text-[7.5px] tracking-[0.3em] uppercase text-[#8a8578] mt-1.5 font-medium">
                   Total Score
                 </span>
               </div>
@@ -770,6 +775,35 @@ export default function ResultsPage() {
                 } else {
                   setRemovedIngredients((prev) => [...prev, ing]);
                 }
+              }}
+              hasChanges={extraIngredients.length > 0 || removedIngredients.length > 0}
+              onRescore={async () => {
+                const finalList = [...ingredients, ...extraIngredients].filter((i) => !removedIngredients.includes(i));
+                if (finalList.length === 0) return;
+                setLoading(true);
+                try {
+                  const conditions = getConditions();
+                  const profile = getProfile();
+                  const conditionScoreEnabled = getConditionScoreEnabled();
+                  let labs = null;
+                  const labsEnabled = localStorage.getItem("wholefed_labs_enabled") !== "false";
+                  if (labsEnabled) {
+                    try { labs = JSON.parse(localStorage.getItem("wholefed_labs")); } catch {}
+                  }
+                  const description = `Meal contains: ${finalList.join(", ")}`;
+                  const res = await fetch("/api/analyze", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ description, conditions, profile, labs, conditionScoreEnabled }),
+                  });
+                  const data = await res.json();
+                  if (!data.error) {
+                    setAnalysis(data);
+                    setExtraIngredients([]);
+                    setRemovedIngredients([]);
+                  }
+                } catch {}
+                setLoading(false);
               }}
             />
           )}
