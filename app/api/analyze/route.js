@@ -122,9 +122,22 @@ BASE: Every meal starts at 94. A complete clean meal with no quality issues land
 REQUIRED MACRO COMPONENTS (deduct if missing):
 - Quality protein source absent (no fish/poultry/eggs/tofu/legumes/lean meat): -18
 - Healthy fat source absent (no avocado/olive oil/nuts/seeds/fatty fish/olives): -12
-- Complex carb absent (no whole grains/sweet potato/butternut squash/winter squash/quinoa/oats/legumes; white rice/white bread does NOT count): -10
+- Complex carb absent (no whole grains/sweet potato/butternut squash/winter squash/quinoa/oats/legumes; white rice/white bread does NOT count): -12
 - Vegetable/produce absent (no veg, including mushrooms/tomatoes/avocado/peppers): -15
   (avocado can count for BOTH healthy fat AND veg in deductions)
+
+HARD CEILING — non-negotiable:
+- If ANY of the four macro requirements above is missing, the final score CANNOT exceed 89. Period. Cap at 89 regardless of how many bonuses apply.
+- 90+ requires every macro requirement to be satisfied.
+- 94 base is for COMPLETE meals only.
+- If you find yourself wanting to score an incomplete meal in the 90s because "the foods present are really good," resist. The hard ceiling exists because completeness matters more than ingredient quality alone.
+
+EXPLICIT MACRO CHECK — do this BEFORE choosing a score:
+1. Is there a quality protein source? (yes/no)
+2. Is there a healthy fat source? (yes/no)
+3. Is there a complex carb? (yes/no — fruit alone does NOT count; must be whole grain/legume/starchy vegetable like sweet potato or butternut squash)
+4. Is there a vegetable/produce item? (yes/no)
+If ANY answer is "no", apply the deduction AND cap at 89.
 
 QUALITY DEDUCTIONS (stack if multiple apply):
 - Refined grain present (white rice, white bread, regular pasta): -6
@@ -164,21 +177,22 @@ RANGES:
 
 NUTRIENT DENSITY SANITY CHECK — if a meal technically hits all macros but is nutritionally bland (e.g., bread + plain yogurt + olive oil = covers carb/protein/fat but has no vegetables and minimal variety), the missing-vegetable deduction already applies. Don't over-deduct beyond the stated rules.
 
-CALIBRATION EXAMPLES (sanity checks against the deduction method):
-- Grilled salmon + quinoa + broccoli + avocado + olive oil + fresh herbs: 94 base + bonuses (herbs+omega3) = 98
-- Eggs + smoked salmon + spinach + tomato + avocado + butternut squash (sweet potato look-alike): 94 base, all macros covered (butternut squash = complex carb) + bonuses (omega-3 from salmon, 3+ colors, leafy greens) = 100
-- Eggs + avocado + tomatoes + greens + olive oil (no complex carb): 94 - 10 = 84 + small bonuses → 86
-- Bread + plain yogurt + olive oil (no vegetables): 94 - 15 (no veg) - 6 (refined grain) = 73
-- Chicken stir-fry with white rice + vegetables: 94 - 6 (white rice) - 5 (soy sauce) = 83
-- Tuna sushi roll (white rice + fish + nori + cucumber): 94 - 6 (white rice) - 5 (sodium) - 3 (limited veg) = 80
-- Beef sandwich with lettuce + tomato + cheese on white bread: 94 - 6 (cheese) - 6 (refined bread) - 3 (limited veg) = 79
-- Pasta with meat sauce, no greens: 94 - 15 (no veg) - 6 (refined grain) = 73
-- Chicken breast + white rice only: 94 - 15 (no veg) - 12 (no fat) - 6 (refined grain) = 61
-- Pizza slice: 94 - 6 (refined grain) - 6 (cheese) - 15 (no real veg) - 10 (processed) = 57
-- Fast food burger + fries: 94 - 10 (fried) - 10 (processed protein) - 6 (refined grain) - 15 (no real veg) = 53
-- Just blueberries + pomegranate (snack, not full meal): 94 - 18 (no protein) - 12 (no fat) - 10 (no complex carb other than fruit) = 54. Verdict should note this is "more of a snack than a meal" not call it processed.
-- Bag of chips alone: 94 - 18 - 12 - 10 - 15 - 10 (processed) = 19
-- Instant cup noodles: 94 - 18 - 12 - 15 - 10 - 6 (refined) - 5 (sodium) = 28
+CALIBRATION EXAMPLES (sanity checks against the deduction method + ceiling):
+- Grilled salmon + quinoa + broccoli + avocado + olive oil + fresh herbs: 94 base + bonuses (herbs+omega3) = 98. COMPLETE, no ceiling.
+- Eggs + smoked salmon + spinach + tomato + avocado + butternut squash: 94, all macros covered + bonuses (omega-3 from salmon, 3+ colors, leafy greens) = up to 100. COMPLETE.
+- Eggs + avocado + tomatoes + greens + olive oil (NO complex carb): 94 - 12 = 82, capped at 89. Bonuses can lift to 86-88 max.
+- Eggs + smoked salmon + spinach + tomato + avocado (NO complex carb): 94 - 12 = 82 + bonuses (omega-3, colors, greens) = ~87. Capped at 89.
+- Bread + plain yogurt + olive oil (NO vegetables): 94 - 15 - 6 (refined grain) = 73. Capped at 89 because of missing veg.
+- Chicken stir-fry with white rice + vegetables: 94 - 12 (no complex carb, white rice doesn't count) - 6 (refined grain) - 5 (soy sauce) = 71. Capped at 89.
+- Tuna sushi roll (white rice + fish + nori + cucumber): 94 - 12 (no complex carb) - 6 (white rice) - 5 (sodium) - 3 (limited veg) = 68.
+- Beef sandwich with lettuce + tomato + cheese on white bread: 94 - 12 (no complex carb) - 6 (cheese) - 6 (refined bread) - 3 (limited veg) = 67.
+- Pasta with meat sauce, no greens: 94 - 15 (no veg) - 12 (no complex carb, regular pasta) - 6 (refined grain) = 61.
+- Chicken breast + white rice only: 94 - 15 - 12 (no fat) - 12 (no complex carb) - 6 (refined) = 49.
+- Pizza slice: 94 - 12 (no complex carb) - 6 (refined grain) - 6 (cheese) - 15 (no real veg) - 10 (processed) = 45.
+- Fast food burger + fries: 94 - 12 - 10 (fried) - 10 (processed protein) - 6 (refined grain) - 15 (no real veg) = 41.
+- Just blueberries + pomegranate (snack, not full meal): 94 - 18 (no protein) - 12 (no fat) - 12 (no complex carb) = 52. Verdict should note this is "more of a snack than a meal" not call it processed.
+- Bag of chips alone: 94 - 18 - 12 - 12 - 15 - 10 (processed) = 17
+- Instant cup noodles: 94 - 18 - 12 - 15 - 6 (refined) - 5 (sodium) = 38
 - Pizza slice: ~27 (refined grain -6, cheese -6, no real veg -15, processed -10)
 - Fast food burger + fries: ~19 (fried -10, processed protein -10, refined grain -6, no real veg -15)
 - Bag of chips alone: ~6
