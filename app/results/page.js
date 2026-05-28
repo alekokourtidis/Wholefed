@@ -256,23 +256,25 @@ function IngredientsRow({ items, onAdd, onRemove }) {
       <span className="text-[10px] tracking-[0.25em] font-bold text-[#8a8578] uppercase block px-1">
         Detected Ingredients
       </span>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2.5 pt-1">
         {items.map((ing, i) => (
-          <span
+          <div
             key={i}
-            className="text-[12px] font-light text-[#d4cfc4] pl-3 pr-2 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.02] inline-flex items-center gap-1.5"
+            className="relative inline-block"
           >
-            {ing}
+            <span className="text-[12px] font-light text-[#d4cfc4] px-3 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.02] inline-block">
+              {ing}
+            </span>
             <button
               onClick={() => onRemove(ing)}
-              className="w-[18px] h-[18px] rounded-full flex items-center justify-center text-[#8a8578] hover:text-red-400 hover:bg-red-500/10 active:scale-90 transition-all"
+              className="absolute -top-1.5 -right-1.5 w-[18px] h-[18px] rounded-full flex items-center justify-center bg-[#2a2a2a] border border-white/15 text-[#bcccab] active:scale-90 transition-transform shadow-md"
               aria-label={`Remove ${ing}`}
             >
-              <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'wght' 500" }}>
+              <span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'wght' 600" }}>
                 close
               </span>
             </button>
-          </span>
+          </div>
         ))}
         <button
           onClick={onAdd}
@@ -574,21 +576,6 @@ export default function ResultsPage() {
       className="fixed inset-0 bg-surface text-on-surface overflow-y-auto no-scrollbar"
       onScroll={handleScroll}
     >
-      {/* Back to scan button — floating top-right over the photo */}
-      <button
-        onClick={() => router.push("/")}
-        aria-label="Done, back to scan"
-        className="fixed z-30 right-4 flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-black/55 backdrop-blur-xl border border-white/15 active:scale-95 transition-transform"
-        style={{ top: "calc(env(safe-area-inset-top) + 12px)" }}
-      >
-        <span className="material-symbols-outlined text-white text-[16px]" style={{ fontVariationSettings: "'wght' 400" }}>
-          photo_camera
-        </span>
-        <span className="text-[11px] tracking-[0.15em] uppercase font-semibold text-white">
-          Rescan
-        </span>
-      </button>
-
       {/* Sticky photo at top */}
       <div className="sticky top-0 h-[45vh] w-full z-0 overflow-hidden">
         {imageUrl ? (
@@ -669,10 +656,10 @@ export default function ResultsPage() {
         <div className="flex justify-center pt-3 pb-2">
           <div className="w-10 h-1 rounded-full bg-white/20" />
         </div>
-        <section className="px-8 pt-2 flex flex-col gap-4">
+        <section className="px-8 pt-2 flex flex-col gap-3">
           {/* Score Ring — fancy double ring */}
-          <div className="flex justify-center items-center py-3" data-onboarding="score-ring">
-            <div className="relative w-40 h-40 flex items-center justify-center">
+          <div className="flex justify-center items-center py-1" data-onboarding="score-ring">
+            <div className="relative w-36 h-36 flex items-center justify-center">
               <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 200 200">
                 {/* Outer decorative ring — thin, full circle */}
                 <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
@@ -723,10 +710,10 @@ export default function ResultsPage() {
               </svg>
               {/* Score number */}
               <div className="flex flex-col items-center score-number">
-                <span className="text-[64px] font-extralight text-[#e5e2e1] leading-none tracking-[-0.03em]">
+                <span className="text-[56px] font-extralight text-[#e5e2e1] leading-none tracking-[-0.03em]">
                   {score}
                 </span>
-                <span className="text-[9px] tracking-[0.3em] uppercase text-[#8a8578] mt-2 font-medium">
+                <span className="text-[9px] tracking-[0.3em] uppercase text-[#8a8578] mt-1.5 font-medium">
                   Total Score
                 </span>
               </div>
@@ -743,12 +730,12 @@ export default function ResultsPage() {
           )}
 
           {/* Variety + Nutrition bars */}
-          <div className="space-y-5 px-2" data-onboarding="bars">
+          <div className="space-y-3 px-2" data-onboarding="bars">
             {[
               { label: "Variety", value: variety, icon: "spa" },
               { label: "Nutrition", value: nutrition, icon: "bolt" },
             ].map((bar) => (
-              <div key={bar.label} className="space-y-2">
+              <div key={bar.label} className="space-y-1.5">
                 <div className="flex justify-between items-center">
                   <span className="text-[10px] tracking-[0.25em] font-bold text-[#8a8578] uppercase">
                     {bar.label}
@@ -888,6 +875,17 @@ export default function ResultsPage() {
             })}
 
           </div>
+
+          {/* Rescan button — primary action at the bottom of the analysis */}
+          <button
+            onClick={() => router.push("/")}
+            className="mt-6 w-full py-4 rounded-2xl bg-[#6b7a5e] text-white text-[14px] font-medium tracking-wide active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+          >
+            <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'wght' 400" }}>
+              photo_camera
+            </span>
+            Scan another meal
+          </button>
         </section>
       </div>
 
