@@ -502,7 +502,9 @@ export default function ResultsPage() {
             score: data.score,
             variety: data.variety,
             nutrition: data.nutrition,
-            image: (base64 && base64.startsWith("data:")) ? base64 : (img || "/healthymeal1.jpg"),
+            image: isTextScan
+              ? "text"
+              : (base64 && base64.startsWith("data:")) ? base64 : (img || "/healthymeal1.jpg"),
             verdict: data.verdict,
             ingredients: data.ingredients,
             insights: data.insights,

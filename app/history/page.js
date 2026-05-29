@@ -187,11 +187,28 @@ export default function HistoryPage() {
                     }}
                   >
                     <div className="w-[80px] h-[80px] rounded-xl overflow-hidden flex-shrink-0 bg-surface-container">
-                      <img
-                        src={scan.image}
-                        alt={scan.name}
-                        className="w-full h-full object-cover"
-                      />
+                      {scan.image && scan.image !== "text" && !scan.image.startsWith("text") ? (
+                        <img
+                          src={scan.image}
+                          alt={scan.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div
+                          className="w-full h-full flex items-center justify-center"
+                          style={{
+                            background:
+                              "linear-gradient(135deg, #1c2623 0%, #2d3a30 40%, #3d4b32 80%, #6b7a5e 100%)",
+                          }}
+                        >
+                          <span
+                            className="material-symbols-outlined text-[#bcccab]/80 text-[28px]"
+                            style={{ fontVariationSettings: "'wght' 200" }}
+                          >
+                            edit_note
+                          </span>
+                        </div>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-[16px] font-light text-[#e5e2e1] leading-snug">
