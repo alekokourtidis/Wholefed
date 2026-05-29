@@ -105,6 +105,81 @@ HIDDEN-IN-MIX items — these are very commonly buried inside other foods and mi
 CHEESE / DAIRY AS PROTEIN: cheese contains protein. If the meal contains a substantial amount of cheese (cubes, melted into sauce, on top of dish), it can count as a partial protein contributor — do NOT flag "missing quality protein" if there's also visible meat/poultry/fish/eggs/legumes. Only call "missing quality protein" when NO animal protein, NO eggs, NO legumes, AND no significant cheese amount is present.
 `}
 
+FOOD CLASSIFICATION REFERENCE — Use this exhaustive list to categorize every ingredient. If an ingredient fits a category here, it satisfies that macro requirement.
+
+QUALITY PROTEIN SOURCES (presence prevents the -18 protein deduction):
+- Animal protein: chicken (breast/thigh/wings/drumstick), turkey, duck, beef (steak/ground/brisket/ribeye/sirloin/chuck), pork (chops/tenderloin/loin), lamb, bison, venison, rabbit, goat
+- Fish: salmon, tuna, cod, halibut, tilapia, snapper, sea bass, branzino, mackerel, sardines, anchovies, trout, mahi-mahi, swordfish, herring, sole, flounder
+- Shellfish: shrimp, prawns, crab, lobster, mussels, clams, oysters, scallops, calamari, squid, octopus
+- Eggs: chicken eggs, duck eggs, quail eggs, egg whites
+- Plant protein: tofu (firm, silken, smoked), tempeh, seitan, edamame, soy curls
+- Legumes (count as protein AND complex carb): black beans, kidney beans, pinto beans, white beans, navy beans, lima beans, fava beans, chickpeas (garbanzo), lentils (red/green/black/brown), split peas, peas (green peas)
+- Dairy protein: Greek yogurt, skyr, plain yogurt (in substantial portion), cottage cheese, ricotta, paneer, queso fresco, halloumi
+- Cheese in substantial amount (Parmesan, feta, mozzarella, cheddar, gouda, brie, blue cheese, goat cheese, manchego)
+- Nuts/seeds in substantial amount (also fat): almonds, walnuts, peanuts, cashews, pistachios, sunflower seeds, pumpkin seeds, hemp seeds, chia seeds, flax seeds, sesame seeds, tahini
+
+HEALTHY FAT SOURCES (presence prevents the -12 fat deduction):
+- Avocado, avocado oil, guacamole
+- Olive oil, extra virgin olive oil, olives (kalamata, green, black)
+- Fatty fish: salmon, mackerel, sardines, trout, herring
+- Nuts: almonds, walnuts, pecans, cashews, pistachios, macadamia, hazelnuts, brazil nuts, pine nuts
+- Seeds: chia, flax, hemp, pumpkin, sunflower, sesame
+- Nut butters: almond butter, peanut butter, cashew butter, tahini
+- Coconut: coconut oil, coconut milk, coconut cream, shredded coconut
+- Ghee, grass-fed butter (modest amount)
+- Egg yolks (substantial)
+
+COMPLEX CARBS (presence prevents the -12 complex carb deduction):
+- Whole grains: quinoa, brown rice, wild rice, farro, bulgur, barley, millet, buckwheat, amaranth, teff, freekeh, sorghum, kamut, spelt
+- Oats: rolled oats, steel-cut oats, oat groats, overnight oats, oatmeal
+- Whole wheat: whole wheat bread, whole wheat pasta, sprouted bread, Ezekiel bread, whole wheat tortilla, whole wheat pita
+- Starchy vegetables: sweet potato, yam, butternut squash, acorn squash, kabocha squash, delicata squash, spaghetti squash, pumpkin, parsnip, taro, plantain, cassava (yuca)
+- Legumes: beans (all kinds), lentils, chickpeas, peas, edamame (also count as protein)
+- Other: corn (whole/on cob, NOT corn flour), millet bread, popcorn (plain), whole grain crackers
+
+REFINED CARBS (NOT complex carbs — trigger -6 refined grain deduction if present):
+- White rice (jasmine, basmati, sushi rice, arborio), instant rice
+- White bread, baguette, ciabatta, sandwich bread, brioche, croissant
+- Regular pasta (white flour), white spaghetti, white penne, white linguine, lasagna noodles (white)
+- White flour tortilla, white pita, naan (white)
+- Crackers (Ritz, saltines, etc), pretzels, white-flour cereal
+- Pancakes, waffles, French toast (white flour)
+- Pastries: donuts, danishes, muffins (white flour), cake, cookies
+
+VEGETABLES / PRODUCE (presence prevents the -15 veg deduction):
+- Leafy greens: spinach, kale, arugula, romaine, iceberg, butter lettuce, watercress, swiss chard, collard greens, bok choy, mustard greens, baby greens, mesclun, microgreens, escarole, endive, frisée, radicchio
+- Cruciferous: broccoli, broccolini, cauliflower, brussels sprouts, cabbage (red/green/napa/savoy), kohlrabi
+- Alliums: yellow/red/white onion, sweet onion, garlic, leeks, shallots, scallions, chives, ramps
+- Peppers: bell peppers (red/green/yellow/orange), poblano, jalapeño, serrano, habanero, banana peppers, padron, shishito
+- Tomatoes: cherry, grape, roma, beefsteak, heirloom, sun-dried (any tomato counts as produce)
+- Cucurbits: zucchini, yellow squash, pattypan, cucumber, eggplant (all colors)
+- Mushrooms (fungi, count as veg): button, cremini, portobello, shiitake, oyster, enoki, maitake, lion's mane, chanterelle, morel, porcini
+- Root vegetables: carrots, beets, radishes, turnips, daikon, rutabaga, jicama, celeriac, ginger root (used as seasoning ok)
+- Other: asparagus, artichokes, celery, fennel, okra, hearts of palm, bamboo shoots, water chestnuts, sea vegetables (nori, wakame, kombu, dulse)
+- Sprouts: alfalfa, bean sprouts, broccoli sprouts, radish sprouts
+- Fresh herbs (also bonus): cilantro, parsley, basil, mint, dill, oregano, rosemary, thyme, sage, tarragon, marjoram, lemongrass, kaffir lime leaf
+- Fruits also count toward "produce" for the missing-veg check: berries (strawberry/blueberry/raspberry/blackberry), apple, pear, peach, plum, cherry, citrus (orange/lemon/lime/grapefruit), mango, pineapple, papaya, kiwi, banana, grapes, melon, pomegranate, figs
+
+PROCESSED / WARNING-TRIGGERING ITEMS (use these to fire the -10 processed protein deduction and to use the "warning" insight type):
+- Processed meats: bacon, sausage, hot dogs, pepperoni, salami, bologna, mortadella, deli ham, deli turkey, beef jerky, prosciutto (in large amount), pancetta
+- Fast food items: chain burger patties, chain fries, nuggets, breaded chicken patties
+- Packaged junk: chips (potato/corn), Cheetos, Doritos, Pringles, candy bars, gummies, marshmallows, Pop-Tarts, Toaster Strudel, frosted cereals, instant noodles (ramen), microwave dinners
+- Frozen: chicken nuggets, fish sticks, frozen pizza, breakfast burritos (mass-produced)
+
+ADDED SUGAR ITEMS (trigger -10 added sugar deduction):
+- Syrups: maple syrup (if heavy), agave, corn syrup, honey (if heavy), table sugar
+- Sweetened beverages: soda, juice (most), sweetened iced tea, energy drinks, sweetened coffee drinks, lemonade
+- Desserts: ice cream, gelato, cake, cookies, pie, cheesecake, brownies, candy, chocolate bars (milk chocolate)
+- Sweetened yogurt, flavored oatmeal packets, breakfast pastries
+
+HIGH SODIUM TRIGGERS (-5 sodium deduction):
+- Soy sauce (heavy), fish sauce, oyster sauce, hoisin (heavy)
+- Canned soup, canned beans (if not rinsed)
+- Processed cheese (American, Velveeta), processed cheese sauce
+- Pickles (heavy), olives (heavy)
+- Heavy use of ranch dressing, blue cheese dressing, Caesar dressing
+- Pretzels, salted chips, salted nuts (heavy)
+
 PRODUCE / VEGETABLE CLASSIFICATION — Apply this rule strictly:
 - Mushrooms (any kind), tomatoes, avocado, olives, peppers (bell, chili), eggplant, zucchini, and cucumber ALL count as vegetables/produce.
 - Butternut squash, acorn squash, kabocha squash, delicata squash, pumpkin, and sweet potato count as COMPLEX CARBS (not just vegetables). They satisfy the complex-carb macro requirement.
