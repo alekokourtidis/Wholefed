@@ -275,20 +275,21 @@ function IngredientsRow({ items, onAdd, onRemove, onRescore, hasChanges }) {
             </button>
           </div>
         ))}
+      </div>
+      <div className="flex gap-2 pt-1">
         <button
           onClick={onAdd}
-          className="text-[12px] font-light text-[#131313] px-3 py-1.5 rounded-full bg-[#bcccab] active:scale-95 transition-all leading-none"
-          aria-label="Add ingredient"
+          className="flex-1 text-[12px] font-medium text-[#bcccab] py-2 rounded-lg bg-[#6b7a5e]/25 border border-[#bcccab]/20 active:scale-[0.98] transition-all leading-none"
         >
-          + Add
+          + Add ingredient
         </button>
         <button
           onClick={hasChanges ? onRescore : undefined}
           disabled={!hasChanges}
-          className={`text-[12px] font-light px-3 py-1.5 rounded-full transition-all leading-none ${
+          className={`flex-1 text-[12px] font-medium py-2 rounded-lg border transition-all leading-none ${
             hasChanges
-              ? "text-white bg-[#6b7a5e] active:scale-95"
-              : "text-white/30 bg-[#6b7a5e]/[0.15] cursor-default"
+              ? "text-[#a8c49e] bg-[#8aab7f]/25 border-[#a8c49e]/30 active:scale-[0.98]"
+              : "text-[#a8c49e]/40 bg-[#8aab7f]/[0.08] border-[#a8c49e]/10 cursor-default"
           }`}
         >
           Re-score
