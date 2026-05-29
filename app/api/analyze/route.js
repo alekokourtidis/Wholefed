@@ -75,12 +75,12 @@ SCORE ADJUSTMENT FOR CONDITIONS: ${conditionScoreEnabled
 
   const prompt = `You are an elite nutritionist ${isTextMode ? "analyzing a meal that the user described in text" : "analyzing a meal photo"}. Be precise, factual, and specific to what you actually ${isTextMode ? "read in the description" : "see in the photo"}. No filler. No motivational fluff.
 
-${isTextMode ? "" : `NOT-FOOD CHECK — Do this FIRST before anything else:
-- If the image is clearly NOT food (a person, a pet, a landscape, a screenshot, a document, a car, a piece of furniture, a body part, a meme, a blank photo, etc.) return ONLY this JSON and nothing else:
-{ "_notFood": true, "detected": "<short description of what is actually in the image>" }
-- If the image contains food but is extremely blurry / unrecognizable / dark to the point that you cannot identify anything, return:
-{ "_notFood": true, "detected": "image too blurry to identify any food" }
-- Only proceed to the full analysis if you can clearly identify at least one food item.
+${isTextMode ? "" : `NOT-FOOD CHECK — Do this FIRST, but ONLY trigger it when there is genuinely zero food visible:
+- Trigger ONLY if the image contains NO food whatsoever (e.g. a person with no food in frame, a pet, a landscape with no food, a screenshot of a non-food app, a document, a car, a piece of furniture, a body part, a meme, a blank or solid-color photo).
+- If you can see ANY identifiable food item, even one — a piece of fruit, a sandwich, a drink, anything edible — proceed to the full analysis. Do NOT use the not-food path.
+- Do NOT trigger for: unusual or international cuisines you don't recognize, slightly blurry food photos, low-light food photos, partial plates, or food photographed from odd angles. Always attempt the analysis if food is present.
+- ONLY when there is truly no food at all, return ONLY this JSON and nothing else:
+{ "_notFood": true }
 `}
 
 

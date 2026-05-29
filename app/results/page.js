@@ -562,11 +562,6 @@ export default function ResultsPage() {
         <p className="text-[#d4cfc4] text-base font-light text-center">
           That doesn&apos;t look like food
         </p>
-        {analysis.detected && (
-          <p className="text-[#8a8578] text-xs font-light text-center italic">
-            We saw: {analysis.detected}
-          </p>
-        )}
         <p className="text-[#8a8578] text-xs font-light text-center max-w-xs">
           Wholefed only analyzes meals. Try scanning food in front of you, uploading a meal photo, or describing your meal in text.
         </p>
