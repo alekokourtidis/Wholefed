@@ -492,7 +492,13 @@ export default function ResultsPage() {
           setAnalysis({ _error: true });
           setLoading(false);
           return;
-        } else {
+        }
+        if (data._notFood) {
+          setAnalysis({ _notFood: true, detected: data.detected });
+          setLoading(false);
+          return;
+        }
+        {
           setAnalysis(data);
           // Save to scan history (localStorage + Supabase if authenticated)
           saveScan({
@@ -543,6 +549,34 @@ export default function ResultsPage() {
             &ldquo;{fact}&rdquo;
           </p>
         )}
+      </div>
+    );
+  }
+
+  if (analysis?._notFood) {
+    return (
+      <div className="fixed inset-0 bg-surface flex flex-col items-center justify-center gap-5 px-10">
+        <span className="material-symbols-outlined text-[48px] text-[#bcccab]/70" style={{ fontVariationSettings: "'wght' 200" }}>
+          no_food
+        </span>
+        <p className="text-[#d4cfc4] text-base font-light text-center">
+          That doesn&apos;t look like food
+        </p>
+        {analysis.detected && (
+          <p className="text-[#8a8578] text-xs font-light text-center italic">
+            We saw: {analysis.detected}
+          </p>
+        )}
+        <p className="text-[#8a8578] text-xs font-light text-center max-w-xs">
+          Wholefed only analyzes meals. Try scanning food in front of you, uploading a meal photo, or describing your meal in text.
+        </p>
+        <button
+          onClick={() => router.push("/")}
+          className="mt-2 px-8 py-3 rounded-full bg-[#bcccab]/20 text-[#bcccab] text-sm font-medium"
+        >
+          Try a Different Scan
+        </button>
+        <BottomNav />
       </div>
     );
   }
