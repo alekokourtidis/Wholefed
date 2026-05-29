@@ -131,11 +131,12 @@ METHOD — Start at 94 and DEDUCT (or ADD bonuses up to 100). This makes 90s eas
 BASE: Every meal starts at 94. A complete clean meal with no quality issues lands at 94. Bonuses push the very best meals to 100. Most realistic top-tier meals score 94-97.
 
 REQUIRED MACRO COMPONENTS (deduct if missing):
-- Quality protein source absent (no fish/poultry/eggs/tofu/legumes/lean meat): -18
+- Quality protein source absent (-18): a "quality protein source" includes ANY of the following — fish, poultry, eggs, lean red meat, tofu, tempeh, legumes (beans, lentils, chickpeas, edamame), Greek yogurt, plain yogurt (substantial amount), cottage cheese, ricotta, paneer, OR a significant amount of cheese. Only deduct if NONE of these are present.
 - Healthy fat source absent (no avocado/olive oil/nuts/seeds/fatty fish/olives): -12
 - Complex carb absent (no whole grains/sweet potato/butternut squash/winter squash/quinoa/oats/legumes; white rice/white bread does NOT count): -12
 - Vegetable/produce absent (no veg, including mushrooms/tomatoes/avocado/peppers): -15
   (avocado can count for BOTH healthy fat AND veg in deductions)
+  (Greek yogurt and cottage cheese can count as both protein AND a calcium source)
 
 HARD CEILING — non-negotiable:
 - If ANY of the four macro requirements above is missing, the final score CANNOT exceed 89. Period. Cap at 89 regardless of how many bonuses apply.

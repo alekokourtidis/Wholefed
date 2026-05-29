@@ -277,7 +277,7 @@ function IngredientsRow({ items, onAdd, onRemove, onRescore, hasChanges }) {
         ))}
         <button
           onClick={onAdd}
-          className="text-[12px] font-light text-[#bcccab] px-3 py-1.5 rounded-full border border-[#bcccab]/25 bg-[#6b7a5e]/[0.08] active:scale-95 transition-all leading-none"
+          className="text-[12px] font-light text-[#131313] px-3 py-1.5 rounded-full bg-[#bcccab] active:scale-95 transition-all leading-none"
           aria-label="Add ingredient"
         >
           + Add
@@ -285,10 +285,10 @@ function IngredientsRow({ items, onAdd, onRemove, onRescore, hasChanges }) {
         <button
           onClick={hasChanges ? onRescore : undefined}
           disabled={!hasChanges}
-          className={`text-[12px] px-3 py-1.5 rounded-full transition-all leading-none ${
+          className={`text-[12px] font-light px-3 py-1.5 rounded-full transition-all leading-none ${
             hasChanges
-              ? "font-medium text-white bg-[#6b7a5e] active:scale-95"
-              : "font-light text-white/35 bg-white/[0.04] border border-white/[0.06] cursor-default"
+              ? "text-white bg-[#6b7a5e] active:scale-95"
+              : "text-white/30 bg-[#6b7a5e]/[0.15] cursor-default"
           }`}
         >
           Re-score
@@ -925,9 +925,9 @@ export default function ResultsPage() {
       >
         <button
           onClick={() => router.push("/")}
-          className="w-full py-3.5 rounded-2xl bg-[#6b7a5e] text-white text-[14px] font-medium tracking-wide active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-2xl shadow-black/60"
+          className="w-full py-2.5 rounded-xl bg-[#6b7a5e] text-white text-[13px] font-medium tracking-wide active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-xl shadow-black/50"
         >
-          <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'wght' 400" }}>
+          <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'wght' 400" }}>
             photo_camera
           </span>
           Scan another meal
