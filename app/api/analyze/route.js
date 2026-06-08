@@ -123,7 +123,7 @@ QUALITY PROTEIN SOURCES (presence prevents the -18 protein deduction):
 - Eggs: chicken eggs, duck eggs, quail eggs, egg whites
 - Plant protein: tofu (firm, silken, smoked), tempeh, seitan, edamame, soy curls
 - Legumes (count as protein AND complex carb): black beans, kidney beans, pinto beans, white beans, navy beans, lima beans, fava beans, chickpeas (garbanzo), lentils (red/green/black/brown), split peas, peas (green peas)
-- Dairy protein: Greek yogurt, skyr, plain yogurt (in substantial portion), cottage cheese, ricotta, paneer, queso fresco, halloumi
+- Dairy protein: Greek yogurt, skyr, plain yogurt, any yogurt (any visible bowl/cup/serving counts — do NOT require a "substantial" portion), cottage cheese, ricotta, paneer, queso fresco, halloumi. IMPORTANT: yogurt is ALWAYS a quality protein source. If you see yogurt of any kind, the protein requirement is satisfied — never flag "missing protein" when yogurt is present.
 - Cheese in substantial amount (Parmesan, feta, mozzarella, cheddar, gouda, brie, blue cheese, goat cheese, manchego)
 - Nuts/seeds in substantial amount (also fat): almonds, walnuts, peanuts, cashews, pistachios, sunflower seeds, pumpkin seeds, hemp seeds, chia seeds, flax seeds, sesame seeds, tahini
 
@@ -215,7 +215,7 @@ METHOD — Start at 94 and DEDUCT (or ADD bonuses up to 100). This makes 90s eas
 BASE: Every meal starts at 94. A complete clean meal with no quality issues lands at 94. Bonuses push the very best meals to 100. Most realistic top-tier meals score 94-97.
 
 REQUIRED MACRO COMPONENTS (deduct if missing):
-- Quality protein source absent (-18): a "quality protein source" includes ANY of the following — fish, poultry, eggs, lean red meat, tofu, tempeh, legumes (beans, lentils, chickpeas, edamame), Greek yogurt, plain yogurt (substantial amount), cottage cheese, ricotta, paneer, OR a significant amount of cheese. Only deduct if NONE of these are present.
+- Quality protein source absent (-18): a "quality protein source" includes ANY of the following — fish, poultry, eggs, lean red meat, tofu, tempeh, legumes (beans, lentils, chickpeas, edamame), Greek yogurt, skyr, plain yogurt, ANY yogurt (any visible serving — portion size does NOT matter), cottage cheese, ricotta, paneer, OR a significant amount of cheese. Only deduct if NONE of these are present. NEVER apply this deduction or call protein "missing" when yogurt is visible in the image.
 - Healthy fat source absent (no avocado/olive oil/nuts/seeds/fatty fish/olives): -12
 - Complex carb absent (no whole grains/sweet potato/butternut squash/winter squash/quinoa/oats/legumes; white rice/white bread does NOT count): -12
 - Vegetable/produce absent (no veg, including mushrooms/tomatoes/avocado/peppers): -15
@@ -229,7 +229,7 @@ HARD CEILING — non-negotiable:
 - If you find yourself wanting to score an incomplete meal in the 90s because "the foods present are really good," resist. The hard ceiling exists because completeness matters more than ingredient quality alone.
 
 EXPLICIT MACRO CHECK — do this BEFORE choosing a score:
-1. Is there a quality protein source? (yes/no)
+1. Is there a quality protein source? (yes/no — yogurt of ANY kind or portion = yes)
 2. Is there a healthy fat source? (yes/no)
 3. Is there a complex carb? (yes/no — fruit alone does NOT count; must be whole grain/legume/starchy vegetable like sweet potato or butternut squash)
 4. Is there a vegetable/produce item? (yes/no)
