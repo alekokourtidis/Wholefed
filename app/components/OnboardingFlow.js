@@ -58,8 +58,8 @@ const STEPS = [
   {
     path: "/results",
     selector: '[data-onboarding="bars"]',
-    title: "Variety & Nutrition",
-    body: "Two sub-scores: variety is how many distinct food groups are present, nutrition is the overall density. Both feed the main score.",
+    title: "Completeness & Quality",
+    body: "Two sub-scores: completeness is whether it's a full, balanced meal (protein, carbs, fat, veg), and quality is how clean and unprocessed the ingredients are. Quality matters most, both feed the main score.",
     pad: 8,
   },
   {

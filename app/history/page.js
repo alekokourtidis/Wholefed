@@ -220,11 +220,11 @@ export default function HistoryPage() {
                       <div className="flex items-center gap-4 mt-2">
                         <div className="flex items-center gap-1.5">
                           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: dotGreen(scan.variety).color, boxShadow: dotGreen(scan.variety).glow }} />
-                          <span className="text-[9px] tracking-[0.15em] uppercase text-[#8a8578]">Variety</span>
+                          <span className="text-[9px] tracking-[0.15em] uppercase text-[#8a8578]">Completeness</span>
                         </div>
                         <div className="flex items-center gap-1.5">
                           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: dotGreen(scan.nutrition).color, boxShadow: dotGreen(scan.nutrition).glow }} />
-                          <span className="text-[9px] tracking-[0.15em] uppercase text-[#8a8578]">Nutrition</span>
+                          <span className="text-[9px] tracking-[0.15em] uppercase text-[#8a8578]">Quality</span>
                         </div>
                       </div>
                     </div>

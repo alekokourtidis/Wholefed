@@ -222,11 +222,19 @@ REQUIRED MACRO COMPONENTS (deduct if missing):
   (avocado can count for BOTH healthy fat AND veg in deductions)
   (Greek yogurt and cottage cheese can count as both protein AND a calcium source)
 
-HARD CEILING — non-negotiable:
-- If ANY of the four macro requirements above is missing, the final score CANNOT exceed 89. Period. Cap at 89 regardless of how many bonuses apply.
-- 90+ requires every macro requirement to be satisfied.
-- 94 base is for COMPLETE meals only.
-- If you find yourself wanting to score an incomplete meal in the 90s because "the foods present are really good," resist. The hard ceiling exists because completeness matters more than ingredient quality alone.
+HARD CEILING — non-negotiable. There are TWO independent ceilings; ALWAYS apply the LOWER one.
+
+WEIGHTING PRINCIPLE: ingredient quality / processing matters MORE than completeness — weight it roughly 60% quality, 40% completeness. Hitting all the macro boxes does NOT rescue a processed meal.
+
+(1) COMPLETENESS CEILING:
+- If ANY of the four macro requirements above is missing, the final score CANNOT exceed 89.
+- 90+ requires every macro requirement to be satisfied. 94 base is for COMPLETE meals only.
+
+(2) QUALITY CEILING (this is the dominant lever — a complete meal that is processed must NOT score well):
+- HEAVILY processed (deep-fried main, fast food, mostly packaged/refined, OR processed meat as the main protein): CANNOT exceed 55, even if every macro is present.
+- MODERATELY processed (one fried element, OR a refined-grain base, OR a sugary/processed sauce as a notable component): CANNOT exceed 78, even if every macro is present.
+- Only a genuinely clean, whole-food meal can reach 90-100.
+- If you find yourself wanting to score a processed-but-complete meal in the 80s-90s because "it technically hits all the macros," resist. Quality outranks completeness.
 
 EXPLICIT MACRO CHECK — do this BEFORE choosing a score:
 1. Is there a quality protein source? (yes/no — yogurt of ANY kind or portion = yes)
@@ -287,6 +295,8 @@ CALIBRATION EXAMPLES (sanity checks against the deduction method + ceiling):
 - Pizza slice: 94 - 12 (no complex carb) - 6 (refined grain) - 6 (cheese) - 15 (no real veg) - 10 (processed) = 45.
 - Fast food burger + fries: 94 - 12 - 10 (fried) - 10 (processed protein) - 6 (refined grain) - 15 (no real veg) = 41.
 - Just blueberries + pomegranate (snack, not full meal): 94 - 18 (no protein) - 12 (no fat) - 12 (no complex carb) = 52. Verdict should note this is "more of a snack than a meal" not call it processed.
+- COMPLETE but MODERATELY processed (grilled chicken + sweet potato FRIES + side salad + olive oil): protein/carb/fat/veg ALL present, so completeness is satisfied — but the carb is fried, so the QUALITY CEILING of 78 applies. 94 - 10 (fried) = 84, then capped at 78. Completeness alone does not lift it back up.
+- COMPLETE but HEAVILY processed (fried chicken sandwich on white bun + fries + soda): macros arguably present, but deep-fried main + refined bun + fried side = heavily processed → QUALITY CEILING of 55. Lands ~45-50 regardless of completeness.
 - Bag of chips alone: 94 - 18 - 12 - 12 - 15 - 10 (processed) = 17
 - Instant cup noodles: 94 - 18 - 12 - 15 - 6 (refined) - 5 (sodium) = 38
 - Pizza slice: ~27 (refined grain -6, cheese -6, no real veg -15, processed -10)
@@ -294,13 +304,13 @@ CALIBRATION EXAMPLES (sanity checks against the deduction method + ceiling):
 - Bag of chips alone: ~6
 - Instant cup noodles: ~3
 
-If a meal is ALL processed with no whole foods, variety MUST be 1/10 and nutrition MUST be 1/10.
+If a meal is ALL processed with no whole foods, quality MUST be 1/10 (completeness still reflects only whether the macro groups are present).
 
 {
   "title": "<string — 2-4 word meal name based on what you see, e.g. 'Shin Ramen', 'Grilled Salmon Bowl', 'Eggs & Avocado Toast'. Be specific to the actual food, not generic like 'Meal Scan'.>",
   "score": <number 0-100>,
-  "variety": <number 1-10>,
-  "nutrition": <number 1-10>,
+  "completeness": <number 1-10 — does this work as a FULL, balanced meal: protein + complex carb + healthy fat + vegetables. 10 = all four groups clearly present; deduct roughly 2-3 per missing group. This is PURELY about whether the meal is complete/balanced, NOT about how healthy the ingredients are. A fried-but-present carb (e.g. fried sweet potato) still counts toward completeness — its frying is penalized under quality, not here.>,
+  "quality": <number 1-10 — how good the actual ingredients are: whole, unprocessed, nutrient-dense = high; processed, refined, fried, packaged, sugary, additive-heavy, or processed-meat = low. Fold ALL processing judgment into THIS number. This is the more important of the two sub-scores.>,
   "verdict": "<string>",
   "upgrade": {"from": "<string>", "to": "<string>"} or null,
   "annotations": [{"label": "<string>", "ingredient": "<string>", "x": <number 0-100>, "y": <number 0-100>}],

@@ -506,8 +506,8 @@ export default function ResultsPage() {
             name: data.title || data.verdict?.split("—")[0]?.split("–")[0]?.trim().slice(0, 40) || "Meal Scan",
             date: new Date().toISOString(),
             score: data.score,
-            variety: data.variety,
-            nutrition: data.nutrition,
+            variety: data.completeness ?? data.variety,
+            nutrition: data.quality ?? data.nutrition,
             image: isTextScan
               ? "text"
               : (base64 && base64.startsWith("data:")) ? base64 : (img || "/healthymeal1.jpg"),
@@ -597,10 +597,12 @@ export default function ResultsPage() {
     );
   }
 
-  const { score: rawScore = 0, variety: rawVariety = 0, nutrition: rawNutrition = 0, annotations = [], ingredients = [] } = analysis || {};
+  const { score: rawScore = 0, annotations = [], ingredients = [] } = analysis || {};
   const score = Math.round(rawScore);
-  const variety = Math.round(rawVariety);
-  const nutrition = Math.round(rawNutrition);
+  // Score now splits into Completeness (full-meal balance) + Quality (ingredient/processing).
+  // Internal storage keys stay variety/nutrition (DB columns) — fall back for older scans.
+  const completeness = Math.round(analysis?.completeness ?? analysis?.variety ?? 0);
+  const quality = Math.round(analysis?.quality ?? analysis?.nutrition ?? 0);
 
   // Validate upgrade first — needed to determine insight order
   const upgrade = analysis?.upgrade && ingredients?.some(
@@ -769,11 +771,11 @@ export default function ResultsPage() {
             </div>
           )}
 
-          {/* Variety + Nutrition bars */}
+          {/* Completeness + Quality bars */}
           <div className="space-y-3 px-2" data-onboarding="bars">
             {[
-              { label: "Variety", value: variety, icon: "spa" },
-              { label: "Nutrition", value: nutrition, icon: "bolt" },
+              { label: "Completeness", value: completeness, icon: "spa" },
+              { label: "Quality", value: quality, icon: "bolt" },
             ].map((bar) => (
               <div key={bar.label} className="space-y-1.5">
                 <div className="flex justify-between items-center">
