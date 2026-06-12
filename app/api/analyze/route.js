@@ -564,7 +564,10 @@ ${personalization ? `\n--- USER CONTEXT (apply to insights as instructed above) 
   // BETTER than gpt-4o in testing, fast, cheap tier). Text uses gpt-4o-mini
   // (no vision needed, deterministic at temp 0). GPT-5 models only accept the
   // default temperature and use max_completion_tokens instead of max_tokens.
-  const model = isTextMode ? "gpt-4o-mini" : "gpt-5.4-mini";
+  // gpt-5.4-mini for both modes: it follows the nuanced scoring rubric far more
+  // reliably than gpt-4o-mini (which under-credited complex carbs when a refined
+  // item was also present). Determinism for identical scans comes from the cache.
+  const model = "gpt-5.4-mini";
   const isGpt5 = model.startsWith("gpt-5");
   const openaiBody = {
     model,
