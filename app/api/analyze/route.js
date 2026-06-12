@@ -231,6 +231,7 @@ WEIGHTING PRINCIPLE: ingredient quality / processing matters MORE than completen
 - 90+ requires every macro requirement to be satisfied. 94 base is for COMPLETE meals only.
 
 (2) QUALITY CEILING (this is the dominant lever — a complete meal that is processed must NOT score well):
+- DESSERT / PURE JUNK as the dominant item (cake, cookies, brownies, donut, pastry, croissant, muffin, candy, chocolate bar, ice cream, sugary cereal, chips, soda, candy bar): CANNOT exceed 18. If the item is ONLY a dessert or junk food with no other real food present, score it in the 4-14 range. These are sugar / refined-flour items with effectively no protein, fiber, or micronutrients — they are NOT a meal. A single cookie, a slice of cake, or a pastry on its own should land around 6-12, NEVER in the 17-29 range. When in doubt, score junk LOWER, not higher. A lone pastry scoring 24 is WRONG — it should be ~9.
 - HEAVILY processed (deep-fried main, fast food, mostly packaged/refined, OR processed meat as the main protein): CANNOT exceed 55, even if every macro is present.
 - MODERATELY processed (one fried element, OR a refined-grain base, OR a sugary/processed sauce as a notable component): CANNOT exceed 78, even if every macro is present.
 - Only a genuinely clean, whole-food meal can reach 90-100.
@@ -299,6 +300,10 @@ CALIBRATION EXAMPLES (sanity checks against the deduction method + ceiling):
 - COMPLETE but HEAVILY processed (fried chicken sandwich on white bun + fries + soda): macros arguably present, but deep-fried main + refined bun + fried side = heavily processed → QUALITY CEILING of 55. Lands ~45-50 regardless of completeness.
 - Bag of chips alone: 94 - 18 - 12 - 12 - 15 - 10 (processed) = 17
 - Instant cup noodles: 94 - 18 - 12 - 15 - 6 (refined) - 5 (sodium) = 38
+- Chocolate chip cookies: no protein, no complex carb, no veg, added sugar, refined flour → DESSERT CEILING → ~8.
+- Slice of cake / cupcake: pure sugar + refined flour, no real nutrition → DESSERT CEILING → ~7.
+- Croissant or plain pastry alone: refined-flour, buttery, no real nutrition → ~11.
+- Donut: refined flour + fried + added sugar → ~6. Plain muffin: ~12. Candy bar: ~5. Ice cream scoop: ~9.
 - Pizza slice: ~27 (refined grain -6, cheese -6, no real veg -15, processed -10)
 - Fast food burger + fries: ~19 (fried -10, processed protein -10, refined grain -6, no real veg -15)
 - Bag of chips alone: ~6
@@ -379,7 +384,7 @@ Return ONLY valid JSON. No markdown. No explanation.`;
       Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "user",
