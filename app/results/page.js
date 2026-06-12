@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import BottomNav from "../components/BottomNav";
+import ShareCard from "../components/ShareCard";
 import { getConditions, getProfile, getConditionScoreEnabled } from "../../lib/user-profile";
 import { useAuth } from "../../lib/auth";
 import { saveScan } from "../../lib/scan-storage";
@@ -367,6 +368,7 @@ export default function ResultsPage() {
   const [extraIngredients, setExtraIngredients] = useState([]);
   const [removedIngredients, setRemovedIngredients] = useState([]);
   const [showAddIngredient, setShowAddIngredient] = useState(false);
+  const [showShare, setShowShare] = useState(false);
   const [userConditions, setUserConditions] = useState([]);
 
   useEffect(() => {
@@ -489,7 +491,11 @@ export default function ResultsPage() {
         const data = await res.json();
         if (data.error) {
           console.warn("API error:", data.error);
-          setAnalysis({ _error: true });
+          // Distinguish "service over capacity" (OpenAI quota / 429) from a real
+          // connection problem, so users aren't told to check a connection that's fine.
+          const errStr = typeof data.error === "string" ? data.error : JSON.stringify(data.error || "");
+          const overCapacity = res.status === 429 || /quota|capacity|rate.?limit|billing/i.test(errStr);
+          setAnalysis({ _error: true, _reason: overCapacity ? "capacity" : "connection" });
           setLoading(false);
           return;
         }
@@ -577,14 +583,21 @@ export default function ResultsPage() {
   }
 
   if (analysis?._error) {
+    const overCapacity = analysis?._reason === "capacity";
     return (
       <div className="fixed inset-0 bg-surface flex flex-col items-center justify-center gap-6 px-10">
-        <span className="material-symbols-outlined text-[48px] text-[#8a8578]">cloud_off</span>
+        <span className="material-symbols-outlined text-[48px] text-[#8a8578]">
+          {overCapacity ? "hourglass_empty" : "cloud_off"}
+        </span>
         <p className="text-[#d4cfc4] text-base font-light text-center">
-          Something went wrong analyzing your meal
+          {overCapacity
+            ? "Our kitchen is a little backed up"
+            : "Something went wrong analyzing your meal"}
         </p>
         <p className="text-[#8a8578] text-xs font-light text-center">
-          Please check your connection and try again.
+          {overCapacity
+            ? "We're temporarily over capacity. Your connection is fine — please try again in a few minutes."
+            : "Please check your connection and try again."}
         </p>
         <button
           onClick={() => router.push("/")}
@@ -801,6 +814,16 @@ export default function ResultsPage() {
             ))}
           </div>
 
+          {/* Share result */}
+          <button
+            onClick={() => setShowShare(true)}
+            className="self-center mt-1 flex items-center gap-2 px-5 py-2 rounded-full border border-white/15 text-[#d4cfc4] active:scale-95 transition-transform"
+            style={{ background: "rgba(255,255,255,0.04)" }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>ios_share</span>
+            <span className="text-[12px] tracking-[0.1em] uppercase font-semibold">Share score</span>
+          </button>
+
           {/* Detected Ingredients Strip */}
           {ingredients && ingredients.length > 0 && (
             <IngredientsRow
@@ -975,6 +998,16 @@ export default function ResultsPage() {
           existingIngredients={[...ingredients, ...extraIngredients]}
           onAdd={(food) => setExtraIngredients((prev) => [...prev, food])}
           onClose={() => setShowAddIngredient(false)}
+        />
+      )}
+
+      {showShare && (
+        <ShareCard
+          score={score}
+          completeness={completeness}
+          quality={quality}
+          title={analysis?.title || ""}
+          onClose={() => setShowShare(false)}
         />
       )}
     </div>
