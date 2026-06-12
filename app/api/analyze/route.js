@@ -1,11 +1,38 @@
+import { createClient } from "@supabase/supabase-js";
+
 // Allow large image uploads (up to 10MB base64)
 export const maxDuration = 60;
 
-// In-memory cache — keyed by image hash + conditions + profile
+// In-memory cache — keyed by image hash + conditions + profile + labs.
+// This only lives for one serverless instance, so it just catches rapid repeats.
 const analysisCache = new Map();
 
-async function hashImage(image, conditions, profile) {
-  const key = image.slice(0, 200) + image.slice(-200) + image.length + JSON.stringify(conditions || []) + JSON.stringify(profile || {});
+// Persistent cross-request/user cache in Supabase. Identical scans — especially
+// text-mode common foods like "2 eggs and toast" typed by many users — return
+// from here instead of spending an OpenAI call. Key already includes the user's
+// conditions/profile/labs, so personalized results are never shared across users.
+const supaUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supaKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supa = supaUrl && supaKey ? createClient(supaUrl, supaKey) : null;
+
+async function getCachedAnalysis(key) {
+  if (!supa) return null;
+  try {
+    const { data } = await supa.from("analysis_cache").select("result").eq("cache_key", key).maybeSingle();
+    return data?.result ?? null;
+  } catch { return null; }
+}
+
+async function setCachedAnalysis(key, result) {
+  if (!supa) return;
+  try {
+    // ON CONFLICT DO NOTHING — only needs the insert policy.
+    await supa.from("analysis_cache").upsert({ cache_key: key, result }, { onConflict: "cache_key", ignoreDuplicates: true });
+  } catch {}
+}
+
+async function hashImage(image, conditions, profile, labs) {
+  const key = image.slice(0, 200) + image.slice(-200) + image.length + JSON.stringify(conditions || []) + JSON.stringify(profile || {}) + JSON.stringify(labs || {});
   const encoder = new TextEncoder();
   const data = encoder.encode(key);
   const hash = await crypto.subtle.digest("SHA-256", data);
@@ -57,11 +84,20 @@ export async function POST(request) {
   const { image, conditions, profile, labs, conditionScoreEnabled, description } = await request.json();
   const isTextMode = !!description && (!image || image.startsWith("text:"));
 
-  // Check cache — same image/text + same conditions + same toggle = same result
-  const cacheBase = isTextMode ? `text:${description}` : image;
-  const cacheKey = await hashImage(cacheBase, conditions, profile) + (conditionScoreEnabled ? ":cs1" : ":cs0");
+  // Check cache — same food + same conditions/profile/labs + same toggle = same result.
+  // Text is normalized (lowercase, trimmed, collapsed whitespace) so "2 Eggs " and
+  // "2 eggs" share a cache entry and common foods hit far more often.
+  const cacheBase = isTextMode
+    ? `text:${(description || "").trim().toLowerCase().replace(/\s+/g, " ")}`
+    : image;
+  const cacheKey = await hashImage(cacheBase, conditions, profile, labs) + (conditionScoreEnabled ? ":cs1" : ":cs0");
   if (analysisCache.has(cacheKey)) {
     return Response.json(analysisCache.get(cacheKey));
+  }
+  const persisted = await getCachedAnalysis(cacheKey);
+  if (persisted) {
+    analysisCache.set(cacheKey, persisted);
+    return Response.json(persisted);
   }
 
   // Build personalization context
@@ -464,8 +500,9 @@ Return ONLY valid JSON. No markdown. No explanation.`;
   try {
     const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
     const analysis = applyJunkScoreGuardrails(JSON.parse(cleaned));
-    // Cache the result — same image won't hit the API again
+    // Cache the result — same scan won't hit the OpenAI API again (memory + Supabase)
     analysisCache.set(cacheKey, analysis);
+    await setCachedAnalysis(cacheKey, analysis);
     return Response.json(analysis);
   } catch {
     return Response.json({ error: "Failed to parse AI response", raw: text }, { status: 500 });
