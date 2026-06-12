@@ -389,6 +389,7 @@ ADDED SUGAR ITEMS (trigger -10 added sugar deduction):
 - Sweetened beverages: soda, juice (most), sweetened iced tea, energy drinks, sweetened coffee drinks, lemonade
 - Desserts: ice cream, gelato, cake, cookies, pie, cheesecake, brownies, candy, chocolate bars (milk chocolate)
 - Sweetened yogurt, flavored oatmeal packets, breakfast pastries
+- DRIZZLE CARVE-OUT (apply strictly): a small DRIZZLE of honey, hot honey, maple syrup, or other natural sweetener used as a flavoring/finish — NOT pooled, NOT a primary component, NOT a dessert — is a minor flavoring, NOT a dessert-level added sugar. Deduct at most -3, the same way capers/olives are treated as garnishes. The full -10 "added sugar" deduction is ONLY for added sugar that is HEAVY, POOLED, or a DEFINING component of the dish (a dessert, a sugar-loaded sauce coating the food, visible syrup pooling on the plate, sweetened drink). A teaspoon of hot honey on an otherwise whole-food meal must NOT crater the score — treat it like the harmless flavoring it is.
 
 HIGH SODIUM TRIGGERS (-5 sodium deduction):
 - Soy sauce (heavy), fish sauce, oyster sauce, hoisin (heavy)
@@ -503,7 +504,7 @@ QUALITY DEDUCTIONS (stack if multiple apply):
 - Processed protein present (deli meat, sausage, bacon, chicken nuggets): -10
 - Heavy sugary sauce/dressing (BBQ, ketchup with sugar, honey mustard, sweet glaze): -8
 - High sodium sauce (soy sauce loaded, ranch, processed dressing): -5
-- Added sugar visible (syrup, sweetener, dessert component): -10
+- Added sugar visible and HEAVY/POOLED/dessert-level (syrup pooling, dessert component, sugar-loaded sauce): -10. A small DRIZZLE of honey/hot honey/syrup used as a flavoring is at most -3 (see DRIZZLE CARVE-OUT above), never -10.
 - Cheese as primary protein or in large amount: -6
 - Portion clearly oversized or undersized: -4
 
