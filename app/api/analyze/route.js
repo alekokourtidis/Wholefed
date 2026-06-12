@@ -234,7 +234,7 @@ WEIGHTING PRINCIPLE: ingredient quality / processing matters MORE than completen
 - DESSERT / PURE JUNK as the dominant item (cake, cookies, brownies, donut, pastry, croissant, muffin, candy, chocolate bar, ice cream, sugary cereal, chips, soda): CANNOT exceed 20. These are not meals. Score them within a 2-20 band, BUT calibrate by how much genuine nutrition is actually present — do not flatten everything to the same low number:
   - ZERO-nutrition pure sugar (soda, gummies, lollipops, hard candy, cotton candy): 2-6. There is nothing redeeming here.
   - Refined-flour baked goods with little else (plain cookies, cake, cupcakes, donuts, croissants, plain pastries): 6-12. Mostly sugar + refined flour, trace nutrition.
-  - Desserts with a REAL nutritional component (ice cream / milkshake = dairy, so some protein + calcium + fat; nut-based or dark-chocolate items = some healthy fat/antioxidants; a muffin with nuts/oats/fruit): 12-20. Still junk, still capped at 20, but the dairy/protein/fat earns the higher end of the band. Ice cream should NOT score as low as a soda — it has actual macronutrients.
+  - Desserts with a REAL nutritional component (ice cream / milkshake / frozen yogurt = dairy, so some protein + calcium + fat; nut-based or dark-chocolate items = some healthy fat/antioxidants; a muffin with nuts/oats/fruit): score 14-20. This is a HARD FLOOR — ice cream, milkshakes, and frozen yogurt MUST score at least 14 and must NOT drop into single digits, because dairy provides genuine protein, calcium, and fat. A scoop of ice cream scoring 8 is WRONG — it should be ~16. Ice cream is junk, but it is NOT as empty as soda or candy, and the score must reflect that difference clearly.
   When in doubt for a refined/sugary item with no redeeming component, score LOWER not higher. A lone plain pastry scoring 24 is WRONG — it should be ~9.
 - PROCESSED / PACKAGED AUTO-PENALTY: any item that is clearly processed or packaged (has a wrapper, an ingredients label, is fried, cured, or factory-made rather than a whole food) MUST score low regardless of whether it technically hits macros. Processing alone drags the quality sub-score down and pulls the final score into the lower bands. Whole, minimally-processed foods are the only ones that earn high scores.
 - HEAVILY processed (deep-fried main, fast food, mostly packaged/refined, OR processed meat as the main protein): CANNOT exceed 55, even if every macro is present.
@@ -400,6 +400,7 @@ Return ONLY valid JSON. No markdown. No explanation.`;
       ],
       max_tokens: 2000,
       temperature: 0.55,
+      response_format: { type: "json_object" },
     }),
   });
 
