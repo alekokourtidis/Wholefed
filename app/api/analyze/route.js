@@ -124,6 +124,31 @@ function enforceScoreContract(analysis, ctx) {
   return analysis;
 }
 
+// Code-level consistency net: the model occasionally returns a complete-tier score
+// (90+) yet also emits a contradictory "missing complex carb / protein / fat / veg"
+// insight (usually because it annotated the carb but flagged it missing). A 90+
+// score asserts the meal is complete, so we DROP the contradictory missing-macro
+// insight (trust the score). Also strips the word "gap" from missing-insight titles.
+function reconcileAnalysis(analysis) {
+  if (!analysis || !Array.isArray(analysis.insights)) return analysis;
+  const macroRe = /(complex carb|whole grain|\bprotein\b|healthy fat|vegetable|veggie|leafy green)/i;
+  analysis.insights = analysis.insights.filter((i) => {
+    if ((i?.type || "").toLowerCase() !== "missing") return true;
+    const txt = `${i.title || ""} ${i.text || ""}`;
+    const flagsMacro = macroRe.test(txt);
+    // On a complete-tier meal, a "missing macro" insight is contradictory — drop it.
+    if (typeof analysis.score === "number" && analysis.score >= 88 && flagsMacro) return false;
+    return true;
+  });
+  // Clean up titles: no "gap" wording.
+  for (const i of analysis.insights) {
+    if ((i?.type || "").toLowerCase() === "missing" && typeof i.title === "string") {
+      i.title = i.title.replace(/\bgap\b/gi, "").replace(/\s{2,}/g, " ").trim();
+    }
+  }
+  return analysis;
+}
+
 export async function POST(request) {
   const { image, conditions, profile, labs, conditionScoreEnabled, description,
           previousScore, previousBonus100, addedIngredients, removedAny } = await request.json();
@@ -544,13 +569,18 @@ INSIGHTS — Each type renders differently in the UI. Include each insight's "ty
      - "good" — if the meal has any genuine positive qualities (which is true for any meal made of real whole foods, even if incomplete). One positive observation. Just "text", no title. One sentence.
      - "warning" — ONLY when the meal contains genuinely harmful items: fast food, deep-fried items, heavy added sugar, processed/cured meats (bacon/sausage/deli), packaged junk (chips, instant noodles, soda, candy), or sodium-loaded sauces. NEVER use "warning" for fresh fruit, fresh vegetables, eggs, raw nuts, plain yogurt, or whole grains, even if the meal is nutritionally incomplete. Incomplete ≠ unhealthy.
      - Decision rule: use "good" UNLESS you can name a specific harmful processed item in the ingredients. A bowl of just berries is "good" (and the verdict can note it's small/snack-sized). Cheese fries is "warning".
-  2. "missing" (ONLY if something is genuinely lacking) — include "title" (2-4 words, Capitalized), "text", AND "suggestions" array with 2-3 foods: [{"emoji": "🍠", "name": "Sweet Potato"}, ...]. If the meal is well-rounded, SKIP this entirely. Do NOT invent a deficiency.
+  2. "missing" (ONLY if something is genuinely lacking) — include "title" (2-4 words, Capitalized), "text", AND "suggestions" array with 2-3 foods: [{"emoji": "🍠", "name": "Sweet Potato"}, ...]. If the meal is well-rounded, SKIP this entirely. Do NOT invent a deficiency. TITLE must be a positive ACTION phrase like "Add Whole Grains" or "Add Leafy Greens" — NEVER use the word "gap" (no "Complex Carb Gap"). And NEVER include a "missing" insight for a macro that is actually present: if the meal scores 86+ it is COMPLETE by definition, so it must NOT have a "missing complex carb / protein / fat / vegetable" insight.
   3. "interaction" (REQUIRED) — a real nutrient interaction between two foods in this meal. Just "text". Must mention TWO specific foods. This can be POSITIVE (one food boosts another's absorption, e.g. vitamin C + iron, fat + fat-soluble vitamins) OR a CAUTION about poor combining/absorption or digestion (e.g. calcium-rich dairy blunting iron absorption from greens, a very high-fat load slowing digestion, tannins in tea limiting iron uptake). If a genuine negative interaction or digestion concern exists in THIS meal, prefer flagging it constructively over a generic positive one.
   4. "fact" (REQUIRED) — a genuinely surprising fact about a specific ingredient. Not common knowledge. Just "text".
 - IF (and only if) health conditions are listed in the USER CONTEXT section at the very end of this prompt, you MUST also include a "condition" type insight with "title" (the condition name) and "text" about how this meal affects those conditions. If no conditions are listed, omit the condition insight.
 - NEVER return two insights of the same type.
 - Each "text" is 1-2 sentences. Specific to THIS meal, not generic.
 - NO generic advice. Reference actual ingredients you identified.
+
+INTERNAL CONSISTENCY — the score, ingredients, annotations, and insights MUST tell ONE story. Before finalizing:
+- Every food you put in an ANNOTATION must also appear in the "ingredients" list. If you annotate something as "Complex Carbs", that food (e.g. potatoes) MUST be in ingredients — and then the meal HAS its complex carb, so do NOT also flag it missing.
+- If you flag a missing macro group (complex carb/protein/fat/vegetable), the score MUST be 85 or below AND you must NOT annotate that macro as present. If instead the macro IS present, score it as complete (86+) and do NOT flag it missing. Never do both.
+- A 90+ score asserts the meal is complete and clean — it cannot carry a "missing macro" insight.
 
 Return ONLY valid JSON. No markdown. No explanation.
 ${personalization ? `\n--- USER CONTEXT (apply to insights as instructed above) ---${personalization}` : ""}`;
@@ -608,7 +638,7 @@ ${personalization ? `\n--- USER CONTEXT (apply to insights as instructed above) 
 
   try {
     const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-    const analysis = enforceScoreContract(applyJunkScoreGuardrails(JSON.parse(cleaned)), scoreCtx);
+    const analysis = reconcileAnalysis(enforceScoreContract(applyJunkScoreGuardrails(JSON.parse(cleaned)), scoreCtx));
     // Cache the result — same scan won't hit the OpenAI API again (memory + Supabase).
     // Rescores are contextual (depend on previous score), so they are NOT cached.
     if (!isRescore) {
