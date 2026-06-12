@@ -286,7 +286,6 @@ FRESH FOOD GUARDRAILS — Never get this wrong:
 - "Processed" means: visible packaging, candy, chips, soda, deli meat, sausage, bacon, hot dogs, sugar-laden sauces, fast food, instant noodles, breakfast cereal with added sugar, frosted/breaded items.
 - "High sodium" means: cured meats, soy sauce, processed condiments, fast food, canned soup, chips. NOT fresh produce. NOT fresh meat. NOT raw eggs.
 - If you cannot point to a SPECIFIC processed or high-sodium item by name in the meal, do NOT claim the meal is processed or high in sodium.
-${personalization}
 
 Return a JSON object with exactly this structure:
 
@@ -463,12 +462,13 @@ INSIGHTS — Each type renders differently in the UI. Include each insight's "ty
   2. "missing" (ONLY if something is genuinely lacking) — include "title" (2-4 words, Capitalized), "text", AND "suggestions" array with 2-3 foods: [{"emoji": "🍠", "name": "Sweet Potato"}, ...]. If the meal is well-rounded, SKIP this entirely. Do NOT invent a deficiency.
   3. "interaction" (REQUIRED) — a real nutrient interaction between two foods in this meal. Just "text". Must mention TWO specific foods.
   4. "fact" (REQUIRED) — a genuinely surprising fact about a specific ingredient. Not common knowledge. Just "text".
-${conditions && conditions.length > 0 ? '- You MUST also include a "condition" type insight. Include "title" (the condition name) and "text" about how this meal affects: ' + conditions.join(", ") + '.' : ""}
+- IF (and only if) health conditions are listed in the USER CONTEXT section at the very end of this prompt, you MUST also include a "condition" type insight with "title" (the condition name) and "text" about how this meal affects those conditions. If no conditions are listed, omit the condition insight.
 - NEVER return two insights of the same type.
 - Each "text" is 1-2 sentences. Specific to THIS meal, not generic.
 - NO generic advice. Reference actual ingredients you identified.
 
-Return ONLY valid JSON. No markdown. No explanation.`;
+Return ONLY valid JSON. No markdown. No explanation.
+${personalization ? `\n--- USER CONTEXT (apply to insights as instructed above) ---${personalization}` : ""}`;
 
   const messageContent = isTextMode
     ? [
