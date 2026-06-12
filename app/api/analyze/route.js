@@ -58,7 +58,7 @@ function applyJunkScoreGuardrails(analysis) {
   const has = (words) => words.some((w) => title.includes(w));
 
   let lo = null, hi = null;
-  if (has(["soda", "cola", "coke", "pepsi", "sprite", "fanta", "mountain dew", "gatorade", "lemonade", "soft drink", "energy drink"])) {
+  if (has(["soda", "cola", "coke", "pepsi", "sprite", "fanta", "mountain dew", "gatorade", "lemonade", "soft drink", "energy drink", "sweet tea", "sweet iced tea", "sweetened tea", "kool-aid", "kool aid", "fruit punch", "frappuccino", "slushie", "slurpee", "sweetened drink", "sugary drink"])) {
     lo = 2; hi = 5; // zero-nutrition sugar water
   } else if (has(["gummy", "gummies", "lollipop", "hard candy", "candy", "skittles", "starburst", "jelly bean", "cotton candy", "chocolate bar", "candy bar"])) {
     lo = 2; hi = 6; // pure candy
