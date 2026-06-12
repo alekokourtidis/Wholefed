@@ -47,15 +47,16 @@ async function hashImage(image, conditions, profile, labs) {
 function applyJunkScoreGuardrails(analysis) {
   if (!analysis || typeof analysis.score !== "number") return analysis;
   const completeness = analysis.completeness ?? analysis.variety ?? 10;
-  const numIngredients = Array.isArray(analysis.ingredients) ? analysis.ingredients.length : 99;
-  // Only clamp a genuinely SINGLE junk item (e.g. just soda, just a cookie, just
-  // fries). A combo meal like "Burger & Fries" has many ingredients and real
-  // protein/veg — it must NOT be treated as pure junk just because the title says
-  // "fries". Require BOTH low completeness AND a short ingredient list.
-  if (completeness > 3 || numIngredients > 3) return analysis;
+  if (completeness > 3) return analysis; // a complete/balanced meal — never clamp
 
   const title = (analysis.title || "").toLowerCase();
   const has = (words) => words.some((w) => title.includes(w));
+
+  // Never clamp a COMPOSED meal even if its title mentions a junk word. "Burger &
+  // Fries" or "Fish and Chips" is a real meal with protein — only a STANDALONE
+  // junk item (just fries, just a milkshake, just soda) should hit the bands below.
+  const REAL_MEAL_WORDS = ["burger", "cheeseburger", "sandwich", "wrap", "taco", "burrito", "steak", "chicken", "salmon", "fish", "shrimp", "tofu", "stir fry", "stir-fry", "curry", "soup", "stew", "omelet", "omelette", "salad", "gyro", "kebab", "quesadilla", "pasta", "rice bowl", "grain bowl", "platter", "with eggs", "and eggs"];
+  if (REAL_MEAL_WORDS.some((w) => title.includes(w))) return analysis;
 
   let lo = null, hi = null;
   if (has(["soda", "cola", "coke", "pepsi", "sprite", "fanta", "mountain dew", "gatorade", "lemonade", "soft drink", "energy drink", "sweet tea", "sweet iced tea", "sweetened tea", "kool-aid", "kool aid", "fruit punch", "frappuccino", "slushie", "slurpee", "sweetened drink", "sugary drink"])) {
