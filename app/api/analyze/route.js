@@ -167,6 +167,7 @@ INGREDIENT DETECTION — Be exhaustive:
 - ${isTextMode ? "Sauces and condiments the user mentioned count." : "Look for sauces, condiments, dips, and garnishes — they count. Schug, hummus, tahini, pesto, salsa, etc."}
 - If you see grains mixed with herbs (like tabbouleh, couscous), identify the dish, not just "grains".
 - Return ALL ingredients in the "ingredients" array, not just the top 3-4. Aim for completeness.
+- CONSISTENCY: the "ingredients" array MUST list every food your score is based on. If you score the meal as having protein, the protein (chicken, etc.) MUST appear in the list. A high score (90+) with a near-empty ingredient list is FORBIDDEN — the score and the listed ingredients must tell the same story. If you only detect 2 items, the score must reflect a 2-item meal.
 
 ${isTextMode ? "" : `HIGH-MISS ITEMS — Pay extra attention to these, they are commonly missed:
 - Butternut squash, acorn squash, kabocha squash, delicata squash, pumpkin (orange/yellow flesh, often roasted in cubes or slices) — count as COMPLEX CARBS not vegetables.
@@ -480,7 +481,11 @@ Return ONLY valid JSON. No markdown. No explanation.`;
       Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
-      model: "gpt-4o-mini",
+      // Photos need real vision to detect every item on the plate — gpt-4o-mini
+      // under-detects ingredients (missed chicken/cheese, mislabeled potato), so
+      // photo scans use full gpt-4o. Text descriptions need no vision, so they
+      // stay on cheap gpt-4o-mini.
+      model: isTextMode ? "gpt-4o-mini" : "gpt-4o",
       messages: [
         {
           role: "user",
