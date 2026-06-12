@@ -85,9 +85,52 @@ function applyJunkScoreGuardrails(analysis) {
   return analysis;
 }
 
+// Additions that ARE allowed to lower a score (objectively unhealthy).
+const JUNK_ADDITION_WORDS = ["soda", "cola", "candy", "chocolate bar", "candy bar", "fries", "chips", "bacon", "sausage", "hot dog", "deep fried", "fried", "syrup", "frosting", "ice cream", "donut", "doughnut", "cookie", "cake", "mayo", "mayonnaise", "ranch", "processed", "deli meat", "pepperoni", "salami", "nutella", "whipped cream", "caramel", "sugar"];
+function isJunkAddition(name) {
+  const n = (name || "").toLowerCase();
+  return JUNK_ADDITION_WORDS.some((w) => n.includes(w));
+}
+
+// Enforce the score contract on a RE-SCAN (user edited the ingredient list):
+// 1) If the meal previously promised "add X for a perfect 100" and X was added,
+//    the score MUST become 100 — the app made a promise, honor it.
+// 2) Adding a non-junk (healthy/neutral) ingredient can only RAISE or HOLD the
+//    score, never lower it. Only an objectively unhealthy addition may drop it.
+function enforceScoreContract(analysis, ctx) {
+  if (!analysis || typeof analysis.score !== "number" || !ctx) return analysis;
+  const { previousScore, previousBonus100, addedIngredients, removedAny } = ctx;
+  const added = Array.isArray(addedIngredients) ? addedIngredients : [];
+
+  // (1) The 100 promise
+  if (previousBonus100 && typeof previousBonus100 === "string" && typeof previousScore === "number" && previousScore >= 94) {
+    const promised = previousBonus100.toLowerCase().trim();
+    const wasAdded = added.some((i) => {
+      const a = (i || "").toLowerCase().trim();
+      return a && promised && (a.includes(promised) || promised.includes(a));
+    });
+    if (wasAdded) {
+      analysis.score = 100;
+      analysis.bonus100 = null;
+      return analysis;
+    }
+  }
+
+  // (2) Monotonic floor — healthy/neutral additions never lower the score
+  if (typeof previousScore === "number" && !removedAny && added.length > 0 && !added.some(isJunkAddition)) {
+    analysis.score = Math.max(analysis.score, previousScore);
+  }
+  return analysis;
+}
+
 export async function POST(request) {
-  const { image, conditions, profile, labs, conditionScoreEnabled, description } = await request.json();
+  const { image, conditions, profile, labs, conditionScoreEnabled, description,
+          previousScore, previousBonus100, addedIngredients, removedAny } = await request.json();
   const isTextMode = !!description && (!image || image.startsWith("text:"));
+  // A re-score (user edited ingredients) carries the previous score — its result
+  // is contextual (monotonic floor / 100 promise), so it bypasses the shared cache.
+  const isRescore = typeof previousScore === "number";
+  const scoreCtx = { previousScore, previousBonus100, addedIngredients, removedAny };
 
   // Check cache — same food + same conditions/profile/labs + same toggle = same result.
   // Text is normalized (lowercase, trimmed, collapsed whitespace) so "2 Eggs " and
@@ -96,13 +139,15 @@ export async function POST(request) {
     ? `text:${(description || "").trim().toLowerCase().replace(/\s+/g, " ")}`
     : image;
   const cacheKey = await hashImage(cacheBase, conditions, profile, labs) + (conditionScoreEnabled ? ":cs1" : ":cs0");
-  if (analysisCache.has(cacheKey)) {
-    return Response.json(analysisCache.get(cacheKey));
-  }
-  const persisted = await getCachedAnalysis(cacheKey);
-  if (persisted) {
-    analysisCache.set(cacheKey, persisted);
-    return Response.json(persisted);
+  if (!isRescore) {
+    if (analysisCache.has(cacheKey)) {
+      return Response.json(analysisCache.get(cacheKey));
+    }
+    const persisted = await getCachedAnalysis(cacheKey);
+    if (persisted) {
+      analysisCache.set(cacheKey, persisted);
+      return Response.json(persisted);
+    }
   }
 
   // Build personalization context
@@ -421,7 +466,8 @@ If a meal is ALL processed with no whole foods, quality MUST be 1/10 (completene
   "upgrade": {"from": "<string>", "to": "<string>"} or null,
   "annotations": [{"label": "<string>", "ingredient": "<string>", "x": <number 0-100>, "y": <number 0-100>}],
   "insights": [<insight objects>],
-  "ingredients": ["<string>", ...]
+  "ingredients": ["<string>", ...],
+  "bonus100": "<string OR null — if the score is 94-99, the SINGLE food that would bring this meal to a perfect 100 (the exact same food you named in the verdict's path-to-100 sentence, e.g. 'sauerkraut' or 'fresh herbs'). Use a simple lowercase food name. null if the score is 100 or below 94.>"
 }
 
 ANNOTATIONS — Be scientifically precise:
@@ -442,7 +488,7 @@ VERDICT — Be a smart friend, not a motivational poster:
 - REQUIRED: if the meal is missing any of the four macro requirements (protein, healthy fat, complex carb, vegetables), the verdict MUST explicitly name what's missing using the words "missing", "needs", or "lacks". Example: "Solid protein and fat from the eggs and avocado, but missing a complex carb — add quinoa or sweet potato next time."
 - If the meal hits all four macro requirements, the verdict can celebrate that without mentioning what's missing.
 - REFINED CARB CALLOUT: If the meal contains a refined carb (white pasta, white rice, white bread, regular pasta) but no complex carb, the verdict MUST say so explicitly. Example: "The pasta is white-flour based — a whole grain option like brown rice or whole wheat pasta would replace the refined carb here." Don't just say "missing complex carb" when there's clearly a refined carb in the dish; name the swap.
-- PATH TO 100: If the score is 94-99 (any score in the 90s but not 100), the verdict MUST end with one short sentence naming a specific bonus element that would push it to a perfect 100. Examples: "Add a fermented element like sauerkraut for a perfect 100." OR "A sprinkle of fresh herbs would round this out to 100." Only one bonus suggestion, the most impactful one. Skip this line if the score is already 100 or below 94.
+- PATH TO 100: If the score is 94-99 (any score in the 90s but not 100), the verdict MUST end with one short sentence naming a specific bonus element that would push it to a perfect 100. Examples: "Add a fermented element like sauerkraut for a perfect 100." OR "A sprinkle of fresh herbs would round this out to 100." Only one bonus suggestion, the most impactful one. Skip this line if the score is already 100 or below 94. The "bonus100" field MUST name the EXACT same food (simple lowercase), so adding it is a real promise the app will honor.
 
 UPGRADE — Only suggest swaps that meaningfully improve nutrition:
 - ABSOLUTE RULE: "from" MUST be a food you can ACTUALLY SEE in the image and that you listed in "ingredients". If the food is not in your ingredients list, you CANNOT use it in a swap. NEVER EVER invent or assume foods that aren't visible.
@@ -520,10 +566,13 @@ ${personalization ? `\n--- USER CONTEXT (apply to insights as instructed above) 
 
   try {
     const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-    const analysis = applyJunkScoreGuardrails(JSON.parse(cleaned));
-    // Cache the result — same scan won't hit the OpenAI API again (memory + Supabase)
-    analysisCache.set(cacheKey, analysis);
-    await setCachedAnalysis(cacheKey, analysis);
+    const analysis = enforceScoreContract(applyJunkScoreGuardrails(JSON.parse(cleaned)), scoreCtx);
+    // Cache the result — same scan won't hit the OpenAI API again (memory + Supabase).
+    // Rescores are contextual (depend on previous score), so they are NOT cached.
+    if (!isRescore) {
+      analysisCache.set(cacheKey, analysis);
+      await setCachedAnalysis(cacheKey, analysis);
+    }
     return Response.json(analysis);
   } catch {
     return Response.json({ error: "Failed to parse AI response", raw: text }, { status: 500 });

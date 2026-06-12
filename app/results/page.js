@@ -854,7 +854,15 @@ export default function ResultsPage() {
                   const res = await fetch("/api/analyze", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ description, conditions, profile, labs, conditionScoreEnabled }),
+                    body: JSON.stringify({
+                      description, conditions, profile, labs, conditionScoreEnabled,
+                      // Score-contract context: enforce the 100 promise and the
+                      // "healthy additions never lower the score" rule on rescore.
+                      previousScore: analysis?.score,
+                      previousBonus100: analysis?.bonus100,
+                      addedIngredients: extraIngredients,
+                      removedAny: removedIngredients.length > 0,
+                    }),
                   });
                   const data = await res.json();
                   if (!data.error) {
