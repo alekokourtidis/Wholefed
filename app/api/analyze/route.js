@@ -284,6 +284,13 @@ ${personalization}
 
 Return a JSON object with exactly this structure:
 
+SCORE STABILITY & ADDITIVITY — critical, do not violate:
+- Adding a whole-food, neutral, or healthy ingredient to a meal must NEVER lower the score. More real-food variety is BETTER, not worse. If a meal of "pasta" scores 70, then "pasta + capers" or "pasta + spinach" or "pasta + grilled chicken" must score the SAME or HIGHER — never lower.
+- A score only DROPS when a genuinely unhealthy, substantial component is added (e.g. adding deep-fried chicken, bacon, a sugary sauce, or a side of fries). A small flavoring or garnish never drops it.
+- GARNISHES & SMALL FLAVORINGS are score-neutral-to-positive and NEVER trigger penalties: capers, olives (small amount), pickles (small amount), fresh herbs, spices, lemon/lime, a sprinkle of seeds/nuts/cheese, capers, chili flakes, garlic, scallions. Do NOT apply a sodium penalty for a small amount of a briny garnish like capers or a few olives — the sodium deduction is only for genuinely sodium-LOADED items (soy-sauce-drenched dishes, cured meats, canned soup, chips).
+- Capers specifically: a healthy Mediterranean flavoring (antioxidants, very low calorie). Treat as a neutral-to-positive produce/garnish. Never let capers reduce a score.
+- Be CONSISTENT: the same meal must produce the same score every time. Compute the deduction stack the same way on every scan.
+
 SCORING — Build the score from explicit components. Two different meals should NEVER end at the exact same score unless they are nutritionally identical.
 Do NOT round to multiples of 5 or 10. Use precise numbers.
 
@@ -480,7 +487,7 @@ Return ONLY valid JSON. No markdown. No explanation.`;
         },
       ],
       max_tokens: 2000,
-      temperature: 0.15,
+      temperature: 0,
       response_format: { type: "json_object" },
     }),
   });
