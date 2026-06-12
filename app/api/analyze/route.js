@@ -12,6 +12,38 @@ async function hashImage(image, conditions, profile) {
   return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
+// Deterministic score guardrails for junk items. gpt-4o-mini follows the broad
+// rubric but won't reliably hit the fine-grained dessert/junk bands, so we clamp
+// the final score in code based on the meal's title. Gated on low completeness
+// (<=3) so it ONLY fires for single junk items, never a real balanced meal that
+// happens to mention one of these words as a side.
+function applyJunkScoreGuardrails(analysis) {
+  if (!analysis || typeof analysis.score !== "number") return analysis;
+  const completeness = analysis.completeness ?? analysis.variety ?? 10;
+  if (completeness > 3) return analysis; // real meal — leave the model's score alone
+
+  const title = (analysis.title || "").toLowerCase();
+  const has = (words) => words.some((w) => title.includes(w));
+
+  let lo = null, hi = null;
+  if (has(["soda", "cola", "coke", "pepsi", "sprite", "fanta", "mountain dew", "gatorade", "lemonade", "soft drink", "energy drink"])) {
+    lo = 2; hi = 5; // zero-nutrition sugar water
+  } else if (has(["gummy", "gummies", "lollipop", "hard candy", "candy", "skittles", "starburst", "jelly bean", "cotton candy", "chocolate bar", "candy bar"])) {
+    lo = 2; hi = 6; // pure candy
+  } else if (has(["ice cream", "gelato", "milkshake", "frozen yogurt", "froyo", "sundae", "soft serve"])) {
+    lo = 14; hi = 20; // dairy dessert — has real protein/calcium/fat, must beat soda
+  } else if (has(["cookie", "cake", "cupcake", "donut", "doughnut", "brownie", "pastry", "croissant", "muffin", "danish", "cinnamon roll", "eclair", "pie"])) {
+    lo = 5; hi = 12; // refined-flour baked dessert
+  } else if (has(["chips", "fries", "pretzel"])) {
+    lo = 3; hi = 10; // packaged/fried junk
+  }
+
+  if (lo !== null) {
+    analysis.score = Math.max(lo, Math.min(hi, analysis.score));
+  }
+  return analysis;
+}
+
 export async function POST(request) {
   const { image, conditions, profile, labs, conditionScoreEnabled, description } = await request.json();
   const isTextMode = !!description && (!image || image.startsWith("text:"));
@@ -399,7 +431,7 @@ Return ONLY valid JSON. No markdown. No explanation.`;
         },
       ],
       max_tokens: 2000,
-      temperature: 0.55,
+      temperature: 0.15,
       response_format: { type: "json_object" },
     }),
   });
@@ -418,7 +450,7 @@ Return ONLY valid JSON. No markdown. No explanation.`;
 
   try {
     const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-    const analysis = JSON.parse(cleaned);
+    const analysis = applyJunkScoreGuardrails(JSON.parse(cleaned));
     // Cache the result — same image won't hit the API again
     analysisCache.set(cacheKey, analysis);
     return Response.json(analysis);
