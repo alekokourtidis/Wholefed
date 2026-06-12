@@ -130,20 +130,39 @@ function enforceScoreContract(analysis, ctx) {
 // score asserts the meal is complete, so we DROP the contradictory missing-macro
 // insight (trust the score). Also strips the word "gap" from missing-insight titles.
 function reconcileAnalysis(analysis) {
-  if (!analysis || !Array.isArray(analysis.insights)) return analysis;
-  const macroRe = /(complex carb|whole grain|\bprotein\b|healthy fat|vegetable|veggie|leafy green)/i;
-  analysis.insights = analysis.insights.filter((i) => {
-    if ((i?.type || "").toLowerCase() !== "missing") return true;
-    const txt = `${i.title || ""} ${i.text || ""}`;
-    const flagsMacro = macroRe.test(txt);
-    // On a complete-tier meal, a "missing macro" insight is contradictory — drop it.
-    if (typeof analysis.score === "number" && analysis.score >= 88 && flagsMacro) return false;
-    return true;
-  });
-  // Clean up titles: no "gap" wording.
-  for (const i of analysis.insights) {
-    if ((i?.type || "").toLowerCase() === "missing" && typeof i.title === "string") {
-      i.title = i.title.replace(/\bgap\b/gi, "").replace(/\s{2,}/g, " ").trim();
+  if (!analysis) return analysis;
+
+  // (1) Every ANNOTATED food (the labels drawn on the photo) MUST appear in the
+  // ingredients list — guaranteed in code, never left to the model. If the photo
+  // labels "potatoes" as Complex Carbs, "potatoes" goes into ingredients too.
+  if (Array.isArray(analysis.annotations) && Array.isArray(analysis.ingredients)) {
+    const lower = analysis.ingredients.map((s) => (s || "").toLowerCase());
+    for (const a of analysis.annotations) {
+      const food = (a?.ingredient || "").trim();
+      if (!food) continue;
+      const f = food.toLowerCase();
+      const present = lower.some((x) => x && (x.includes(f) || f.includes(x)));
+      if (!present) {
+        analysis.ingredients.push(food);
+        lower.push(f);
+      }
+    }
+  }
+
+  // (2) On a complete-tier meal (90+), drop a contradictory "missing macro" insight.
+  if (Array.isArray(analysis.insights)) {
+    const macroRe = /(complex carb|whole grain|\bprotein\b|healthy fat|vegetable|veggie|leafy green)/i;
+    analysis.insights = analysis.insights.filter((i) => {
+      if ((i?.type || "").toLowerCase() !== "missing") return true;
+      const txt = `${i.title || ""} ${i.text || ""}`;
+      if (typeof analysis.score === "number" && analysis.score >= 90 && macroRe.test(txt)) return false;
+      return true;
+    });
+    // Clean up titles: no "gap" wording.
+    for (const i of analysis.insights) {
+      if ((i?.type || "").toLowerCase() === "missing" && typeof i.title === "string") {
+        i.title = i.title.replace(/\bgap\b/gi, "").replace(/\s{2,}/g, " ").trim();
+      }
     }
   }
   return analysis;
