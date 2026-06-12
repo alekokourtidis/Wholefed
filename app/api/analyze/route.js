@@ -47,7 +47,12 @@ async function hashImage(image, conditions, profile, labs) {
 function applyJunkScoreGuardrails(analysis) {
   if (!analysis || typeof analysis.score !== "number") return analysis;
   const completeness = analysis.completeness ?? analysis.variety ?? 10;
-  if (completeness > 3) return analysis; // real meal — leave the model's score alone
+  const numIngredients = Array.isArray(analysis.ingredients) ? analysis.ingredients.length : 99;
+  // Only clamp a genuinely SINGLE junk item (e.g. just soda, just a cookie, just
+  // fries). A combo meal like "Burger & Fries" has many ingredients and real
+  // protein/veg — it must NOT be treated as pure junk just because the title says
+  // "fries". Require BOTH low completeness AND a short ingredient list.
+  if (completeness > 3 || numIngredients > 3) return analysis;
 
   const title = (analysis.title || "").toLowerCase();
   const has = (words) => words.some((w) => title.includes(w));
