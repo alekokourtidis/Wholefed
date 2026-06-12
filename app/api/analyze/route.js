@@ -286,6 +286,7 @@ ${isTextMode ? "" : `HIGH-MISS ITEMS — Pay extra attention to these, they are 
 - Butternut squash, acorn squash, kabocha squash, delicata squash, pumpkin (orange/yellow flesh, often roasted in cubes or slices) — count as COMPLEX CARBS not vegetables.
 - Sweet potato (orange/yellow flesh, often roasted) — complex carb.
 - White/red/gold potato (roasted cubes, wedges, halves, boiled, or mashed — pale beige/golden, often roasted alongside other items or tucked at the plate edge) — a WHOLE potato is a COMPLEX CARB. Look specifically for potato chunks; they are commonly missed and mistaken for other beige items.
+- POTATO vs MUSHROOM — golden-brown DICED CUBES with crispy edges and a solid pale/cream interior are almost always ROASTED POTATOES (a complex carb), NOT mushrooms. Mushrooms are softer, darker brown, often show caps/gills/stems, and shrink when cooked. When you see a pile of crispy golden cubes, default to roasted potatoes unless they clearly show mushroom shape.
 - Leafy greens (spinach, kale, arugula, baby greens, watercress) — these are often UNDERNEATH other items or piled to the side. Specifically scan for green leaves at the edges of the plate or peeking out from under proteins.
 - Fresh herbs (parsley, cilantro, dill, basil, chives, mint) — small flecks of green that add real flavor; don't miss them.
 - Microgreens, sprouts, alfalfa — easy to miss; look for thin shoots.
