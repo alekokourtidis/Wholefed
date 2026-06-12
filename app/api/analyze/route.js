@@ -474,28 +474,31 @@ Return ONLY valid JSON. No markdown. No explanation.`;
         { type: "image_url", image_url: { url: image, detail: "high" } },
       ];
 
+  // Model by mode: photos use gpt-5.4-mini (newer mini — detects ingredients
+  // BETTER than gpt-4o in testing, fast, cheap tier). Text uses gpt-4o-mini
+  // (no vision needed, deterministic at temp 0). GPT-5 models only accept the
+  // default temperature and use max_completion_tokens instead of max_tokens.
+  const model = isTextMode ? "gpt-4o-mini" : "gpt-5.4-mini";
+  const isGpt5 = model.startsWith("gpt-5");
+  const openaiBody = {
+    model,
+    messages: [{ role: "user", content: messageContent }],
+    response_format: { type: "json_object" },
+  };
+  if (isGpt5) {
+    openaiBody.max_completion_tokens = 3000; // headroom for reasoning + full JSON
+  } else {
+    openaiBody.max_tokens = 2000;
+    openaiBody.temperature = 0;
+  }
+
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     },
-    body: JSON.stringify({
-      // Photos need real vision to detect every item on the plate — gpt-4o-mini
-      // under-detects ingredients (missed chicken/cheese, mislabeled potato), so
-      // photo scans use full gpt-4o. Text descriptions need no vision, so they
-      // stay on cheap gpt-4o-mini.
-      model: isTextMode ? "gpt-4o-mini" : "gpt-4o",
-      messages: [
-        {
-          role: "user",
-          content: messageContent,
-        },
-      ],
-      max_tokens: 2000,
-      temperature: 0,
-      response_format: { type: "json_object" },
-    }),
+    body: JSON.stringify(openaiBody),
   });
 
   if (!res.ok) {
