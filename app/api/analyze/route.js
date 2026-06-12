@@ -162,6 +162,21 @@ function reconcileAnalysis(analysis) {
     else analysis.upgrade = null;
   }
 
+  // (1d) CARB CEILING — complex carbs gate the top scores. A meal with no real
+  // complex carb cannot reach 95-100: refined-carb-only caps at 94, no-carb caps
+  // at 85. Only a genuine complex carb (whole grain, potato, oats, legume, squash)
+  // unlocks the top tier.
+  if (typeof analysis.score === "number" && Array.isArray(analysis.ingredients)) {
+    const ings = " " + analysis.ingredients.map((s) => (s || "").toLowerCase()).join(" | ") + " ";
+    const COMPLEX = ["quinoa", "brown rice", "wild rice", "farro", "bulgur", "barley", "millet", "buckwheat", "amaranth", "teff", "freekeh", "sorghum", "spelt", "oat", "whole wheat", "whole grain", "whole-grain", "sprouted", "ezekiel", "sweet potato", "potato", "yam", "butternut", "acorn squash", "kabocha", "delicata", "spaghetti squash", "pumpkin", "parsnip", "taro", "plantain", "cassava", "yuca", "lentil", "chickpea", "garbanzo", "black bean", "kidney bean", "pinto", "navy bean", "white bean", "edamame"];
+    const REFINED = ["white bread", "white toast", "toast", "white rice", "pasta", "noodle", "baguette", "ciabatta", "brioche", "croissant", "bagel", "tortilla", "naan", "pita", "sourdough", "bun", "roll", "cracker"];
+    const hasComplex = COMPLEX.some((w) => ings.includes(w));
+    if (!hasComplex) {
+      const hasRefined = REFINED.some((w) => ings.includes(w));
+      analysis.score = Math.min(analysis.score, hasRefined ? 94 : 85);
+    }
+  }
+
   // (1c) Scores are WHOLE numbers — no decimals anywhere.
   if (typeof analysis.score === "number") analysis.score = Math.round(analysis.score);
   if (typeof analysis.completeness === "number") analysis.completeness = Math.round(analysis.completeness);
@@ -430,7 +445,7 @@ REQUIRED MACRO COMPONENTS (deduct if missing):
   (avocado can count for BOTH healthy fat AND veg in deductions)
   (Greek yogurt and cottage cheese can count as both protein AND a calcium source)
 
-CRITICAL — FRUIT AND VEGETABLES NEVER FILL THE COMPLEX-CARB SLOT. A plate piled high with greens, berries, and other produce is STILL missing its complex carb if the only starch present is white/refined (white toast, white bread, white rice). Abundance and variety of vegetables/fruit do NOT substitute for a complex carb. Fruit/veg never fill the COMPLEX-CARB slot. BUT distinguish two cases: (a) NO carb of any kind present → the carb macro is genuinely absent (Tier 1, cap 85); (b) a REFINED carb is present (white toast/bread/rice) → the slot is FILLED with a lower-quality option, which is a quality downgrade, NOT a missing macro — soft-cap 89 (see the refined-carb rule below), and nutrient density can lift it toward 89.
+CRITICAL — FRUIT AND VEGETABLES NEVER FILL THE COMPLEX-CARB SLOT. A plate piled high with greens, berries, and other produce is STILL missing its complex carb if the only starch present is white/refined (white toast, white bread, white rice). Abundance and variety of vegetables/fruit do NOT substitute for a complex carb. Fruit/veg never fill the COMPLEX-CARB slot. BUT distinguish two cases: (a) NO carb of any kind present → the carb macro is genuinely absent (Tier 1, cap 85); (b) a REFINED carb is present (white toast/bread/rice) → the slot is FILLED with a lower-quality option, which is a quality downgrade, NOT a missing macro — ceiling 94 (see the refined-carb rule below); nutrient density can lift it toward 94, but it cannot reach 95-100 without a genuine complex carb.
 
 ISSUE PRIORITY — the verdict's improvement line, the "missing" insight, AND the bonus100 field MUST all address the SINGLE most significant issue, in this strict order:
 1. A MISSING MACRO GROUP (protein, complex carb, healthy fat, or vegetable). If ANY is missing, THAT is the issue — name it specifically (e.g. "swap the white toast for whole-grain bread, or add quinoa"). Do NOT suggest a fermented food, herb, or any minor bonus while a macro group is missing.
@@ -444,7 +459,7 @@ WEIGHTING PRINCIPLE: ingredient quality / processing matters MORE than completen
 
 (1) COMPLETENESS CEILING:
 - If a macro group is genuinely ABSENT — NO protein at all, NO healthy fat at all, NO carb of ANY kind, or NO vegetable at all — the meal is Tier 1 and CANNOT exceed 85.
-- REFINED-CARB SOFT CEILING (89): if the meal has protein + fat + veg and DOES have a carb but it is refined (white toast/bread/rice/pasta) rather than whole-grain, the carb slot is FILLED with a lesser option — this is NOT a fully-missing macro. Apply the -6 refined-grain deduction and cap at 89 (it cannot reach 90+ without a whole-grain/quality carb). Crucially, NUTRIENT DENSITY lifts it within the 80s: a bare refined-carb meal sits ~84-86, while one loaded with vegetables, fruit, protein, healthy fat and herbs climbs to ~88-89. Reward the density even though the carb isn't ideal.
+- REFINED-CARB CEILING (94): if the meal has protein + fat + veg and DOES have a carb but it is refined (white toast/bread/rice/pasta) rather than whole-grain, the carb slot is FILLED with a lesser option — this is NOT a fully-missing macro. Apply the -6 refined-grain deduction. Such a meal CANNOT exceed 94 — the top tier (95-100) is reserved for meals with a genuine complex carb. Nutrient density sets where it lands below that cap: a bare refined-carb meal sits ~84-86, while one loaded with vegetables, fruit, protein, healthy fat and herbs climbs to ~92-94. Reward the density, but 94 is the hard ceiling without a real complex carb.
 
 (3) NUTRIENT-DENSITY CEILING:
 - A complete + clean meal that is nutritionally SHALLOW (few ingredients, only one vegetable, monochrome/beige, no leafy greens, no real micronutrient variety) CANNOT exceed 93. To break into 94-100 it MUST show genuine nutrient density: multiple color groups, leafy greens plus other vegetables, and a standout element (omega-3, fermented food, superfood, or fresh herbs).
@@ -466,7 +481,7 @@ AMBIGUOUS GRAINS — assume refined unless told otherwise: if bread, toast, a bu
 
 REFINED-BUT-OTHERWISE-COMPLETE RULE: a refined carb (white toast/bread/rice) is a QUALITY DOWNGRADE, not a missing component — the carb slot is filled, just poorly. When a meal has protein + healthy fat + vegetables + a refined carb, do NOT hard-cap it at 85 like a no-carb meal. Soft-cap it at 89 and let nutrient density set where it lands:
   - bare / low-density (eggs + spinach + plain white toast): ~84-86
-  - nutrient-DENSE (eggs + avocado + potatoes + lots of veg + fruit + herbs, but with white toast): ~88-89
+  - nutrient-DENSE but no real complex carb (eggs + avocado + lots of veg + fruit + herbs, only white toast): ~92-94 (capped at 94)
   The same meals with a WHOLE-GRAIN carb clear 90 and can reach the mid-to-high 90s with density. The reward for whole grain is real but proportional (a few points), NOT a cliff. (Note: roasted/boiled potato counts as a real complex carb, so a plate WITH potato is complete regardless of the toast.)
 
 EXPLICIT MACRO CHECK — do this BEFORE choosing a score:
@@ -474,13 +489,13 @@ EXPLICIT MACRO CHECK — do this BEFORE choosing a score:
 2. Is there a healthy fat source? (yes/no)
 3. Is there a complex carb? (yes/no — fruit alone does NOT count; must be whole grain/legume/starchy vegetable like sweet potato or butternut squash)
 4. Is there a vegetable/produce item? (yes/no)
-If a group is genuinely ABSENT, the meal is Tier 1: apply the deduction AND cap at 85. EXCEPTION: if the carb is merely REFINED (white toast/bread/rice present) rather than absent, do not hard-cap at 85 — use the REFINED-CARB SOFT CEILING of 89 and let nutrient density lift it toward 89.
+If a group is genuinely ABSENT, the meal is Tier 1: apply the deduction AND cap at 85. EXCEPTION: if the carb is merely REFINED (white toast/bread/rice present) rather than absent, do not hard-cap at 85 — use the REFINED-CARB CEILING of 94 and let nutrient density lift it toward 94 (but never to 95+ without a real complex carb).
 
 COMPLEX CARB SATISFIED BY ANY ONE QUALIFYING CARB — and an EXTRA refined item is NEAR-NEUTRAL, never a penalty that craters the score. If the plate has AT LEAST ONE real complex carb (whole grain, legume, sweet potato, WHOLE POTATO, squash, oats, etc.), the carb macro is fully MET and the meal is COMPLETE. Now, when a refined carb (white toast/bread) is ALSO present alongside that complex carb:
 - Frame it correctly: this is NOT "white toast vs potato" (a replacement). It is "this meal WITH white toast vs the SAME meal WITHOUT it." Adding a slice of refined-but-harmless bread does NOT make a complete meal meaningfully worse — it adds little nutrition but REMOVES nothing. White bread is not junk (not soda, not fried, not sugar).
-- Treat the extra refined item as essentially FREE: deduct AT MOST 1 point, and add a gentle note in the verdict ("the white toast is a refined filler — swap it for whole-grain or skip it for a cleaner plate"). Do NOT apply the refined soft-ceiling of 89. Do NOT flag "missing complex carb." The meal still reaches the 90s (and 100) on its complete + nutrient-dense profile.
+- Treat the extra refined item as essentially FREE: deduct AT MOST 1 point, and add a gentle note in the verdict ("the white toast is a refined filler — swap it for whole-grain or skip it for a cleaner plate"). Do NOT apply the refined-carb 94 ceiling (that only applies when refined is the ONLY carb). Do NOT flag "missing complex carb." The meal still reaches the 90s (and 100) on its complete + nutrient-dense profile.
 - HARD REQUIREMENT: the SAME meal WITH a slice of white toast and WITHOUT it must score within 1 point of each other. If the no-toast version would be a 96, the with-white-toast version is ~95 — NOT 91, NOT 88. White bread is not junk; adding it removes nothing. The ONLY thing white toast genuinely costs is the final reach to a literal 100 (a flawless plate wouldn't include white bread), plus the verbal note.
-The refined SOFT-CEILING of 89 applies ONLY when the carb is EXCLUSIVELY refined — i.e. white toast/bread/rice is the ONLY carbohydrate and there is NO potato/whole grain/legume/squash present.
+The refined-carb CEILING of 94 applies ONLY when the carb is EXCLUSIVELY refined — i.e. white toast/bread/rice is the ONLY carbohydrate and there is NO potato/whole grain/legume/squash present. (95-100 always requires a real complex carb.)
 
 QUALITY DEDUCTIONS (stack if multiple apply):
 - Refined grain present (white rice, white bread, regular pasta): -6
