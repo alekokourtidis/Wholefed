@@ -149,6 +149,24 @@ function reconcileAnalysis(analysis) {
     }
   }
 
+  // (1b) The quick-swap "from" food MUST be an exact name from the ingredient list.
+  // If "from" is "Toast" but the list says "Sourdough Toast", use the list's name.
+  // If it refers to nothing in the list, drop the swap entirely.
+  if (analysis.upgrade && analysis.upgrade.from && Array.isArray(analysis.ingredients)) {
+    const from = String(analysis.upgrade.from).toLowerCase();
+    const match = analysis.ingredients.find((x) => {
+      const xl = (x || "").toLowerCase();
+      return xl && (xl.includes(from) || from.includes(xl));
+    });
+    if (match) analysis.upgrade.from = match;
+    else analysis.upgrade = null;
+  }
+
+  // (1c) Scores are WHOLE numbers — no decimals anywhere.
+  if (typeof analysis.score === "number") analysis.score = Math.round(analysis.score);
+  if (typeof analysis.completeness === "number") analysis.completeness = Math.round(analysis.completeness);
+  if (typeof analysis.quality === "number") analysis.quality = Math.round(analysis.quality);
+
   // (2) On a complete-tier meal (90+), drop a contradictory "missing macro" insight.
   if (Array.isArray(analysis.insights)) {
     const macroRe = /(complex carb|whole grain|\bprotein\b|healthy fat|vegetable|veggie|leafy green)/i;
@@ -323,6 +341,7 @@ COMPLEX CARBS (presence prevents the -12 complex carb deduction):
 REFINED CARBS (NOT complex carbs — trigger -6 refined grain deduction if present):
 - White rice (jasmine, basmati, sushi rice, arborio), instant rice
 - White bread, baguette, ciabatta, sandwich bread, brioche, croissant
+- Sourdough (unless explicitly WHOLE-GRAIN sourdough): it is still refined white flour, so it is a REFINED carb and does NOT satisfy the complex-carb slot. BUT the fermentation lowers its glycemic load, so it is modestly better than plain white bread — treat it as refined-but-slightly-better, not as junk, and not as a whole grain.
 - Regular pasta (white flour), white spaghetti, white penne, white linguine, lasagna noodles (white)
 - White flour tortilla, white pita, naan (white)
 - Crackers (Ritz, saltines, etc), pretzels, white-flour cereal
@@ -389,7 +408,7 @@ SCORE STABILITY & ADDITIVITY — critical, do not violate:
 - Be CONSISTENT: the same meal must produce the same score every time. Compute the deduction stack the same way on every scan.
 
 SCORING — Build the score from explicit components. Two different meals should NEVER end at the exact same score unless they are nutritionally identical.
-Do NOT round to multiples of 5 or 10. Use precise numbers.
+The score MUST be a WHOLE number (integer) — NO decimals (e.g. 92, never 91.8). Avoid clustering on multiples of 5/10; vary the exact integer.
 
 THREE-PILLAR TIER SYSTEM — this is the backbone of the score. Apply the LOWEST applicable ceiling:
 - TIER 1 — INCOMPLETE (missing one or more of the four macro groups): score CAPS AT 85. The more groups missing, and the worse the quality, the lower it goes (down into the 60s-70s, or far lower for junk). A meal missing a macro group can NEVER score 86+.
@@ -400,7 +419,7 @@ METHOD — a complete, clean meal STARTS at 90 (mid Tier 2). From there:
 - ADD up to +10 for nutrient density (see NUTRIENT DENSITY below) to climb toward 100 — but a complete clean meal with LOW density stays at 86-90 and CANNOT exceed 93.
 - DEDUCT for quality issues (refined grain, fried, processed, sugar — see QUALITY DEDUCTIONS).
 - If a macro group is MISSING, the meal is Tier 1: cap at 85 and deduct per missing group.
-Do NOT round to multiples of 5. Two different meals should land on different precise numbers.
+Use whole-number scores only (no decimals). Two different meals should land on different integers.
 
 REQUIRED MACRO COMPONENTS (deduct if missing):
 - Quality protein source absent (-18): a "quality protein source" includes ANY of the following — fish, poultry, eggs, lean red meat, tofu, tempeh, legumes (beans, lentils, chickpeas, edamame), Greek yogurt, skyr, plain yogurt, ANY yogurt (any visible serving — portion size does NOT matter), cottage cheese, ricotta, paneer, OR a significant amount of cheese. Only deduct if NONE of these are present. NEVER apply this deduction or call protein "missing" when yogurt is visible in the image.
