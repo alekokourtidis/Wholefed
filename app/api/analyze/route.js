@@ -39,7 +39,16 @@ function applyJunkScoreGuardrails(analysis) {
   }
 
   if (lo !== null) {
-    analysis.score = Math.max(lo, Math.min(hi, analysis.score));
+    // Position WITHIN the band using the model's quality sub-score so different
+    // junk items get different scores (a plain cookie vs a nut-studded one vs a
+    // milkshake) instead of all pinning to the floor — a range, not one number.
+    const q = analysis.quality ?? analysis.nutrition ?? 1; // 1..10
+    const frac = Math.max(0, Math.min(1, (q - 1) / 5));    // q=1 -> band floor, q>=6 -> band ceiling
+    const positioned = Math.round(lo + (hi - lo) * frac);
+    // Blend with the model's own number (also clamped to the band) so its
+    // judgment still nudges the result, but it can never escape the range.
+    const clamped = Math.max(lo, Math.min(hi, analysis.score));
+    analysis.score = Math.max(lo, Math.min(hi, Math.round((positioned + clamped) / 2)));
   }
   return analysis;
 }
@@ -273,6 +282,10 @@ WEIGHTING PRINCIPLE: ingredient quality / processing matters MORE than completen
 - MODERATELY processed (one fried element, OR a refined-grain base, OR a sugary/processed sauce as a notable component): CANNOT exceed 78, even if every macro is present.
 - Only a genuinely clean, whole-food meal can reach 90-100.
 - If you find yourself wanting to score a processed-but-complete meal in the 80s-90s because "it technically hits all the macros," resist. Quality outranks completeness.
+
+AMBIGUOUS GRAINS — assume refined unless told otherwise: if bread, toast, a bun, a roll, a wrap, a tortilla, rice, pasta, or noodles appears WITHOUT a clear whole-grain signal (the words "whole wheat", "whole grain", "sprouted", "Ezekiel", "brown", "quinoa", "multigrain", etc.), treat it as a REFINED carb. Plain "toast" or "bread" = refined. It does NOT satisfy the complex-carb requirement.
+
+REFINED-BUT-OTHERWISE-COMPLETE RULE: when a meal has protein + healthy fat + vegetables and its ONLY shortfall is that its carb is refined rather than whole-grain (e.g. eggs + spinach + plain white toast), do NOT crater it. Apply the -6 refined-grain deduction but recognize the meal is otherwise complete — land it in the HIGH 80s (about 86-89), NOT in the 70s. Reserve the larger -12 "no complex carb" hit for meals with NO carb of any kind. Example: scrambled eggs + spinach + plain toast = ~88. The same meal with WHOLE WHEAT toast = ~94 (complex carb satisfied).
 
 EXPLICIT MACRO CHECK — do this BEFORE choosing a score:
 1. Is there a quality protein source? (yes/no — yogurt of ANY kind or portion = yes)
