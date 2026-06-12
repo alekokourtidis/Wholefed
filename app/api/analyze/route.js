@@ -223,6 +223,7 @@ INGREDIENT DETECTION — Be exhaustive:
 ${isTextMode ? "" : `HIGH-MISS ITEMS — Pay extra attention to these, they are commonly missed:
 - Butternut squash, acorn squash, kabocha squash, delicata squash, pumpkin (orange/yellow flesh, often roasted in cubes or slices) — count as COMPLEX CARBS not vegetables.
 - Sweet potato (orange/yellow flesh, often roasted) — complex carb.
+- White/red/gold potato (roasted cubes, wedges, halves, boiled, or mashed — pale beige/golden, often roasted alongside other items or tucked at the plate edge) — a WHOLE potato is a COMPLEX CARB. Look specifically for potato chunks; they are commonly missed and mistaken for other beige items.
 - Leafy greens (spinach, kale, arugula, baby greens, watercress) — these are often UNDERNEATH other items or piled to the side. Specifically scan for green leaves at the edges of the plate or peeking out from under proteins.
 - Fresh herbs (parsley, cilantro, dill, basil, chives, mint) — small flecks of green that add real flavor; don't miss them.
 - Microgreens, sprouts, alfalfa — easy to miss; look for thin shoots.
@@ -410,6 +411,8 @@ EXPLICIT MACRO CHECK — do this BEFORE choosing a score:
 3. Is there a complex carb? (yes/no — fruit alone does NOT count; must be whole grain/legume/starchy vegetable like sweet potato or butternut squash)
 4. Is there a vegetable/produce item? (yes/no)
 If a group is genuinely ABSENT, the meal is Tier 1: apply the deduction AND cap at 85. EXCEPTION: if the carb is merely REFINED (white toast/bread/rice present) rather than absent, do not hard-cap at 85 — use the REFINED-CARB SOFT CEILING of 89 and let nutrient density lift it toward 89.
+
+COMPLEX CARB IS SATISFIED BY ANY ONE QUALIFYING CARB — and a refined item does NOT cancel it. If the plate has AT LEAST ONE real complex carb (whole grain, legume, sweet potato, WHOLE POTATO, squash, oats, etc.), the complex-carb requirement is MET. The simultaneous presence of a refined carb (e.g. white toast ALSO on the plate) does NOT negate it: do NOT flag "missing complex carb" and do NOT apply the refined soft-ceiling — the meal is COMPLETE. At most apply a small -3 for the extra refined item. So a plate with roasted potato AND white toast HAS its complex carb (the potato) and is fully complete — it can reach the 90s with nutrient density.
 
 QUALITY DEDUCTIONS (stack if multiple apply):
 - Refined grain present (white rice, white bread, regular pasta): -6
