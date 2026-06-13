@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { setPro } from "../../lib/scans";
 import { purchasePro, restorePurchases } from "../../lib/subscription";
+import { redeemCode, captureRef } from "../../lib/promo";
 
 const features = [
   { icon: "labs", text: "Connect your bloodwork" },
@@ -17,6 +18,25 @@ export default function SubscribePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showCode, setShowCode] = useState(false);
+  const [code, setCode] = useState("");
+  const [codeError, setCodeError] = useState("");
+
+  // Capture affiliate ref (?ref=CODE) for referral tracking.
+  useEffect(() => {
+    captureRef();
+  }, []);
+
+  const handleApplyCode = () => {
+    setCodeError("");
+    const result = redeemCode(code);
+    if (result.ok && result.free) {
+      setPro(true);
+      router.push("/");
+    } else {
+      setCodeError(result.message);
+    }
+  };
 
   const handleSubscribe = async () => {
     setLoading(true);
@@ -121,6 +141,43 @@ export default function SubscribePage() {
 
         {error && (
           <p className="text-center text-[11px] text-red-400 mt-2">{error}</p>
+        )}
+
+        {/* Promo / affiliate code */}
+        {!showCode ? (
+          <button
+            onClick={() => setShowCode(true)}
+            className="w-full text-center mt-3 text-[12px] text-[#bcccab] underline"
+          >
+            Have a code?
+          </button>
+        ) : (
+          <div className="mt-3">
+            <div className="flex gap-2">
+              <input
+                value={code}
+                onChange={(e) => {
+                  setCode(e.target.value);
+                  setCodeError("");
+                }}
+                onKeyDown={(e) => e.key === "Enter" && handleApplyCode()}
+                placeholder="Enter code"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                className="flex-1 px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-[14px] text-[#e5e2e1] placeholder-[#8a8578]/50 outline-none focus:border-[#7d8f70]"
+              />
+              <button
+                onClick={handleApplyCode}
+                className="px-5 py-3 rounded-xl bg-[#7d8f70] text-white text-[14px] font-medium active:bg-[#6b7a5e] transition-colors"
+              >
+                Apply
+              </button>
+            </div>
+            {codeError && (
+              <p className="text-center text-[11px] text-red-400 mt-2">{codeError}</p>
+            )}
+          </div>
         )}
 
         {/* Functional EULA + Privacy links — required by Guideline 3.1.2 */}
