@@ -425,155 +425,45 @@ SCORE STABILITY & ADDITIVITY — critical, do not violate:
 - Capers specifically: a healthy Mediterranean flavoring (antioxidants, very low calorie). Treat as a neutral-to-positive produce/garnish. Never let capers reduce a score.
 - Be CONSISTENT: the same meal must produce the same score every time. Compute the deduction stack the same way on every scan.
 
-SCORING — Build the score from explicit components. Two different meals should NEVER end at the exact same score unless they are nutritionally identical.
-The score MUST be a WHOLE number (integer) — NO decimals (e.g. 92, never 91.8). Avoid clustering on multiples of 5/10; vary the exact integer.
+SCORING — the score is a 0-100 WHOLE number built from two parts that SUM. Quality is the dominant lever. Use the FULL range and pick a PRECISE integer that fits THIS meal — never cluster on multiples of 5/10, no decimals (92, never 91.8). Two DIFFERENT meals must land on different integers; the SAME meal must always get the SAME score (be consistent, never random).
 
-THREE-PILLAR TIER SYSTEM — this is the backbone of the score. Apply the LOWEST applicable ceiling:
-- TIER 1 — INCOMPLETE (missing one or more of the four macro groups): score CAPS AT 85. The more groups missing, and the worse the quality, the lower it goes (down into the 60s-70s, or far lower for junk). A meal missing a macro group can NEVER score 86+.
-- TIER 2 — COMPLETE + CLEAN (all four macro groups present AND whole/unprocessed) but ORDINARY nutrient density: score 86-93. This is a solid, balanced whole-food meal. It CAPS AT 93. A complete clean meal CANNOT break into the 94-100 range on completeness alone — that requires the third pillar.
-- TIER 3 — COMPLETE + CLEAN + NUTRIENT-DENSE (genuine variety: multiple color groups, leafy greens AND other vegetables, micronutrient diversity, plus a standout element like omega-3 fish / fermented food / superfood / fresh herbs): score 94-100. 100 is rare and demands excellence on ALL THREE pillars.
+This mirrors the USDA MyPlate / Harvard Healthy Eating Plate consensus: a meal is built from protein + a complex carb + a healthy fat, and VEGETABLES + variety are the half-plate that makes it excellent.
 
-METHOD — a complete, clean meal STARTS at 90 (mid Tier 2). From there:
-- ADD up to +10 for nutrient density (see NUTRIENT DENSITY below) to climb toward 100 — but a complete clean meal with LOW density stays at 86-90 and CANNOT exceed 93.
-- DEDUCT for quality issues (refined grain, fried, processed, sugar — see QUALITY DEDUCTIONS).
-- If a macro group is MISSING, the meal is Tier 1: cap at 85 and deduct per missing group.
-Use whole-number scores only (no decimals). Two different meals should land on different integers.
+PART A — MACROS + QUALITY (0-80). The foundation.
+- A meal of WHOLE, minimally-processed foods covering all three macros (protein, complex carb, healthy fat) earns roughly the full ~80. Land on a precise integer (79, 81, 78...) based on how clean and well-portioned it is.
+- MISSING a macro pulls Part A down hard, roughly -12 to -18 each: no protein, no complex carb, OR no healthy fat.
+  - A quality PROTEIN = fish, poultry, eggs, lean meat, tofu, tempeh, legumes, OR any yogurt/cottage cheese/significant cheese.
+  - A STARCHY vegetable (potato, sweet potato, squash) fills the COMPLEX-CARB slot, NOT the vegetable slot.
+  - A refined-ONLY carb (white rice/bread/pasta as the sole carb) is present-but-poor: about -6, NOT "absent". An EXTRA refined item alongside a real complex carb is near-neutral (≤ -1).
+- QUALITY drags Part A down and OUTRANKS completeness:
+  - DESSERT / PURE JUNK as the main item (candy, soda, cake, cookies, chips, pastry, ice cream): not a meal — TOTAL score 2-20. Within it: zero-nutrition sugar (soda, candy, gummies) 2-6; refined baked goods (cookies, cake, donut, pastry) 6-12; items with real dairy/nut nutrition (ice cream, milkshake, frozen yogurt) 14-20 (hard floor 14).
+  - HEAVILY processed (deep-fried main, fast food, processed meat as the main protein, mostly packaged): TOTAL cannot exceed ~30.
+  - MODERATELY processed (one fried element, a refined-grain base, OR a sugary/processed sauce that COATS the dish): Part A cannot exceed ~55. CARVE-OUT: a light drizzle or finishing sauce (a teaspoon of hot honey, a light vinaigrette) is at most a -2 note, NOT a processing hit, and never pulls a clean whole-food meal down.
+  - Processed / packaged / fried / cured / charred / burnt / processed-meat items drag quality down regardless of macros. Whole, minimally-processed foods are the only ones that earn high scores.
 
-REQUIRED MACRO COMPONENTS (deduct if missing):
-- Quality protein source absent (-18): a "quality protein source" includes ANY of the following — fish, poultry, eggs, lean red meat, tofu, tempeh, legumes (beans, lentils, chickpeas, edamame), Greek yogurt, skyr, plain yogurt, ANY yogurt (any visible serving — portion size does NOT matter), cottage cheese, ricotta, paneer, OR a significant amount of cheese. Only deduct if NONE of these are present. NEVER apply this deduction or call protein "missing" when yogurt is visible in the image.
-- Healthy fat source absent (no avocado/olive oil/nuts/seeds/fatty fish/olives): -12
-- Complex carb absent (no whole grains/sweet potato/butternut squash/winter squash/quinoa/oats/legumes; white rice/white bread does NOT count): -12
-- Vegetable/produce absent (no veg, including mushrooms/tomatoes/avocado/peppers): -15
-  (avocado can count for BOTH healthy fat AND veg in deductions)
-  (Greek yogurt and cottage cheese can count as both protein AND a calcium source)
+PART B — VEGETABLES + NUTRIENT DENSITY (0-20). The path from ~80 to 100. Only earned when Part A is strong (complete + clean):
+- NON-STARCHY vegetables/fruit (greens, broccoli, peppers, tomatoes, mushrooms, berries — NOT potato/sweet potato/squash, those are the carb): up to +12. This is the biggest piece — the half-plate of produce that most meals skip and the authorities prize most.
+- Density standouts, +2 to +5 each (cap the total at 20): multiple color groups, leafy greens PLUS another veg, fermented food, an omega-3 source, fresh herbs, a uniquely nutrient-dense item (berries, seeds, microgreens, sea vegetable).
+- A clean, complete-MACRO meal with NO non-starchy veg and little variety STAYS ~80-84. Add veg + density and it climbs into the 90s. A flawless, varied, nutrient-dense whole-food plate reaches 100.
 
-CRITICAL — FRUIT AND VEGETABLES NEVER FILL THE COMPLEX-CARB SLOT. A plate piled high with greens, berries, and other produce is STILL missing its complex carb if the only starch present is white/refined (white toast, white bread, white rice). Abundance and variety of vegetables/fruit do NOT substitute for a complex carb. Fruit/veg never fill the COMPLEX-CARB slot. BUT distinguish two cases: (a) NO carb of any kind present → the carb macro is genuinely absent (Tier 1, cap 85); (b) a REFINED carb is present (white toast/bread/rice) → the slot is FILLED with a lower-quality option, which is a quality downgrade, NOT a missing macro — ceiling 94 (see the refined-carb rule below); nutrient density can lift it toward 94, but it cannot reach 95-100 without a genuine complex carb.
+HARD CAP 100 — rare. Requires all three macros + clean whole-food quality + real non-starchy vegetables + genuine density.
 
-ISSUE PRIORITY — the verdict's improvement line, the "missing" insight, AND the bonus100 field MUST all address the SINGLE most significant issue, in this strict order:
-1. A MISSING MACRO GROUP (protein, complex carb, healthy fat, or vegetable). If ANY is missing, THAT is the issue — name it specifically (e.g. "swap the white toast for whole-grain bread, or add quinoa"). Do NOT suggest a fermented food, herb, or any minor bonus while a macro group is missing.
-2. A QUALITY problem (refined grain, processed/fried item, added sugar). If all four macros are present but a quality issue exists, that is the issue — name the swap.
-3. ONLY if the meal is fully complete (all 4 macros from whole foods) AND clean (nothing refined/processed/fried/sugary) does the path to 100 become an OPTIONAL nutrient-density bonus (fermented food, omega-3, fresh herbs, more color). Frame it as "to reach an exceptional 100, add X" — a cherry on top, NOT a deficiency.
-NEVER suggest a trivial bonus (like sauerkraut) when a real macro gap or quality issue exists. That is the #1 logic error to avoid.
+SUMMARY vs SWAP (important):
+- The VERDICT/summary must name ALL missing categories. If protein AND complex carb AND vegetables are all missing, say all three — do NOT focus on just one.
+- The SWAP/upgrade names only the SINGLE most impactful change.
 
-HARD CEILING — non-negotiable. There are THREE independent ceilings; ALWAYS apply the LOWEST one.
-
-WEIGHTING PRINCIPLE: ingredient quality / processing matters MORE than completeness — weight it roughly 60% quality, 40% completeness. Hitting all the macro boxes does NOT rescue a processed meal.
-
-(1) COMPLETENESS CEILING:
-- If a macro group is genuinely ABSENT — NO protein at all, NO healthy fat at all, NO carb of ANY kind, or NO vegetable at all — the meal is Tier 1 and CANNOT exceed 85.
-- REFINED-CARB CEILING (94): if the meal has protein + fat + veg and DOES have a carb but it is refined (white toast/bread/rice/pasta) rather than whole-grain, the carb slot is FILLED with a lesser option — this is NOT a fully-missing macro. Apply the -6 refined-grain deduction. Such a meal CANNOT exceed 94 — the top tier (95-100) is reserved for meals with a genuine complex carb. Nutrient density sets where it lands below that cap: a bare refined-carb meal sits ~84-86, while one loaded with vegetables, fruit, protein, healthy fat and herbs climbs to ~92-94. Reward the density, but 94 is the hard ceiling without a real complex carb.
-
-(3) NUTRIENT-DENSITY CEILING:
-- A complete + clean meal that is nutritionally SHALLOW (few ingredients, only one vegetable, monochrome/beige, no leafy greens, no real micronutrient variety) CANNOT exceed 93. To break into 94-100 it MUST show genuine nutrient density: multiple color groups, leafy greens plus other vegetables, and a standout element (omega-3, fermented food, superfood, or fresh herbs).
-- Example of the gap: ground beef + white-free baked potato + one egg, no greens, no color = complete-ish but shallow → high 80s, capped at 93. The same plate plus sautéed kale, cherry tomatoes, avocado, and herbs → 94-99.
-
-(2) QUALITY CEILING (this is the dominant lever — a complete meal that is processed must NOT score well):
-- DESSERT / PURE JUNK as the dominant item (cake, cookies, brownies, donut, pastry, croissant, muffin, candy, chocolate bar, ice cream, sugary cereal, chips, soda): CANNOT exceed 20. These are not meals. Score them within a 2-20 band, BUT calibrate by how much genuine nutrition is actually present — do not flatten everything to the same low number:
-  - ZERO-nutrition pure sugar (soda, gummies, lollipops, hard candy, cotton candy): 2-6. There is nothing redeeming here.
-  - Refined-flour baked goods with little else (plain cookies, cake, cupcakes, donuts, croissants, plain pastries): 6-12. Mostly sugar + refined flour, trace nutrition.
-  - Desserts with a REAL nutritional component (ice cream / milkshake / frozen yogurt = dairy, so some protein + calcium + fat; nut-based or dark-chocolate items = some healthy fat/antioxidants; a muffin with nuts/oats/fruit): score 14-20. This is a HARD FLOOR — ice cream, milkshakes, and frozen yogurt MUST score at least 14 and must NOT drop into single digits, because dairy provides genuine protein, calcium, and fat. A scoop of ice cream scoring 8 is WRONG — it should be ~16. Ice cream is junk, but it is NOT as empty as soda or candy, and the score must reflect that difference clearly.
-  When in doubt for a refined/sugary item with no redeeming component, score LOWER not higher. A lone plain pastry scoring 24 is WRONG — it should be ~9.
-- PROCESSED / PACKAGED AUTO-PENALTY: any item that is clearly processed or packaged (has a wrapper, an ingredients label, is fried, cured, or factory-made rather than a whole food) MUST score low regardless of whether it technically hits macros. Processing alone drags the quality sub-score down and pulls the final score into the lower bands. Whole, minimally-processed foods are the only ones that earn high scores.
-- HEAVILY processed (deep-fried main, fast food, mostly packaged/refined, OR processed meat as the main protein): CANNOT exceed 55, even if every macro is present.
-- MODERATELY processed (one fried element, OR a refined-grain base, OR a sugary/processed sauce that COATS or DEFINES the dish in a notable amount): CANNOT exceed 78, even if every macro is present. CARVE-OUT (apply strictly): a light drizzle, trace, or small finishing sauce — a teaspoon of hot honey, a light vinaigrette, a thin drizzle — does NOT count as "a notable component" and does NOT trigger this ceiling. A clean, complete, whole-food meal (e.g. cottage cheese + sweet potato + avocado + ground beef) with only a trace condiment is NOT moderately processed and SHOULD land in the low-to-mid 90s. Do not let a drizzle pull a whole-food meal out of the 90s.
-- Only a genuinely clean, whole-food meal can reach 90-100.
-- If you find yourself wanting to score a processed-but-complete meal in the 80s-90s because "it technically hits all the macros," resist. Quality outranks completeness.
-
-AMBIGUOUS GRAINS — assume refined unless told otherwise: if bread, toast, a bun, a roll, a wrap, a tortilla, rice, pasta, or noodles appears WITHOUT a clear whole-grain signal (the words "whole wheat", "whole grain", "sprouted", "Ezekiel", "brown", "quinoa", "multigrain", etc.), treat it as a REFINED carb. Plain "toast" or "bread" = refined. It does NOT satisfy the complex-carb requirement.
-
-REFINED-BUT-OTHERWISE-COMPLETE RULE: a refined carb (white toast/bread/rice) is a QUALITY DOWNGRADE, not a missing component — the carb slot is filled, just poorly. When a meal has protein + healthy fat + vegetables + a refined carb, do NOT hard-cap it at 85 like a no-carb meal. Soft-cap it at 89 and let nutrient density set where it lands:
-  - bare / low-density (eggs + spinach + plain white toast): ~84-86
-  - nutrient-DENSE but no real complex carb (eggs + avocado + lots of veg + fruit + herbs, only white toast): ~92-94 (capped at 94)
-  The same meals with a WHOLE-GRAIN carb clear 90 and can reach the mid-to-high 90s with density. The reward for whole grain is real but proportional (a few points), NOT a cliff. (Note: roasted/boiled potato counts as a real complex carb, so a plate WITH potato is complete regardless of the toast.)
-
-EXPLICIT MACRO CHECK — do this BEFORE choosing a score:
-1. Is there a quality protein source? (yes/no — yogurt of ANY kind or portion = yes)
-2. Is there a healthy fat source? (yes/no)
-3. Is there a complex carb? (yes/no — fruit alone does NOT count; must be whole grain/legume/starchy vegetable like sweet potato or butternut squash)
-4. Is there a vegetable/produce item? (yes/no)
-If a group is genuinely ABSENT, the meal is Tier 1: apply the deduction AND cap at 85. EXCEPTION: if the carb is merely REFINED (white toast/bread/rice present) rather than absent, do not hard-cap at 85 — use the REFINED-CARB CEILING of 94 and let nutrient density lift it toward 94 (but never to 95+ without a real complex carb).
-
-COMPLEX CARB SATISFIED BY ANY ONE QUALIFYING CARB — and an EXTRA refined item is NEAR-NEUTRAL, never a penalty that craters the score. If the plate has AT LEAST ONE real complex carb (whole grain, legume, sweet potato, WHOLE POTATO, squash, oats, etc.), the carb macro is fully MET and the meal is COMPLETE. Now, when a refined carb (white toast/bread) is ALSO present alongside that complex carb:
-- Frame it correctly: this is NOT "white toast vs potato" (a replacement). It is "this meal WITH white toast vs the SAME meal WITHOUT it." Adding a slice of refined-but-harmless bread does NOT make a complete meal meaningfully worse — it adds little nutrition but REMOVES nothing. White bread is not junk (not soda, not fried, not sugar).
-- Treat the extra refined item as essentially FREE: deduct AT MOST 1 point, and add a gentle note in the verdict ("the white toast is a refined filler — swap it for whole-grain or skip it for a cleaner plate"). Do NOT apply the refined-carb 94 ceiling (that only applies when refined is the ONLY carb). Do NOT flag "missing complex carb." The meal still reaches the 90s (and 100) on its complete + nutrient-dense profile.
-- HARD REQUIREMENT: the SAME meal WITH a slice of white toast and WITHOUT it must score within 1 point of each other. If the no-toast version would be a 96, the with-white-toast version is ~95 — NOT 91, NOT 88. White bread is not junk; adding it removes nothing. The ONLY thing white toast genuinely costs is the final reach to a literal 100 (a flawless plate wouldn't include white bread), plus the verbal note.
-The refined-carb CEILING of 94 applies ONLY when the carb is EXCLUSIVELY refined — i.e. white toast/bread/rice is the ONLY carbohydrate and there is NO potato/whole grain/legume/squash present. (95-100 always requires a real complex carb.)
-
-QUALITY DEDUCTIONS (stack if multiple apply):
-- Refined grain present (white rice, white bread, regular pasta): -6
-- Fried element present (anything fried, even partially): -10
-- Processed protein present (deli meat, sausage, bacon, chicken nuggets): -10
-- Heavy sugary sauce/dressing (BBQ, ketchup with sugar, honey mustard, sweet glaze): -8
-- High sodium sauce (soy sauce loaded, ranch, processed dressing): -5
-- Added sugar visible and HEAVY/POOLED/dessert-level (syrup pooling, dessert component, sugar-loaded sauce): -10. A small DRIZZLE of honey/hot honey/syrup used as a flavoring is at most -3 (see DRIZZLE CARVE-OUT above), never -10.
-- Cheese as primary protein or in large amount: -6
-- Portion clearly oversized or undersized: -4
-
-NUTRIENT DENSITY — the third pillar, the ONLY way a complete clean meal climbs from ~90 into the 94-100 range. A complete clean meal starts at 90; add these (up to +10 total, but a SHALLOW meal stays ≤93):
-- 3+ distinct color groups on the plate: +2
-- Leafy greens AND at least one other vegetable type (real plant variety): +2
-- Fermented food (kimchi, sauerkraut, yogurt, kefir, miso): +2
-- Omega-3 source (fatty fish, flax, chia, walnuts): +2
-- Visible fresh herbs (cilantro, basil, dill, parsley, mint, chives): +1
-- Raw + cooked vegetables both present: +1
-- A uniquely nutrient-dense / micronutrient-rich ingredient (sea vegetable, microgreens, berries, organ meat, pumpkin/sunflower seeds, beets): +2
-
-LOW-DENSITY PENALTIES — apply to complete meals that are nutritionally shallow (this is what keeps a "box-checking" meal like beef + potato + one egg out of the 90s):
-- Only one vegetable type / no real plant variety: -5
-- No leafy greens or cruciferous vegetables anywhere: -3
-- Monochrome / beige plate, no color variety: -5
-- Very few distinct whole foods (3-4 total, just the bare macro boxes): -5
-A complete, clean, but bland and monotone meal should therefore land in the mid-to-high 80s, NOT the 90s. The 90s are earned by genuine variety and density.
-
-WHAT 100 LOOKS LIKE (Tier 3, rare) — complete + clean + HIGH nutrient density. Example: grilled wild salmon + roasted butternut squash + sauteed kale + cherry tomatoes + avocado + fresh dill + sauerkraut. Complete & clean (90) + omega-3 + fermented + leafy greens + 3+ colors + herbs → 100.
-
-WHAT 94-98 LOOKS LIKE (Tier 3) — complete + clean + GOOD density (real variety, greens, a standout element). Example: grilled chicken + quinoa + broccoli + spinach + avocado + lemon + parsley → ~95.
-
-WHAT 86-93 LOOKS LIKE (Tier 2) — complete + clean but ORDINARY/low density. Example: grilled chicken + quinoa + broccoli + olive oil (only one veg, little color) → ~89. Beef + roasted potato + one egg + a little broccoli (bland, monochrome, one veg) → ~86. These are SOLID but not exceptional — the score reflects that.
-
-Show your work mentally before answering. Two different meals SHOULD produce different scores.
-
-RANGES:
-- 94-100: Tier 3 — complete, clean, AND nutrient-dense. Exceptional and rare.
-- 86-93: Tier 2 — complete and clean whole-food meal, ordinary density.
-- 70-85: Tier 1 — missing a macro group (e.g. refined-only carb, or no veg) but otherwise whole-food; capped at 85.
-- 45-69: Multiple gaps OR a moderate junk/processed element.
-- 30-44: Poor. Mostly processed or very limited.
-- 15-29: Fast food, heavy processed.
-- 5-14: Pure junk.
-- 1-4: Rock bottom.
-
-CALIBRATION EXAMPLES (against the three-pillar system):
-- Salmon + quinoa + broccoli + spinach + avocado + olive oil + fresh herbs: complete + clean + dense → 96-98 (Tier 3).
-- Eggs + smoked salmon + spinach + tomato + avocado + butternut squash: complete + clean + dense (omega-3, greens, 3+ colors) → up to 100 (Tier 3).
-- Beef + roasted potato + one egg, no greens, monochrome: complete-ish but SHALLOW → ~85-87 (Tier 2, low-density penalties keep it out of the 90s).
-- Eggs + avocado + tomatoes + greens + olive oil (NO complex carb): Tier 1 (missing carb) → ~84, capped at 85.
-- Eggs + smoked salmon + spinach + tomato + avocado (NO complex carb): Tier 1, but dense for its tier → ~85, capped at 85.
-- Bread + plain yogurt + olive oil (NO vegetables): Tier 1 (missing veg) + refined grain → ~72.
-- Chicken stir-fry with white rice + vegetables: Tier 1 (no complex carb, white rice) + refined + soy sauce → ~70.
-- Tuna sushi roll (white rice + fish + nori + cucumber): Tier 1 (no complex carb) + refined + sodium → ~66.
-- Beef sandwich with lettuce + tomato + cheese on white bread: 94 - 12 (no complex carb) - 6 (cheese) - 6 (refined bread) - 3 (limited veg) = 67.
-- Pasta with meat sauce, no greens: 94 - 15 (no veg) - 12 (no complex carb, regular pasta) - 6 (refined grain) = 61.
-- Chicken breast + white rice only: 94 - 15 - 12 (no fat) - 12 (no complex carb) - 6 (refined) = 49.
-- Pizza slice: 94 - 12 (no complex carb) - 6 (refined grain) - 6 (cheese) - 15 (no real veg) - 10 (processed) = 45.
-- Fast food burger + fries: 94 - 12 - 10 (fried) - 10 (processed protein) - 6 (refined grain) - 15 (no real veg) = 41.
-- Just blueberries + pomegranate (snack, not full meal): 94 - 18 (no protein) - 12 (no fat) - 12 (no complex carb) = 52. Verdict should note this is "more of a snack than a meal" not call it processed.
-- COMPLETE but MODERATELY processed (grilled chicken + sweet potato FRIES + side salad + olive oil): protein/carb/fat/veg ALL present, so completeness is satisfied — but the carb is fried, so the QUALITY CEILING of 78 applies. 94 - 10 (fried) = 84, then capped at 78. Completeness alone does not lift it back up.
-- COMPLETE but HEAVILY processed (fried chicken sandwich on white bun + fries + soda): macros arguably present, but deep-fried main + refined bun + fried side = heavily processed → QUALITY CEILING of 55. Lands ~45-50 regardless of completeness.
-- Bag of chips alone: 94 - 18 - 12 - 12 - 15 - 10 (processed) = 17
-- Instant cup noodles: 94 - 18 - 12 - 15 - 6 (refined) - 5 (sodium) = 38
-- Chocolate chip cookies: no protein, no complex carb, no veg, added sugar, refined flour → DESSERT CEILING → ~8.
-- Slice of cake / cupcake: pure sugar + refined flour, no real nutrition → DESSERT CEILING → ~7.
-- Croissant or plain pastry alone: refined-flour, buttery, no real nutrition → ~11.
-- Donut: refined flour + fried + added sugar → ~6. Plain muffin: ~12.
-- Ice cream scoop: dessert ceiling, BUT dairy gives real protein/calcium/fat → ~17 (higher end of the junk band — NOT as low as candy).
-- Milkshake: dairy + sugar → ~16. Candy bar: some, but mostly sugar → ~6. Soda: zero nutrition → ~3. Gummy candy: ~3.
-- Pizza slice: ~27 (refined grain -6, cheese -6, no real veg -15, processed -10)
-- Fast food burger + fries: ~19 (fried -10, processed protein -10, refined grain -6, no real veg -15)
-- Bag of chips alone: ~6
-- Instant cup noodles: ~3
-
-If a meal is ALL processed with no whole foods, quality MUST be 1/10 (completeness still reflects only whether the macro groups are present).
+CALIBRATION (whole numbers, varied):
+- Whole-food, all 3 macros, clean, NO non-starchy veg, low variety (cottage cheese + sweet potato + avocado + ground beef): Part A ~80, Part B ~3 → ~83. Solid; it just lacks vegetables and variety.
+- Same plus sautéed kale, cherry tomatoes, herbs: Part A ~80, Part B ~15 → ~95.
+- Salmon + quinoa + broccoli + spinach + avocado + herbs: complete + clean + dense → 96-98.
+- Grilled chicken + quinoa + broccoli + olive oil (one veg, little color): ~88.
+- Eggs + avocado + greens + olive oil, NO carb: missing a macro → ~74.
+- Eggs + spinach + plain white toast (refined-only carb): present-but-poor carb → ~80.
+- Chicken + white rice + vegetables (refined-only carb): ~73.
+- Beef + roasted potato + one egg, monochrome, no greens: complete but shallow → ~84.
+- Pizza slice: refined + cheese + no real veg + processed → ~27.
+- Fast-food burger + fries: fried + processed meat + refined + no veg → ~19.
+- Instant cup noodles: ~6. Soda / candy: ~4. Ice cream scoop: dairy floor → ~16.
 
 {
   "title": "<string — 2-4 word meal name based on what you see, e.g. 'Shin Ramen', 'Grilled Salmon Bowl', 'Eggs & Avocado Toast'. Be specific to the actual food, not generic like 'Meal Scan'.>",
@@ -603,7 +493,7 @@ VERDICT — Be a smart friend, not a motivational poster:
 - BAD: "This meal is packed with nutrients and looks delicious! Consider adding a whole grain."
 - GOOD: "Solid protein from the salmon and good fats from the avocado — you're just missing a complex carb to round it out."
 - Reference actual foods you see. Be specific about what's good and what's lacking.
-- REQUIRED: if the meal is missing any of the four macro requirements (protein, healthy fat, complex carb, vegetables), the verdict MUST explicitly name what's missing using the words "missing", "needs", or "lacks". Example: "Solid protein and fat from the eggs and avocado, but missing a complex carb — add quinoa or sweet potato next time."
+- REQUIRED: if the meal is missing any of the macro/produce categories (protein, healthy fat, complex carb, vegetables), the verdict MUST explicitly name what's missing using "missing", "needs", or "lacks". If MULTIPLE categories are missing, name ALL of them, not just one. Example (one): "Solid protein and fat, but missing a complex carb — add quinoa." Example (multiple): "Good protein here, but it's missing both a complex carb and any vegetables — add a sweet potato and some greens."
 - If the meal hits all four macro requirements, the verdict can celebrate that without mentioning what's missing.
 - REFINED CARB CALLOUT: If the meal contains a refined carb (white pasta, white rice, white bread, regular pasta) but no complex carb, the verdict MUST say so explicitly. Example: "The pasta is white-flour based — a whole grain option like brown rice or whole wheat pasta would replace the refined carb here." Don't just say "missing complex carb" when there's clearly a refined carb in the dish; name the swap.
 - PATH TO 100: If the score is 94-99 (any score in the 90s but not 100), the verdict MUST end with one short sentence naming a specific bonus element that would push it to a perfect 100. Examples: "Add a fermented element like sauerkraut for a perfect 100." OR "A sprinkle of fresh herbs would round this out to 100." Only one bonus suggestion, the most impactful one. Skip this line if the score is already 100 or below 94. The "bonus100" field MUST name the EXACT same food (simple lowercase), so adding it is a real promise the app will honor.
@@ -614,8 +504,13 @@ UPGRADE — Only suggest swaps that meaningfully improve nutrition:
 - ABSOLUTE RULE: "from" MUST be a food you can ACTUALLY SEE in the image and that you listed in "ingredients". If the food is not in your ingredients list, you CANNOT use it in a swap. NEVER EVER invent or assume foods that aren't visible.
 - Before writing the upgrade, check: "Is this food in my ingredients list?" If NO → set upgrade to null.
 - The swap must make HEALTH sense. Don't swap salmon for chicken (both are great). Don't swap healthy foods for equally healthy ones.
-- GOOD swaps: white rice → brown rice (ONLY if white rice is in ingredients), iceberg lettuce → spinach, sour cream → Greek yogurt
-- Default to null. Only include a swap if it's genuinely obvious and the "from" food is clearly unhealthy.
+- LIKE-FOR-LIKE ONLY: a swap replaces a food with a better version of the SAME thing in the SAME role — white rice → brown rice, white bread → whole-grain bread, regular pasta → whole-wheat pasta, iceberg → spinach, sour cream → Greek yogurt. The "from" and "to" must be interchangeable in the dish.
+- NEVER swap across categories. Swapping a condiment/sweetener for a vegetable (e.g. hot honey → cherry tomatoes), or any two unrelated foods, makes NO sense and is wrong. If the real improvement is ADDING a missing category (a vegetable, a complex carb, etc.), do NOT use a swap — set upgrade to null and let the "missing" / "Add X" card handle it.
+- Default to null. Only include a swap if the "from" food is genuinely LOWER-QUALITY (refined, processed, fried, sugary, or junk) and the "to" is clearly healthier.
+- HARD RULE: NEVER swap one healthy whole food for another healthy whole food. Cottage cheese ↔ Greek yogurt, salmon ↔ chicken, sweet potato ↔ quinoa, avocado ↔ olive oil are all POINTLESS — never suggest them.
+- HARD RULE — SAME FOOD / VISUALLY INDISTINGUISHABLE: NEVER suggest a swap between two foods you cannot tell apart from the photo, or that are really the same food in different forms. Plain Yogurt ↔ Greek Yogurt, regular milk ↔ low-fat milk, white sugar ↔ raw sugar, table salt ↔ sea salt are all FORBIDDEN. If you cannot visually confirm the "from" food is the lower-quality version, you do NOT have grounds for the swap — set upgrade to null.
+- PRIORITY — REFINED CARB WINS: if the meal contains a refined carb (white bread, white rice, white pasta, regular pasta, tortilla) AND no whole-grain version, the swap MUST be that refined-carb upgrade (White Bread → Whole Wheat Bread, White Rice → Brown Rice, etc.). Do NOT spend the single swap on a marginal protein/dairy tweak when an obvious refined→whole-grain upgrade is sitting on the plate. The swap must address the SAME gap the verdict and "missing" insight name — they have to tell one story.
+- HARD RULE: if the meal is COMPLETE (all macros present) and CLEAN (no refined/processed/fried/sugary item), there is NOTHING to swap — set upgrade to null. No quick-swap card on a clean, complete meal.
 - "from" and "to" must be Capitalized (e.g. "White Rice" not "white rice")
 
 INSIGHTS — Each type renders differently in the UI. Include each insight's "type" field.
@@ -625,7 +520,7 @@ INSIGHTS — Each type renders differently in the UI. Include each insight's "ty
      - "good" — if the meal has any genuine positive qualities (which is true for any meal made of real whole foods, even if incomplete). One positive observation. Just "text", no title. One sentence.
      - "warning" — ONLY when the meal contains genuinely harmful items: fast food, deep-fried items, heavy added sugar, processed/cured meats (bacon/sausage/deli), packaged junk (chips, instant noodles, soda, candy), or sodium-loaded sauces. NEVER use "warning" for fresh fruit, fresh vegetables, eggs, raw nuts, plain yogurt, or whole grains, even if the meal is nutritionally incomplete. Incomplete ≠ unhealthy.
      - Decision rule: use "good" UNLESS you can name a specific harmful processed item in the ingredients. A bowl of just berries is "good" (and the verdict can note it's small/snack-sized). Cheese fries is "warning".
-  2. "missing" (ONLY if something is genuinely lacking) — include "title" (2-4 words, Capitalized), "text", AND "suggestions" array with 2-3 foods: [{"emoji": "🍠", "name": "Sweet Potato"}, ...]. If the meal is well-rounded, SKIP this entirely. Do NOT invent a deficiency. TITLE must be a positive ACTION phrase like "Add Whole Grains" or "Add Leafy Greens" — NEVER use the word "gap" (no "Complex Carb Gap"). And NEVER include a "missing" insight for a macro that is actually present: if the meal scores 86+ it is COMPLETE by definition, so it must NOT have a "missing complex carb / protein / fat / vegetable" insight.
+  2. "missing" (ONLY if something is genuinely lacking) — include "title" (2-4 words, Capitalized), "text", AND "suggestions" array with 2-3 foods: [{"emoji": "🍠", "name": "Sweet Potato"}, ...]. If the meal is well-rounded, SKIP this entirely. Do NOT invent a deficiency. If MULTIPLE categories are missing, the "text" should name all of them (and suggestions can cover the most important gap). TITLE must be a positive ACTION phrase like "Add Whole Grains" or "Add Leafy Greens" — NEVER use the word "gap". NEVER include a "missing" insight for a category that is actually present (don't say "missing protein" when protein is there).
   3. "interaction" (REQUIRED) — a real nutrient interaction between two foods in this meal. Just "text". Must mention TWO specific foods. This can be POSITIVE (one food boosts another's absorption, e.g. vitamin C + iron, fat + fat-soluble vitamins) OR a CAUTION about poor combining/absorption or digestion (e.g. calcium-rich dairy blunting iron absorption from greens, a very high-fat load slowing digestion, tannins in tea limiting iron uptake). If a genuine negative interaction or digestion concern exists in THIS meal, prefer flagging it constructively over a generic positive one.
   4. "fact" (REQUIRED) — a genuinely surprising fact about a specific ingredient. Not common knowledge. Just "text".
 - IF (and only if) health conditions are listed in the USER CONTEXT section at the very end of this prompt, you MUST also include a "condition" type insight with "title" (the condition name) and "text" about how this meal affects those conditions. If no conditions are listed, omit the condition insight.
