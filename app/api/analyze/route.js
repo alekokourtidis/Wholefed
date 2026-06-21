@@ -552,7 +552,12 @@ ${personalization ? `\n--- USER CONTEXT (apply to insights as instructed above) 
   // gpt-5.4-mini for both modes: it follows the nuanced scoring rubric far more
   // reliably than gpt-4o-mini (which under-credited complex carbs when a refined
   // item was also present). Determinism for identical scans comes from the cache.
-  const model = "gpt-5.4-mini";
+  // Photos use the FULL gpt-5.4 (not mini): the mini tier misidentifies
+  // look-alike whole foods (e.g. roasted sweet potato read as white bread).
+  // Full vision is markedly more accurate at ingredient ID and is worth the
+  // cost since scans are infrequent and cached. Text mode has no image to
+  // identify, so it stays on the cheaper mini.
+  const model = isTextMode ? "gpt-5.4-mini" : "gpt-5.4";
   const isGpt5 = model.startsWith("gpt-5");
   const openaiBody = {
     model,
